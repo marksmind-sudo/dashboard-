@@ -112,6 +112,7 @@
         .percentage-text { font-size: 0.75rem; font-weight: bold; color: var(--accent-color); text-align: right; }
         .badge-row { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 0.7rem; }
         .source-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 1px 5px; border-radius: 4px; color: var(--text-muted); }
+        .source-badge.streaming-badge { background: rgba(255, 0, 127, 0.15); color: var(--accent-color); }
         .star-rating { color: var(--accent-color); }
 
         /* Inputs Layouts */
@@ -121,14 +122,18 @@
         
         /* --- HIGHLY RE-OPTIMIZED LABEL CHASSIS PICKERS --- */
         .maxi-label-picker {
-            display: block; width: 100%; padding: 30px 20px; background: rgba(255,255,255,0.02);
+            display: block; width: 100%; padding: 35px 20px; background: rgba(255,255,255,0.02);
             border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-color);
-            font-size: 1rem; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 12px;
-            transition: background 0.2s ease;
+            font-size: 1.05rem; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 12px;
+            transition: all 0.2s ease;
         }
-        .maxi-label-picker:active { background: rgba(0, 255, 204, 0.05); }
-        .hidden-file-input { display: none !important; } /* Strips native element out entirely */
-        .file-status-text { display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: normal; margin-top: 6px; }
+        .maxi-label-picker:active { background: rgba(0, 255, 204, 0.08); border-color: var(--accent-color); }
+        
+        /* Shrunk to invisible element to ensure event fire triggers pass native checks */
+        .hidden-file-input { 
+            position: absolute; width: 1px; height: 1px; opacity: 0.01; visibility: visible; overflow: hidden; z-index: -1;
+        }
+        .file-status-text { display: block; font-size: 0.85rem; color: #707da4; font-weight: normal; margin-top: 8px; font-family: monospace; }
 
         .password-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
         .password-wrapper input { padding-right: 65px; }
@@ -283,7 +288,8 @@
                     📁 Tap to Select Goodreads CSV File
                     <span id="csvFileStatus" class="file-status-text">No file loaded</span>
                 </label>
-                <input type="file" id="csvFileInput" accept=".csv" class="hidden-file-input" onchange="updateFileLabel('csvFileInput', 'csvFileStatus')">
+                <!-- Stripped strict MIME type restriction to bypass Android sandboxing loops -->
+                <input type="file" id="csvFileInput" class="hidden-file-input" onchange="updateFileLabel('csvFileInput', 'csvFileStatus')">
                 
                 <button class="btn" onclick="processCSV()">Process Goodreads Library Export</button>
             </div>
@@ -300,7 +306,8 @@
                     📂 Tap to Select Trakt JSON Archive
                     <span id="traktFileStatus" class="file-status-text">No file loaded</span>
                 </label>
-                <input type="file" id="traktJsonInput" accept=".json" class="hidden-file-input" onchange="updateFileLabel('traktJsonInput', 'traktFileStatus')">
+                <!-- Stripped strict MIME type restriction to bypass Android sandboxing loops -->
+                <input type="file" id="traktJsonInput" class="hidden-file-input" onchange="updateFileLabel('traktJsonInput', 'traktFileStatus')">
                 
                 <button class="btn" style="background:#ed1c24; color:white;" onclick="processTraktJSON()">Ingest Trakt JSON Archive</button>
             </div>
@@ -376,7 +383,7 @@
                 status.style.color = "var(--accent-color)";
             } else {
                 status.innerText = "No file loaded";
-                status.style.color = "var(--text-muted)";
+                status.style.color = "#707da4";
             }
         }
 
@@ -457,7 +464,7 @@
                             </div>
                             <div class="percentage-text">${item.progress}%</div>
                             <div class="badge-row">
-                                <span class="source-badge">${item.access}</span>
+                                <span class="source-badge ${item.access === 'Streaming' ? 'streaming-badge' : ''}">${item.access}</span>
                                 <span class="star-rating">${'★'.repeat(item.rating)}${'☆'.repeat(5-item.rating)}</span>
                             </div>
                             <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:4px; border-top:1px dashed rgba(255,255,255,0.05); padding-top:2px;">
@@ -583,9 +590,10 @@
                     if (lines.length < 2) { alert('This CSV file context node appears completely empty.'); return; }
 
                     const headerRow = lines[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(h => h.replace(/"/g, '').trim().toLowerCase());
-                    const titleIdx = headerRow.indexOf('title');
-                    const authorIdx = headerRow.indexOf('author');
-                    const ratingIdx = headerRow.indexOf('my rating') !== -1 ? headerRow.indexOf('my rating') : headerRow.indexOf('rating');
+                    
+                    let titleIdx = headerRow.findIndex(h => h.includes('title'));
+                    let authorIdx = headerRow.findIndex(h => h.includes('author'));
+                    let ratingIdx = headerRow.findIndex(h => h.includes('rating'));
 
                     if (titleIdx === -1 || authorIdx === -1) {
                         alert('Could not map standard title or author data branches from your Goodreads export header node.');
