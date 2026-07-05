@@ -79,7 +79,7 @@
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
 
-        /* --- VISUAL POSTER ART MEDIA CARDS GRID --- */
+        /* --- POSTER ART MEDIA GRID --- */
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
         .media-card {
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
@@ -99,14 +99,14 @@
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 4px; }
         .media-title { font-size: 0.95rem; font-weight: bold; color: var(--text-color); margin-bottom: 2px; }
         
-        /* Action Tray on Cards */
+        /* Action Controls */
         .card-controls { display: flex; gap: 6px; align-items: center; }
         .card-ctrl-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; }
         .card-ctrl-btn:hover { color: var(--accent-color); }
         .heart-icon { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 1.1rem; }
         .media-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; line-height: 1.2; }
         
-        /* Progress & Badges */
+        /* Metrics & Progress */
         .progress-container { background: rgba(255,255,255,0.1); border-radius: 4px; height: 5px; margin: 4px 0; overflow: hidden; }
         .progress-bar { background: var(--accent-color); height: 100%; width: 0%; }
         .percentage-text { font-size: 0.75rem; font-weight: bold; color: var(--accent-color); text-align: right; }
@@ -114,16 +114,21 @@
         .source-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 1px 5px; border-radius: 4px; color: var(--text-muted); }
         .star-rating { color: var(--accent-color); }
 
-        /* WIDE SETTINGS FORM INPUT LAYOUTS */
+        /* Inputs Layouts */
         .form-group { display: flex; flex-direction: column; margin-bottom: 12px; width: 100%; }
         .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
         .form-group input, .form-group select { padding: 8px 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem; outline: none; width: 100%; }
         
-        .maxi-file-picker {
-            width: 100%; padding: 20px; background: rgba(255,255,255,0.02);
-            border: 2px dashed var(--border-color); border-radius: 6px; color: var(--text-color);
-            font-size: 0.95rem; text-align: center; cursor: pointer; margin-bottom: 10px;
+        /* --- HIGHLY RE-OPTIMIZED LABEL CHASSIS PICKERS --- */
+        .maxi-label-picker {
+            display: block; width: 100%; padding: 30px 20px; background: rgba(255,255,255,0.02);
+            border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-color);
+            font-size: 1rem; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 12px;
+            transition: background 0.2s ease;
         }
+        .maxi-label-picker:active { background: rgba(0, 255, 204, 0.05); }
+        .hidden-file-input { display: none !important; } /* Strips native element out entirely */
+        .file-status-text { display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: normal; margin-top: 6px; }
 
         .password-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
         .password-wrapper input { padding-right: 65px; }
@@ -133,7 +138,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* --- FILING TABS INDIVIDUAL DIRECTORY BAR --- */
+        /* --- NAVIGATION TABS --- */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; 
             background-color: transparent; border: none;
@@ -142,27 +147,16 @@
             height: 65px; gap: 4px;
         }
         .nav-item { 
-            background: rgba(12, 15, 38, 0.7); 
-            border: 1px solid var(--border-color);
-            border-bottom: none;
-            color: #707da4; cursor: pointer; 
-            font-size: 0.85rem; font-weight: bold;
+            background: rgba(12, 15, 38, 0.7); border: 1px solid var(--border-color); border-bottom: none;
+            color: #707da4; cursor: pointer; font-size: 0.85rem; font-weight: bold;
             display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px;
-            width: 32%; height: 50px;
-            border-top-left-radius: 12px; border-top-right-radius: 12px;
-            transition: all 0.2s ease-out;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
-            backdrop-filter: blur(8px);
+            width: 32%; height: 50px; border-top-left-radius: 12px; border-top-right-radius: 12px;
+            transition: all 0.2s ease-out; box-shadow: 0 -2px 5px rgba(0,0,0,0.3); backdrop-filter: blur(8px);
         }
         .nav-item.active { 
-            color: var(--accent-color); 
-            background: var(--panel-bg);
-            height: 58px;
-            border: 2px solid var(--border-color);
-            border-bottom: 2px solid var(--bg-color);
-            margin-bottom: -2px;
-            z-index: 1001;
-            text-shadow: var(--text-shadow);
+            color: var(--accent-color); background: var(--panel-bg); height: 58px;
+            border: 2px solid var(--border-color); border-bottom: 2px solid var(--bg-color);
+            margin-bottom: -2px; z-index: 1010; text-shadow: var(--text-shadow);
         }
         .nav-icon { font-size: 1.1rem; }
     </style>
@@ -247,7 +241,7 @@
                 <button class="btn" onclick="addNewMediaItem()">Inject Into Collection</button>
             </div>
 
-            <!-- EXPANSIBLE COMPACT FILTERS ROW -->
+            <!-- COMPACT FILTERS ROW -->
             <div class="filter-row">
                 <select id="sortEngine" onchange="renderMediaGrid()">
                     <option value="name">Sort: Name</option>
@@ -283,8 +277,15 @@
             <div class="panel">
                 <h2>Goodreads Library Import Engine</h2>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Upload your exported Goodreads *.csv file to dynamically parse and rebuild your audiobook log:</p>
-                <input type="file" id="csvFileInput" accept=".csv" class="maxi-file-picker">
-                <button class="btn" onclick="processCSV()">Process Audiobook Log</button>
+                
+                <!-- LABEL TARGET BOX -->
+                <label for="csvFileInput" class="maxi-label-picker">
+                    📁 Tap to Select Goodreads CSV File
+                    <span id="csvFileStatus" class="file-status-text">No file loaded</span>
+                </label>
+                <input type="file" id="csvFileInput" accept=".csv" class="hidden-file-input" onchange="updateFileLabel('csvFileInput', 'csvFileStatus')">
+                
+                <button class="btn" onclick="processCSV()">Process Goodreads Library Export</button>
             </div>
         </div>
 
@@ -293,7 +294,14 @@
             <div class="panel">
                 <h2>Trakt.tv JSON Archive Ingestion</h2>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Import your backup watchlists or history dumps here via local file upload:</p>
-                <input type="file" id="traktJsonInput" accept=".json" class="maxi-file-picker">
+                
+                <!-- LABEL TARGET BOX -->
+                <label for="traktJsonInput" class="maxi-label-picker">
+                    📂 Tap to Select Trakt JSON Archive
+                    <span id="traktFileStatus" class="file-status-text">No file loaded</span>
+                </label>
+                <input type="file" id="traktJsonInput" accept=".json" class="hidden-file-input" onchange="updateFileLabel('traktJsonInput', 'traktFileStatus')">
+                
                 <button class="btn" style="background:#ed1c24; color:white;" onclick="processTraktJSON()">Ingest Trakt JSON Archive</button>
             </div>
 
@@ -360,6 +368,18 @@
             handleAuthCallback();
         });
 
+        function updateFileLabel(inputId, statusId) {
+            const input = document.getElementById(inputId);
+            const status = document.getElementById(statusId);
+            if(input.files.length > 0) {
+                status.innerText = `📄 Selected: ${input.files[0].name}`;
+                status.style.color = "var(--accent-color)";
+            } else {
+                status.innerText = "No file loaded";
+                status.style.color = "var(--text-muted)";
+            }
+        }
+
         function toggleVisibility(inputId) {
             const field = document.getElementById(inputId);
             const btn = field.nextElementSibling;
@@ -409,12 +429,10 @@
                 const card = document.createElement('div');
                 card.className = `media-card ${item.pinned ? 'pinned' : ''}`;
                 
-                // Build Left Poster Visual Block
                 let posterContent = `<span class="poster-placeholder">🎬</span>`;
                 if (item.poster) {
                     posterContent = `<img src="${item.poster}" class="poster-img" alt="Poster">`;
                 } else {
-                    // Fire asynchronous smart artwork lookup pipelines
                     fetchMediaArtwork(item);
                 }
 
@@ -453,7 +471,6 @@
             });
         }
 
-        // --- ASYNCHRONOUS CROSS-PLATFORM ARTWORK RETRIEVAL SYSTEM ---
         function fetchMediaArtwork(item) {
             const tmdbKey = localStorage.getItem('tmdb_key');
             
@@ -470,7 +487,6 @@
                         }
                     }).catch(() => {});
             } else if (item.type === 'Audiobook') {
-                // Public Open Library Cover Art Engine query lookup
                 const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(item.title)}&limit=1`;
                 fetch(url)
                     .then(res => res.json())
@@ -555,58 +571,55 @@
 
         function processCSV() {
             const fileInput = document.getElementById('csvFileInput');
-            if (!fileInput.files.length) { alert('Select a Goodreads CSV file first, Sweetie!'); return; }
+            if (!fileInput.files.length) { alert('Select your Goodreads CSV backup file first, Sweetie!'); return; }
+            
+            const file = fileInput.files[0];
             const reader = new FileReader();
+            
             reader.onload = function(e) {
-                const text = e.target.result;
-                const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-                let count = 0;
-                const today = new Date().toISOString().split('T')[0];
+                try {
+                    const text = e.target.result;
+                    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+                    if (lines.length < 2) { alert('This CSV file context node appears completely empty.'); return; }
 
-                for(let i = 1; i < lines.length; i++) {
-                    const columns = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    if(columns.length > 1) {
-                        const title = columns[1].replace(/"/g, '').trim();
-                        const author = columns[2].replace(/"/g, '').trim();
-                        if(title) {
-                            mediaDatabase.push({
-                                id: Date.now() + Math.random(), title, type: "Audiobook", creator: author,
-                                genre: "Goodreads", releaseDate: "2026-01-01", dateAdded: today, access: "Owned",
-                                status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: ""
-                            });
-                            count++;
+                    const headerRow = lines[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(h => h.replace(/"/g, '').trim().toLowerCase());
+                    const titleIdx = headerRow.indexOf('title');
+                    const authorIdx = headerRow.indexOf('author');
+                    const ratingIdx = headerRow.indexOf('my rating') !== -1 ? headerRow.indexOf('my rating') : headerRow.indexOf('rating');
+
+                    if (titleIdx === -1 || authorIdx === -1) {
+                        alert('Could not map standard title or author data branches from your Goodreads export header node.');
+                        return;
+                    }
+
+                    let count = 0;
+                    const today = new Date().toISOString().split('T')[0];
+
+                    for (let i = 1; i < lines.length; i++) {
+                        const columns = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/"/g, '').trim());
+                        
+                        if (columns.length > Math.max(titleIdx, authorIdx)) {
+                            const title = columns[titleIdx];
+                            const author = columns[authorIdx];
+                            let rating = ratingIdx !== -1 ? parseInt(columns[ratingIdx]) : 5;
+                            if (!rating || rating < 1 || rating > 5) rating = 5;
+
+                            if (title) {
+                                mediaDatabase.push({
+                                    id: Date.now() + Math.random(), title: title, type: "Audiobook", creator: author || "Unknown Author",
+                                    genre: "Goodreads Log", releaseDate: "2026-01-01", dateAdded: today, access: "Owned",
+                                    status: "history", progress: 100, favorite: false, rating: rating, pinned: false, manualOrder: mediaDatabase.length, poster: ""
+                                });
+                                count++;
+                            }
                         }
                     }
-                }
-                saveAndRefresh();
-                alert(`Successfully processed ${count} audiobooks from Goodreads file, Sweetie!`);
+
+                    saveAndRefresh();
+                    alert(`Successfully processed and ingested ${count} audiobooks from your Goodreads library archive list, Sweetie!`);
+                } catch (err) { alert('Error compiling text string matrices.'); }
             };
-            reader.readAsText(fileInput.files[0]);
-        }
-
-        function toggleHeartItem(id) {
-            const index = mediaDatabase.findIndex(i => i.id === id);
-            if(index !== -1) { mediaDatabase[index].favorite = !mediaDatabase[index].favorite; saveAndRefresh(); }
-        }
-
-        function pinItem(id) {
-            const index = mediaDatabase.findIndex(i => i.id === id);
-            if(index !== -1) { mediaDatabase[index].pinned = !mediaDatabase[index].pinned; saveAndRefresh(); }
-        }
-
-        function moveItemPosition(currentIndex, direction) {
-            const targetIndex = currentIndex + direction;
-            if (targetIndex >= 0 && targetIndex < mediaDatabase.length) {
-                let temp = mediaDatabase[currentIndex].manualOrder;
-                mediaDatabase[currentIndex].manualOrder = mediaDatabase[targetIndex].manualOrder;
-                mediaDatabase[targetIndex].manualOrder = temp;
-                saveAndRefresh();
-            }
-        }
-
-        function resetListToDefault() {
-            mediaDatabase.forEach((item, index) => { item.manualOrder = index; item.pinned = false; });
-            saveAndRefresh();
+            reader.readAsText(file);
         }
 
         function saveAndRefresh() {
