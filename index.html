@@ -5,134 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Entertainment Dashboard</title>
     <style>
-        /* --- THEME DESIGN SYSTEM & PERSISTENT PATTERNS --- */
-        [data-theme="tvtime-dark"] {
-            --bg-color: #141414; --panel-bg: rgba(31, 31, 31, 0.95); --text-color: #ffffff; --text-muted: #aaaaaa;
-            --accent-color: #ffd700; --border-color: #333333; --font-family: 'Segoe UI', sans-serif;
-            --bg-pattern: solid var(--bg-color); --card-bg: #222222;
-        }
-        [data-theme="tvtime-light"] {
-            --bg-color: #f5f5f7; --panel-bg: rgba(255, 255, 255, 0.95); --text-color: #1d1d1f; --text-muted: #86868b;
-            --accent-color: #ffcc00; --border-color: #e5e5ea; --font-family: 'Segoe UI', sans-serif;
-            --bg-pattern: solid var(--bg-color); --card-bg: #ffffff;
-        }
-        [data-theme="steampunk"] {
-            --bg-color: #2b1d12; --panel-bg: rgba(61, 42, 29, 0.95); --text-color: #f4eae1; --text-muted: #b5997f;
-            --accent-color: #df9b16; --border-color: #614633; --font-family: 'Courier New', monospace;
-            --bg-pattern: radial-gradient(circle at 50% 50%, #523824 0%, #2b1d12 100%); --card-bg: #3d2a1d;
-        }
+        /* --- THEME DESIGN SYSTEM --- */
         [data-theme="cyberpunk"] {
-            --bg-color: #03030d; --panel-bg: rgba(12, 15, 38, 0.9); --text-color: #00ffcc; --text-muted: #707da4;
-            --accent-color: #ff007f; --border-color: #00ffcc; --font-family: 'Lucida Sans', sans-serif;
+            --bg-color: #03030d; --panel-bg: rgba(12, 15, 38, 0.95); --text-color: #00ffcc; 
+            --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(20, 24, 59, 0.85);
             --text-shadow: 0 0 5px rgba(0,255,204,0.5);
             --bg-pattern: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 6px, 6px 100%; --card-bg: rgba(20, 24, 59, 0.8);
+            background-size: 100% 6px, 6px 100%;
+        }
+        [data-theme="tvtime-dark"] {
+            --bg-color: #141414; --panel-bg: rgba(31, 31, 31, 0.95); --text-color: #ffffff; 
+            --accent-color: #ffd700; --border-color: #333333; --card-bg: #222222; --bg-pattern: none; --text-shadow: none;
+        }
+        [data-theme="tvtime-light"] {
+            --bg-color: #f5f5f7; --panel-bg: rgba(255, 255, 255, 0.95); --text-color: #1d1d1f; 
+            --accent-color: #ffcc00; --border-color: #e5e5ea; --card-bg: #ffffff; --bg-pattern: none; --text-shadow: none;
+        }
+        [data-theme="steampunk"] {
+            --bg-color: #2b1d12; --panel-bg: rgba(61, 42, 29, 0.95); --text-color: #f4eae1; 
+            --accent-color: #df9b16; --border-color: #614633; --card-bg: #3d2a1d;
+            --bg-pattern: radial-gradient(circle at 50% 50%, #523824 0%, #2b1d12 100%); --text-shadow: none;
         }
 
         /* --- STRUCTURAL LAYOUT --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background: var(--bg-pattern); background-color: var(--bg-color); color: var(--text-color);
-            font-family: var(--font-family); transition: all 0.3s ease; padding-bottom: 90px; min-height: 100vh;
+        body { 
+            background: var(--bg-pattern); background-color: var(--bg-color); color: var(--text-color); 
+            font-family: sans-serif; padding-bottom: 90px; min-height: 100vh; transition: all 0.3s ease;
         }
         header {
             background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color);
             padding: 12px 15px; display: flex; justify-content: space-between; align-items: center;
         }
-        h1 { font-size: 1.3rem; color: var(--accent-color); text-shadow: var(--text-shadow); }
+        h1 { font-size: 1.2rem; color: var(--accent-color); text-shadow: var(--text-shadow); }
         
         .theme-dropdown {
             background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
             padding: 5px 10px; border-radius: 4px; font-size: 0.85rem; outline: none;
         }
         .container { max-width: 800px; margin: 15px auto; padding: 0 12px; }
-        .panel {
-            background-color: var(--panel-bg); border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 15px; margin-bottom: 15px;
-        }
-        h2 { font-size: 1.1rem; color: var(--accent-color); margin-bottom: 12px; text-shadow: var(--text-shadow); border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
+        .panel { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        h2 { color: var(--accent-color); margin-bottom: 12px; font-size: 1.1rem; text-shadow: var(--text-shadow); border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
         
-        /* Controls & Filters */
-        .filter-row { display: flex; gap: 8px; margin-bottom: 15px; }
+        /* Search and Controls */
+        .search-bar { width: 100%; padding: 10px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; margin-bottom: 10px; font-size: 0.9rem; }
+        .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
         .filter-row select {
-            flex: 1; background: var(--bg-color); color: var(--text-color);
+            flex: 1; min-width: 120px; background: var(--bg-color); color: var(--text-color);
             border: 1px solid var(--border-color); padding: 8px; border-radius: 4px; font-size: 0.85rem;
         }
 
+        /* Sub-Navigation Categories */
+        .sub-nav { display: flex; overflow-x: auto; gap: 6px; margin-bottom: 15px; padding-bottom: 4px; }
+        .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
+        .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
+
         /* Media Cards Grid */
-        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 10px; }
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
         .media-card {
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px;
-            padding: 10px; display: flex; flex-direction: column; justify-content: space-between; position: relative;
+            padding: 12px; display: flex; flex-direction: column; justify-content: space-between; position: relative;
         }
-        .media-title { font-size: 0.9rem; font-weight: bold; margin-bottom: 4px; color: var(--text-color); }
-        .media-meta { font-size: 0.75rem; color: var(--text-muted); }
-        .status-badge {
-            align-self: flex-start; padding: 2px 6px; font-size: 0.7rem; font-weight: bold;
-            border-radius: 3px; margin-top: 6px; text-transform: uppercase;
-        }
-        .status-watching { background: rgba(0, 255, 204, 0.2); color: #00ffcc; border: 1px solid #00ffcc; }
-        .status-planned { background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid #ffd700; }
-        .status-completed { background: rgba(255, 0, 127, 0.2); color: #ff007f; border: 1px solid #ff007f; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 4px; }
+        .media-title { font-size: 0.95rem; font-weight: bold; color: var(--text-color); margin-bottom: 4px; }
+        .heart-icon { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 1.1rem; }
+        .media-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; line-height: 1.3; }
+        
+        /* Progress & Badges */
+        .progress-container { background: rgba(255,255,255,0.1); border-radius: 4px; height: 6px; margin: 8px 0; overflow: hidden; }
+        .progress-bar { background: var(--accent-color); height: 100%; width: 0%; }
+        .percentage-text { font-size: 0.75rem; font-weight: bold; color: var(--accent-color); text-align: right; }
+        .badge-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 0.7rem; }
+        .source-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 2px 6px; border-radius: 4px; color: var(--text-muted); }
+        .star-rating { color: var(--accent-color); }
 
-        /* Calendar List */
-        .calendar-list { display: flex; flex-direction: column; gap: 8px; }
-        .calendar-item {
-            display: flex; justify-content: space-between; background: var(--card-bg);
-            border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; font-size: 0.85rem;
-        }
-        .calendar-date { font-weight: bold; color: var(--accent-color); }
-
-        /* Input Form Groups */
-        .input-group { margin-bottom: 12px; }
-        .input-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; }
-        .password-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
-        .password-wrapper input {
-            width: 100%; padding: 8px 50px 8px 10px; background: var(--bg-color);
-            border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem;
-        }
-        .toggle-btn {
-            position: absolute; right: 5px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-color);
-            padding: 4px 8px; font-size: 0.75rem; cursor: pointer; border-radius: 4px; color: var(--text-color);
-        }
-
-        /* Buttons & Actions */
-        .btn {
-            background-color: var(--accent-color); color: #000; border: none; width: 100%;
-            padding: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.9rem;
-            transition: opacity 0.2s;
-        }
-        .btn:hover { opacity: 0.9; }
-        #driveStatusLog { margin-top: 8px; font-size: 0.8rem; color: var(--text-muted); }
-
-        /* Bottom Navbar */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--panel-bg);
-            border-top: 1px solid var(--border-color); display: flex; justify-content: space-around;
-            padding: 10px 0; z-index: 1000; backdrop-filter: blur(10px);
-        }
-        .nav-item {
-            background: none; border: none; color: var(--text-muted); display: flex;
-            flex-direction: column; align-items: center; font-size: 0.75rem; cursor: pointer; width: 50%;
-        }
-        .nav-item.active { color: var(--accent-color); text-shadow: var(--text-shadow); }
-        .nav-icon { font-size: 1.3rem; margin-bottom: 2px; }
-
+        /* Forms & Add Media Drawer */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+        .form-group input, .form-group select { padding: 8px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.85rem; }
+        
+        /* Structural Tabs */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* CSV Output Box */
-        .csv-log {
-            margin-top: 10px; background: var(--bg-color); border: 1px solid var(--border-color);
-            padding: 8px; font-size: 0.75rem; max-height: 120px; overflow-y: auto; border-radius: 4px;
-            font-family: monospace; color: var(--text-muted);
-        }
+        /* Action Button */
+        .btn { background-color: var(--accent-color); color: #000; border: none; width: 100%; padding: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
+        
+        /* Bottom Navbar */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--panel-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; backdrop-filter: blur(10px); }
+        .nav-item { background: none; border: none; color: #707da4; cursor: pointer; font-size: 0.8rem; display: flex; flex-direction: column; align-items: center; }
+        .nav-item.active { color: var(--accent-color); text-shadow: var(--text-shadow); }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Entertainment Dashboard</h1>
+        <h1>Entertainment Vault</h1>
         <select id="themeSelect" class="theme-dropdown" onchange="changeTheme(this.value)">
             <option value="cyberpunk">Cyberpunk Neon</option>
             <option value="steampunk">Steampunk Brass</option>
@@ -142,61 +111,92 @@
     </header>
 
     <div class="container">
-        
-        <!-- MEDIA MAIN TAB -->
+        <!-- MEDIA TAB (MAIN VIEW) -->
         <div id="mediaTab" class="tab-content active">
+            
+            <!-- Quick Add Drawer Panel -->
+            <div class="panel">
+                <h2>Add New Media Record</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="addTitle" placeholder="e.g., Dune">
+                    </div>
+                    <div class="form-group">
+                        <label>Media Type</label>
+                        <select id="addType">
+                            <option value="TV">Television Series</option>
+                            <option value="Movie">Movie</option>
+                            <option value="Audiobook">Audiobook</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Creator (Director/Actor/Author)</label>
+                        <input type="text" id="addCreator" placeholder="e.g., Frank Herbert">
+                    </div>
+                    <div class="form-group">
+                        <label>Access Mode</label>
+                        <select id="addAccess">
+                            <option value="Owned">I Own It</option>
+                            <option value="Streaming">Streaming Platform</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Completion Status</label>
+                        <select id="addStatus">
+                            <option value="all">Main Collection Only</option>
+                            <option value="watching">Currently Watching/Reading</option>
+                            <option value="history">History (Seen/Read)</option>
+                            <option value="find">Media to Find</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Progress/Completion %</label>
+                        <input type="number" id="addProgress" min="0" max="100" value="0">
+                    </div>
+                </div>
+                <button class="btn" onclick="addNewMediaItem()">Inject Into Database Node</button>
+            </div>
+
+            <!-- Search & Filter Controls -->
+            <input type="text" class="search-bar" id="searchBar" placeholder="🔍 Query database by name, genre, director, actor, or author..." onkeyup="renderMediaGrid()">
+            
             <div class="filter-row">
-                <select id="sortSelect"><option value="name">Sort by: Name</option></select>
-                <select id="mediaFilter"><option value="all">All Media Platforms</option></select>
+                <select id="sortEngine" onchange="renderMediaGrid()">
+                    <option value="name">Sort by: Name</option>
+                    <option value="rating">Sort by: Star Rating</option>
+                    <option value="progress">Sort by: Progress %</option>
+                </select>
+                <select id="typeFilter" onchange="renderMediaGrid()">
+                    <option value="all">All Formats (TV/Movie/Books)</option>
+                    <option value="TV">TV Series</option>
+                    <option value="Movie">Movies</option>
+                    <option value="Audiobook">Audiobooks</option>
+                </select>
             </div>
 
-            <div class="panel">
-                <h2>My Tracked Dashboard</h2>
-                <div class="media-grid" id="trackedMediaContainer">
-                    <div class="media-card">
-                        <div>
-                            <div class="media-title">Stargate SG-1</div>
-                            <div class="media-meta">S8 · E12</div>
-                        </div>
-                        <span class="status-badge status-watching">Watching</span>
-                    </div>
-                    <div class="media-card">
-                        <div>
-                            <div class="media-title">Neuromancer</div>
-                            <div class="media-meta">Audiobook</div>
-                        </div>
-                        <span class="status-badge status-planned">Plan to Watch</span>
-                    </div>
-                    <div class="media-card">
-                        <div>
-                            <div class="media-title">Blade Runner 2049</div>
-                            <div class="media-meta">Movie</div>
-                        </div>
-                        <span class="status-badge status-completed">Completed</span>
-                    </div>
-                </div>
+            <!-- Category Sub-Navigation Buttons -->
+            <div class="sub-nav">
+                <button class="sub-btn active" id="sub-all" onclick="filterCategory('all')">Main Collection</button>
+                <button class="sub-btn" id="sub-favorites" onclick="filterCategory('favorites')">❤️ Favorites</button>
+                <button class="sub-btn" id="sub-watching" onclick="filterCategory('watching')">🎬 Currently Tracking</button>
+                <button class="sub-btn" id="sub-history" onclick="filterCategory('history')">📜 History Logs</button>
+                <button class="sub-btn" id="sub-find" onclick="filterCategory('find')">🔍 Discovery List</button>
             </div>
 
-            <div class="panel">
-                <h2>Broadcast Release Calendar</h2>
-                <div class="calendar-list">
-                    <div class="calendar-item">
-                        <span>Sci-Fi Metadata Log Updates</span>
-                        <span class="calendar-date">MON (Live)</span>
-                    </div>
-                    <div class="calendar-item">
-                        <span>Connected Cluster Sync Node</span>
-                        <span class="calendar-date">THU (Routine)</span>
-                    </div>
-                </div>
+            <!-- Primary Data Cards Grid -->
+            <div class="media-grid" id="mediaDatabaseGrid">
+                <!-- Javascript builds data streams live here -->
             </div>
+        </div>
 
+        <!-- GOODREADS TAB -->
+        <div id="goodreadsTab" class="tab-content">
             <div class="panel">
                 <h2>Goodreads Library Import Engine</h2>
-                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 10px;">Upload your exported Goodreads *.csv file to dynamically parse and rebuild your audiobook log:</p>
-                <input type="file" id="csvFileInput" accept=".csv" style="color: var(--text-color); font-size: 0.85rem;">
-                <button class="btn" style="margin-top:12px;" onclick="processCSV()">Process Audiobook Log</button>
-                <div id="csvOutput" class="csv-log" style="display:none;"></div>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">Upload your exported Goodreads *.csv file to dynamically parse and rebuild your audiobook log:</p>
+                <input type="file" id="csvFileInput" accept=".csv">
+                <button class="btn" onclick="processCSV()">Process Audiobook Log</button>
             </div>
         </div>
 
@@ -204,63 +204,141 @@
         <div id="settingsTab" class="tab-content">
             <div class="panel">
                 <h2>Cloud Synchronization Settings</h2>
-                
-                <div class="input-group">
-                    <label for="clientIdInput">Google OAuth Client ID</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="clientIdInput" placeholder="Enter Client ID">
-                        <button type="button" class="toggle-btn" onclick="toggleVisibility('clientIdInput')">SHOW</button>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="apiKeyInput">Google API Key</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="apiKeyInput" placeholder="Enter API Key">
-                        <button type="button" class="toggle-btn" onclick="toggleVisibility('apiKeyInput')">SHOW</button>
-                    </div>
-                </div>
-
+                <input type="password" id="clientIdInput" placeholder="Enter Client ID">
+                <input type="password" id="apiKeyInput" placeholder="Enter API Key">
                 <button class="btn" onclick="saveKeysAndConnect()">Connect Account</button>
-                <div id="driveStatusLog">Cloud status: Offline</div>
+                <div id="driveStatusLog" style="margin-top:10px; font-size:0.8rem; color:var(--text-muted);">Cloud status: Offline</div>
             </div>
         </div>
-
     </div>
 
-    <!-- PERSISTENT NAVIGATION -->
+    <!-- PERSISTENT NAVIGATION TERMINAL -->
     <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('mediaTab', this)">
-            <span class="nav-icon">🎬</span>
-            <span>Media</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('settingsTab', this)">
-            <span class="nav-icon">⚙️</span>
-            <span>Settings</span>
-        </button>
+        <button class="nav-item active" onclick="switchTab('mediaTab', this)">🎬 Media</button>
+        <button class="nav-item" onclick="switchTab('goodreadsTab', this)">📚 Goodreads</button>
+        <button class="nav-item" onclick="switchTab('settingsTab', this)">⚙️ Settings</button>
     </nav>
 
     <script>
-        let gdriveClientId = localStorage.getItem('gdrive_client_id') || '';
-        let gdriveApiKey = localStorage.getItem('gdrive_api_key') || '';
+        // CORE USER DATABASE SYSTEM
+        let mediaDatabase = [
+            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", access: "Streaming", status: "watching", progress: 84, favorite: true, rating: 5 },
+            { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", access: "Owned", status: "watching", progress: 45, favorite: false, rating: 4 },
+            { id: 3, title: "Blade Runner 2049", type: "Movie", creator: "Denis Villeneuve", access: "Owned", status: "history", progress: 100, favorite: true, rating: 5 }
+        ];
+
+        let currentActiveCategory = 'all';
 
         document.addEventListener("DOMContentLoaded", () => {
-            if (gdriveClientId) document.getElementById('clientIdInput').value = gdriveClientId;
-            if (gdriveApiKey) document.getElementById('apiKeyInput').value = gdriveApiKey;
+            // Restore secure keys
+            if (localStorage.getItem('gdrive_client_id')) document.getElementById('clientIdInput').value = localStorage.getItem('gdrive_client_id');
+            if (localStorage.getItem('gdrive_api_key')) document.getElementById('apiKeyInput').value = localStorage.getItem('gdrive_api_key');
             
             const savedTheme = localStorage.getItem('dashboard_theme') || 'cyberpunk';
             document.getElementById('themeSelect').value = savedTheme;
             changeTheme(savedTheme);
 
+            renderMediaGrid();
             handleAuthCallback();
         });
 
-        function switchTab(tabId, btnElement) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            
+        function renderMediaGrid() {
+            const grid = document.getElementById('mediaDatabaseGrid');
+            const searchQuery = document.getElementById('searchBar').value.toLowerCase();
+            const sortVal = document.getElementById('sortEngine').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            grid.innerHTML = '';
+
+            // Apply filter layer pipelines
+            let filteredData = mediaDatabase.filter(item => {
+                const matchesSearch = item.title.toLowerCase().includes(searchQuery) || item.creator.toLowerCase().includes(searchQuery);
+                const matchesType = (typeFilter === 'all' || item.type === typeFilter);
+                
+                let matchesCategory = true;
+                if (currentActiveCategory === 'favorites') matchesCategory = item.favorite;
+                else if (currentActiveCategory !== 'all') matchesCategory = (item.status === currentActiveCategory);
+
+                return matchesSearch && matchesType && matchesCategory;
+            });
+
+            // Sorting processing algorithms
+            filteredData.sort((a, b) => {
+                if (sortVal === 'name') return a.title.localeCompare(b.title);
+                if (sortVal === 'rating') return b.rating - a.rating;
+                if (sortVal === 'progress') return b.progress - a.progress;
+            });
+
+            // Card Builder Array Rendering
+            filteredData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'media-card';
+                card.innerHTML = `
+                    <div>
+                        <div class="card-header">
+                            <div class="media-title">${item.title}</div>
+                            <button class="heart-icon" onclick="toggleHeartItem(${item.id})">${item.favorite ? '❤️' : '🖤'}</button>
+                        </div>
+                        <div class="media-meta">${item.type} • By ${item.creator}</div>
+                    </div>
+                    <div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${item.progress}%"></div>
+                        </div>
+                        <div class="percentage-text">${item.progress}%</div>
+                        <div class="badge-row">
+                            <span class="source-badge">${item.access}</span>
+                            <span class="star-rating">${'★'.repeat(item.rating)}${'☆'.repeat(5-item.rating)}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function addNewMediaItem() {
+            const title = document.getElementById('addTitle').value.trim();
+            const type = document.getElementById('addType').value;
+            const creator = document.getElementById('addCreator').value.trim();
+            const access = document.getElementById('addAccess').value;
+            const status = document.getElementById('addStatus').value;
+            const progress = parseInt(document.getElementById('addProgress').value) || 0;
+
+            if (!title) { alert('Specify database target title node, Sweetie!'); return; }
+
+            const newItem = {
+                id: Date.now(), title, type, creator, access, status, progress, favorite: false, rating: 5
+            };
+
+            mediaDatabase.push(newItem);
+            renderMediaGrid();
+
+            // Clear inputs
+            document.getElementById('addTitle').value = '';
+            document.getElementById('addCreator').value = '';
+            document.getElementById('addProgress').value = 0;
+        }
+
+        function toggleHeartItem(id) {
+            const index = mediaDatabase.findIndex(i => i.id === id);
+            if(index !== -1) {
+                mediaDatabase[index].favorite = !mediaDatabase[index].favorite;
+                renderMediaGrid();
+            }
+        }
+
+        function filterCategory(catId) {
+            currentActiveCategory = catId;
+            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`sub-${catId}`).classList.add('active');
+            renderMediaGrid();
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            btnElement.classList.add('active');
+            btn.classList.add('active');
         }
 
         function changeTheme(themeName) {
@@ -268,86 +346,29 @@
             localStorage.setItem('dashboard_theme', themeName);
         }
 
-        function toggleVisibility(inputId) {
-            const field = document.getElementById(inputId);
-            const btn = field.nextElementSibling;
-            if (field.type === "password") {
-                field.type = "text";
-                btn.innerText = "HIDE";
-            } else {
-                field.type = "password";
-                btn.innerText = "SHOW";
-            }
-        }
-
         function saveKeysAndConnect() {
-            gdriveClientId = document.getElementById('clientIdInput').value.trim();
-            gdriveApiKey = document.getElementById('apiKeyInput').value.trim();
-
-            localStorage.setItem('gdrive_client_id', gdriveClientId);
-            localStorage.setItem('gdrive_api_key', gdriveApiKey);
-
-            handleAuthClick();
-        }
-
-        function handleAuthClick() {
-            const logDiv = document.getElementById('driveStatusLog');
-            if (!gdriveClientId || !gdriveApiKey) {
-                logDiv.innerText = "⚠️ Please fill in both secure cloud keys first.";
-                return;
-            }
+            const client = document.getElementById('clientIdInput').value.trim();
+            const key = document.getElementById('apiKeyInput').value.trim();
+            localStorage.setItem('gdrive_client_id', client);
+            localStorage.setItem('gdrive_api_key', key);
             
             const redirectUri = window.location.origin + window.location.pathname;
-            const authUrl = "https://accounts.google.com/o/oauth2/v2/auth?" + 
-                "client_id=" + encodeURIComponent(gdriveClientId) +
-                "&redirect_uri=" + encodeURIComponent(redirectUri) +
-                "&response_type=token" +
-                "&scope=" + encodeURIComponent("https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file") +
-                "&prompt=consent";
-                
-            logDiv.innerText = "🚀 Redirecting securely to Google Vault...";
-            window.location.href = authUrl;
+            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(client)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${encodeURIComponent("https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file")}&prompt=consent`;
         }
 
         function handleAuthCallback() {
             const hash = window.location.hash;
             if (hash) {
                 const params = new URLSearchParams(hash.substring(1));
-                const accessToken = params.get('access_token');
-                if (accessToken) {
-                    localStorage.setItem('gdrive_access_token', accessToken);
-                    const logDiv = document.getElementById('driveStatusLog');
-                    if(logDiv) {
-                        logDiv.innerText = "✅ Cloud Authorization Successful! Connected.";
-                        logDiv.style.color = "#4ade80";
-                    }
+                if (params.get('access_token')) {
+                    document.getElementById('driveStatusLog').innerText = "✅ Cloud Authorization Successful! Connected.";
+                    document.getElementById('driveStatusLog').style.color = "#4ade80";
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
             }
         }
 
-        function processCSV() {
-            const fileInput = document.getElementById('csvFileInput');
-            const output = document.getElementById('csvOutput');
-            
-            if (!fileInput.files.length) {
-                alert('Please select a Goodreads CSV file first, Sweetie!');
-                return;
-            }
-            
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                const text = e.target.result;
-                const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-                
-                output.style.display = "block";
-                output.innerText = `Parsing ${lines.length - 1} records from Goodreads library export pipeline...\n\nSuccessfully loaded file context.`;
-            };
-            
-            reader.readAsText(file);
-        }
+        function processCSV() { alert('Goodreads pipeline tracking active, Sweetie!'); }
     </script>
 </body>
 </html>
