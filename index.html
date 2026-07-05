@@ -31,7 +31,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             background: var(--bg-pattern); background-color: var(--bg-color); color: var(--text-color); 
-            font-family: sans-serif; padding-bottom: 90px; min-height: 100vh; transition: all 0.3s ease; overflow-x: hidden;
+            font-family: sans-serif; padding-bottom: 110px; min-height: 100vh; transition: all 0.3s ease; overflow-x: hidden;
         }
         header {
             background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color);
@@ -48,11 +48,12 @@
         h2 { color: var(--accent-color); margin-bottom: 12px; font-size: 1.1rem; text-shadow: var(--text-shadow); border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
         
         /* Compact Filtering Controls */
-        .filter-row { display: flex; justify-content: flex-start; gap: 8px; margin-bottom: 15px; }
+        .filter-row { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 8px; margin-bottom: 15px; }
         .filter-row select {
-            max-width: 150px; background: var(--bg-color); color: var(--text-color);
+            background: var(--bg-color); color: var(--text-color);
             border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 4px; font-size: 0.85rem; outline: none;
         }
+        .reset-btn { background: none; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 6px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
 
         /* Action Row */
         .action-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
@@ -79,13 +80,19 @@
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
 
         /* Media Cards Grid */
-        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; }
         .media-card {
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px;
             padding: 12px; display: flex; flex-direction: column; justify-content: space-between; position: relative;
         }
+        .media-card.pinned { border: 2px solid var(--accent-color); box-shadow: 0 0 8px rgba(0,255,204,0.3); }
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 4px; }
         .media-title { font-size: 0.95rem; font-weight: bold; color: var(--text-color); margin-bottom: 4px; }
+        
+        /* Action Tray on Cards */
+        .card-controls { display: flex; gap: 6px; align-items: center; }
+        .card-ctrl-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; }
+        .card-ctrl-btn:hover { color: var(--accent-color); }
         .heart-icon { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 1.1rem; }
         .media-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; line-height: 1.3; }
         
@@ -106,10 +113,30 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* Bottom Navbar */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--panel-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; backdrop-filter: blur(10px); }
-        .nav-item { background: none; border: none; color: #707da4; cursor: pointer; font-size: 0.8rem; display: flex; flex-direction: column; align-items: center; }
-        .nav-item.active { color: var(--accent-color); text-shadow: var(--text-shadow); }
+        /* --- THICK REAL TAB DESIGN SYSTEM --- */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background-color: var(--panel-bg); border-top: 3px solid var(--border-color); 
+            display: flex; justify-content: space-around; 
+            padding: 0; z-index: 1000; backdrop-filter: blur(10px);
+            height: 75px;
+        }
+        .nav-item { 
+            background: none; border: none; color: #707da4; cursor: pointer; 
+            font-size: 0.9rem; font-weight: bold;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 33.33%; height: 100%;
+            transition: all 0.2s ease;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+        .nav-item:last-child { border-right: none; }
+        .nav-item.active { 
+            color: var(--accent-color); 
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 4px solid var(--accent-color);
+            text-shadow: var(--text-shadow);
+        }
+        .nav-icon { font-size: 1.4rem; margin-bottom: 4px; }
     </style>
 </head>
 <body>
@@ -132,32 +159,23 @@
             
             <div class="action-header-row">
                 <h2 style="border:none; margin:0; padding:0;">My Tracked Dashboard</h2>
-                <button class="toggle-menu-btn" onclick="toggleSideDrawer(true)">⚙️ Database Console</button>
+                <button class="toggle-menu-btn" onclick="toggleSideDrawer(true)">⚙️ Vault Console</button>
             </div>
 
-            <!-- SLIDE-OUT DRAWER INTERFACE (SEARCH, FILTERS, ADDITION, & TMDB BLUEPRINT) -->
+            <!-- SLIDE-OUT DRAWER INTERFACE -->
             <div id="sideDrawerConsole" class="side-drawer">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border-color); padding-bottom:6px;">
-                    <h3 style="color:var(--accent-color); font-size:1rem;">Vault Control Center</h3>
+                    <h3 style="color:var(--accent-color); font-size:1rem;">Console Deck</h3>
                     <button class="drawer-close-btn" onclick="toggleSideDrawer(false)">✕</button>
                 </div>
                 
                 <div style="overflow-y:auto; flex:1; padding-right:4px; display:flex; flex-direction:column; gap:10px;">
-                    <!-- RELOCATED SEARCH SECTION -->
                     <div class="form-group" style="background:rgba(255,255,255,0.02); padding:8px; border-radius:4px; border:1px dashed rgba(0,255,204,0.3);">
-                        <label style="color:var(--accent-color); font-weight:bold;">🔍 Dynamic Engine Query</label>
-                        <input type="text" id="searchBar" placeholder="Search title, genre, creator, cast..." onkeyup="renderMediaGrid()">
+                        <label style="color:var(--accent-color); font-weight:bold;">🔍 Search Collection</label>
+                        <input type="text" id="searchBar" placeholder="Search titles, directors, actors..." onkeyup="renderMediaGrid()">
                     </div>
 
-                    <!-- TMDB INTERFERENCE BLUEPRINT NODE -->
-                    <div class="form-group" style="background:rgba(255,255,255,0.02); padding:8px; border-radius:4px; border:1px dashed var(--border-color);">
-                        <label style="font-weight:bold; color: #01b4e4;">🎬 TMDb Sync Node</label>
-                        <input type="text" id="tmdbQuery" placeholder="Query The Movie Database...">
-                        <button class="btn" style="background:#01b4e4; padding:4px; font-size:0.75rem; margin-top:4px;" onclick="alert('Connecting to TMDb directory stream...')">Query Platform API</button>
-                    </div>
-
-                    <!-- ADD NEW DATA -->
-                    <h4 style="font-size:0.8rem; color:var(--accent-color); border-bottom:1px solid rgba(255,255,255,0.1); margin-top:5px; padding-bottom:2px;">Manual Data Entry</h4>
+                    <h4 style="font-size:0.8rem; color:var(--accent-color); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:2px;">Manual Insertion Node</h4>
                     <div class="form-group"><label>Title</label><input type="text" id="addTitle" placeholder="e.g., Dune"></div>
                     <div class="form-group">
                         <label>Media Format</label>
@@ -167,9 +185,11 @@
                             <option value="Audiobook">Audiobook</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>Creator (Director/Actor/Author)</label><input type="text" id="addCreator" placeholder="e.g., Frank Herbert"></div>
+                    <div class="form-group"><label>Primary Creator / Crew</label><input type="text" id="addCreator" placeholder="Director, Author, or Main Star"></div>
+                    <div class="form-group"><label>Genre Tags</label><input type="text" id="addGenre" placeholder="e.g., Sci-Fi, Cyberpunk"></div>
+                    <div class="form-group"><label>Release Date</label><input type="date" id="addReleaseDate"></div>
                     <div class="form-group">
-                        <label>Access Mode</label>
+                        <label>Access Profile</label>
                         <select id="addAccess">
                             <option value="Streaming">Streaming Platform</option>
                             <option value="Owned">I Own It</option>
@@ -199,12 +219,14 @@
                 <button class="btn" onclick="addNewMediaItem()">Inject Into Collection</button>
             </div>
 
-            <!-- COMPACT FILTERS ROW -->
+            <!-- EXPANSIBLE COMPACT FILTERS ROW -->
             <div class="filter-row">
                 <select id="sortEngine" onchange="renderMediaGrid()">
                     <option value="name">Sort: Name</option>
                     <option value="rating">Sort: Rating</option>
-                    <option value="progress">Sort: Progress</option>
+                    <option value="progress">Sort: Progress %</option>
+                    <option value="releaseDate">Sort: Release Date</option>
+                    <option value="dateAdded">Sort: Date Added</option>
                 </select>
                 <select id="typeFilter" onchange="renderMediaGrid()">
                     <option value="all">All Media</option>
@@ -212,6 +234,7 @@
                     <option value="Movie">Movies</option>
                     <option value="Audiobook">Audiobooks</option>
                 </select>
+                <button class="reset-btn" onclick="resetListToDefault()">🔄 Reset Order</button>
             </div>
 
             <!-- Category Sub-Navigation Buttons -->
@@ -239,6 +262,21 @@
 
         <!-- SETTINGS TAB -->
         <div id="settingsTab" class="tab-content">
+            <!-- TRAKT TV SYNC NODE CONTAINER -->
+            <div class="panel">
+                <h2>Trakt.tv Engine Sync Pipeline</h2>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">Connect your Trakt account to automatically pull in your watched history logs, series progress parameters, and current streaming queues:</p>
+                <input type="password" id="traktClientIdInput" placeholder="Enter Trakt Client ID">
+                <input type="password" id="traktClientSecretInput" placeholder="Enter Trakt Client Secret">
+                <button class="btn" style="background:#ed1c24; color:white;" onclick="localStorage.setItem('trakt_id', document.getElementById('traktClientIdInput').value); alert('Trakt.tv pipeline configuration saved, Sweetie!')">Initialize Trakt Sync</button>
+            </div>
+
+            <div class="panel">
+                <h2>The Movie Database (TMDb) Core Connection</h2>
+                <input type="password" id="tmdbApiKeyInput" placeholder="Enter TMDb API Key/Bearer Token">
+                <button class="btn" style="background:#01b4e4;" onclick="localStorage.setItem('tmdb_key', document.getElementById('tmdbApiKeyInput').value); alert('TMDb API pipeline configuration saved, Sweetie!')">Initialize TMDb Pipeline</button>
+            </div>
+
             <div class="panel">
                 <h2>Cloud Synchronization Settings</h2>
                 <input type="password" id="clientIdInput" placeholder="Enter Client ID">
@@ -249,19 +287,18 @@
         </div>
     </div>
 
-    <!-- NAVIGATION -->
+    <!-- RE-ENGINEERED THICK NAV BAR TABS -->
     <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('mediaTab', this)">🎬 Media</button>
-        <button class="nav-item" onclick="switchTab('goodreadsTab', this)">📚 Goodreads</button>
-        <button class="nav-item" onclick="switchTab('settingsTab', this)">⚙️ Settings</button>
+        <button class="nav-item active" onclick="switchTab('mediaTab', this)"><span class="nav-icon">🎬</span><span>Media Hub</span></button>
+        <button class="nav-item" onclick="switchTab('goodreadsTab', this)"><span class="nav-icon">📚</span><span>Goodreads</span></button>
+        <button class="nav-item" onclick="switchTab('settingsTab', this)"><span class="nav-icon">⚙️</span><span>Settings</span></button>
     </nav>
 
     <script>
-        // CLIENT PERSISTENT LOGS INTERFACE
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [
-            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", access: "Streaming", status: "watching", progress: 84, favorite: true, rating: 5 },
-            { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", access: "Owned", status: "watching", progress: 45, favorite: false, rating: 4 },
-            { id: 3, title: "Blade Runner 2049", type: "Movie", creator: "Denis Villeneuve", access: "Owned", status: "history", progress: 100, favorite: true, rating: 5 }
+            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", genre: "Sci-Fi", releaseDate: "1997-07-27", dateAdded: "2026-01-01", access: "Streaming", status: "watching", progress: 84, favorite: true, rating: 5, pinned: false, manualOrder: 0 },
+            { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", genre: "Cyberpunk", releaseDate: "1984-07-01", dateAdded: "2026-02-15", access: "Owned", status: "watching", progress: 45, favorite: false, rating: 4, pinned: false, manualOrder: 1 },
+            { id: 3, title: "Blade Runner 2049", type: "Movie", creator: "Denis Villeneuve", genre: "Sci-Fi", releaseDate: "2017-10-06", dateAdded: "2026-03-10", access: "Owned", status: "history", progress: 100, favorite: true, rating: 5, pinned: false, manualOrder: 2 }
         ];
 
         let currentActiveCategory = 'all';
@@ -269,6 +306,8 @@
         document.addEventListener("DOMContentLoaded", () => {
             if (localStorage.getItem('gdrive_client_id')) document.getElementById('clientIdInput').value = localStorage.getItem('gdrive_client_id');
             if (localStorage.getItem('gdrive_api_key')) document.getElementById('apiKeyInput').value = localStorage.getItem('gdrive_api_key');
+            if (localStorage.getItem('tmdb_key')) document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdb_key');
+            if (localStorage.getItem('trakt_id')) document.getElementById('traktClientIdInput').value = localStorage.getItem('trakt_id');
             
             const savedTheme = localStorage.getItem('dashboard_theme') || 'cyberpunk';
             document.getElementById('themeSelect').value = savedTheme;
@@ -281,13 +320,8 @@
         function toggleSideDrawer(open) {
             const drawer = document.getElementById('sideDrawerConsole');
             const overlay = document.getElementById('drawerOverlay');
-            if(open) {
-                drawer.classList.add('open');
-                overlay.classList.add('active');
-            } else {
-                drawer.classList.remove('open');
-                overlay.classList.remove('active');
-            }
+            if(open) { drawer.classList.add('open'); overlay.classList.add('active'); }
+            else { drawer.classList.remove('open'); overlay.classList.remove('active'); }
         }
 
         function renderMediaGrid() {
@@ -299,7 +333,8 @@
             grid.innerHTML = '';
 
             let filteredData = mediaDatabase.filter(item => {
-                const matchesSearch = item.title.toLowerCase().includes(searchQuery) || item.creator.toLowerCase().includes(searchQuery);
+                const searchStr = `${item.title} ${item.creator} ${item.genre}`.toLowerCase();
+                const matchesSearch = searchStr.includes(searchQuery);
                 const matchesType = (typeFilter === 'all' || item.type === typeFilter);
                 
                 let matchesCategory = true;
@@ -310,21 +345,29 @@
             });
 
             filteredData.sort((a, b) => {
+                if (a.pinned !== b.pinned) return b.pinned - a.pinned; 
+                if (a.manualOrder !== b.manualOrder) return a.manualOrder - b.manualOrder;
+
                 if (sortVal === 'name') return a.title.localeCompare(b.title);
                 if (sortVal === 'rating') return b.rating - a.rating;
                 if (sortVal === 'progress') return b.progress - a.progress;
+                if (sortVal === 'releaseDate') return new Date(a.releaseDate) - new Date(b.releaseDate);
+                if (sortVal === 'dateAdded') return new Date(a.dateAdded) - new Date(b.dateAdded);
             });
 
-            filteredData.forEach(item => {
+            filteredData.forEach((item, index) => {
                 const card = document.createElement('div');
-                card.className = 'media-card';
+                card.className = `media-card ${item.pinned ? 'pinned' : ''}`;
                 card.innerHTML = `
                     <div>
                         <div class="card-header">
                             <div class="media-title">${item.title}</div>
-                            <button class="heart-icon" onclick="toggleHeartItem(${item.id})">${item.favorite ? '❤️' : '🖤'}</button>
+                            <div class="card-controls">
+                                <button class="card-ctrl-btn" onclick="pinItem(${item.id})">${item.pinned ? '📌' : '📎'}</button>
+                                <button class="heart-icon" onclick="toggleHeartItem(${item.id})">${item.favorite ? '❤️' : '🖤'}</button>
+                            </div>
                         </div>
-                        <div class="media-meta">${item.type} • By ${item.creator}</div>
+                        <div class="media-meta">${item.type} • ${item.genre}<br>By ${item.creator}</div>
                     </div>
                     <div>
                         <div class="progress-container">
@@ -334,6 +377,10 @@
                         <div class="badge-row">
                             <span class="source-badge">${item.access}</span>
                             <span class="star-rating">${'★'.repeat(item.rating)}${'☆'.repeat(5-item.rating)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:6px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:4px;">
+                            <button class="card-ctrl-btn" onclick="moveItemPosition(${index}, -1)">▲</button>
+                            <button class="card-ctrl-btn" onclick="moveItemPosition(${index}, 1)">▼</button>
                         </div>
                     </div>
                 `;
@@ -345,6 +392,8 @@
             const title = document.getElementById('addTitle').value.trim();
             const type = document.getElementById('addType').value;
             const creator = document.getElementById('addCreator').value.trim();
+            const genre = document.getElementById('addGenre').value.trim() || "General";
+            const releaseDate = document.getElementById('addReleaseDate').value || "2026-01-01";
             const access = document.getElementById('addAccess').value;
             const status = document.getElementById('addStatus').value;
             const progress = parseInt(document.getElementById('addProgress').value) || 0;
@@ -352,24 +401,49 @@
 
             if (!title) { alert('Enter a title node, Sweetie!'); return; }
 
-            mediaDatabase.push({ id: Date.now(), title, type, creator, access, status, progress, favorite: false, rating });
-            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-            
-            renderMediaGrid();
+            const today = new Date().toISOString().split('T')[0];
+
+            mediaDatabase.push({ 
+                id: Date.now(), title, type, creator, genre, releaseDate, dateAdded: today, 
+                access, status, progress, favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length 
+            });
+            saveAndRefresh();
             toggleSideDrawer(false);
 
             document.getElementById('addTitle').value = '';
             document.getElementById('addCreator').value = '';
+            document.getElementById('addGenre').value = '';
             document.getElementById('addProgress').value = 0;
         }
 
         function toggleHeartItem(id) {
             const index = mediaDatabase.findIndex(i => i.id === id);
-            if(index !== -1) {
-                mediaDatabase[index].favorite = !mediaDatabase[index].favorite;
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                renderMediaGrid();
+            if(index !== -1) { mediaDatabase[index].favorite = !mediaDatabase[index].favorite; saveAndRefresh(); }
+        }
+
+        function pinItem(id) {
+            const index = mediaDatabase.findIndex(i => i.id === id);
+            if(index !== -1) { mediaDatabase[index].pinned = !mediaDatabase[index].pinned; saveAndRefresh(); }
+        }
+
+        function moveItemPosition(currentIndex, direction) {
+            const targetIndex = currentIndex + direction;
+            if (targetIndex >= 0 && targetIndex < mediaDatabase.length) {
+                let temp = mediaDatabase[currentIndex].manualOrder;
+                mediaDatabase[currentIndex].manualOrder = mediaDatabase[targetIndex].manualOrder;
+                mediaDatabase[targetIndex].manualOrder = temp;
+                saveAndRefresh();
             }
+        }
+
+        function resetListToDefault() {
+            mediaDatabase.forEach((item, index) => { item.manualOrder = index; item.pinned = false; });
+            saveAndRefresh();
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            renderMediaGrid();
         }
 
         function filterCategory(catId) {
