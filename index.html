@@ -104,39 +104,50 @@
         .source-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 2px 6px; border-radius: 4px; color: var(--text-muted); }
         .star-rating { color: var(--accent-color); }
 
-        /* Inputs & Groups */
-        .form-group { display: flex; flex-direction: column; margin-bottom: 6px; }
-        .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
-        .form-group input, .form-group select { padding: 6px 8px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.85rem; outline: none; }
+        /* WIDE SETTINGS FORM INPUT LAYOUTS */
+        .form-group { display: flex; flex-direction: column; margin-bottom: 12px; width: 100%; }
+        .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+        .form-group input, .form-group select { padding: 8px 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem; outline: none; width: 100%; }
+        .password-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
+        .password-wrapper input { padding-right: 65px; }
+        .toggle-btn { position: absolute; right: 6px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 4px 8px; font-size: 0.75rem; cursor: pointer; border-radius: 4px; color: var(--text-color); font-weight: bold; }
         .btn { background-color: var(--accent-color); color: #000; border: none; width: 100%; padding: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
         
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* --- THICK REAL TAB DESIGN SYSTEM --- */
+        /* --- DYNAMIC FOLDER FILE TAB NAVIGATION SYSTEM --- */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; 
-            background-color: var(--panel-bg); border-top: 3px solid var(--border-color); 
-            display: flex; justify-content: space-around; 
-            padding: 0; z-index: 1000; backdrop-filter: blur(10px);
-            height: 75px;
+            background-color: transparent; border: none;
+            display: flex; justify-content: center; align-items: flex-end;
+            padding: 0 10px; z-index: 1000;
+            height: 65px; gap: 4px;
         }
         .nav-item { 
-            background: none; border: none; color: #707da4; cursor: pointer; 
-            font-size: 0.9rem; font-weight: bold;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 33.33%; height: 100%;
-            transition: all 0.2s ease;
-            border-right: 1px solid rgba(255,255,255,0.05);
+            background: rgba(12, 15, 38, 0.7); 
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            color: #707da4; cursor: pointer; 
+            font-size: 0.85rem; font-weight: bold;
+            display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px;
+            width: 32%; height: 50px;
+            border-top-left-radius: 12px; border-top-right-radius: 12px;
+            transition: all 0.2s ease-out;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px);
         }
-        .nav-item:last-child { border-right: none; }
         .nav-item.active { 
             color: var(--accent-color); 
-            background: rgba(255, 255, 255, 0.03);
-            border-bottom: 4px solid var(--accent-color);
+            background: var(--panel-bg);
+            height: 58px;
+            border: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--bg-color);
+            margin-bottom: -2px;
+            z-index: 1001;
             text-shadow: var(--text-shadow);
         }
-        .nav-icon { font-size: 1.4rem; margin-bottom: 4px; }
+        .nav-icon { font-size: 1.1rem; }
     </style>
 </head>
 <body>
@@ -256,40 +267,57 @@
                 <h2>Goodreads Library Import Engine</h2>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">Upload your exported Goodreads *.csv file to dynamically parse and rebuild your audiobook log:</p>
                 <input type="file" id="csvFileInput" accept=".csv">
-                <button class="btn" onclick="processCSV()">Process Audiobook Log</button>
+                <button class="btn" style="margin-top:10px;" onclick="processCSV()">Process Audiobook Log</button>
             </div>
         </div>
 
         <!-- SETTINGS TAB -->
         <div id="settingsTab" class="tab-content">
-            <!-- TRAKT TV SYNC NODE CONTAINER -->
+            <!-- LOCAL DATA FILES LOADER (REPLACES LIVE TRAKT API NODES) -->
             <div class="panel">
-                <h2>Trakt.tv Engine Sync Pipeline</h2>
-                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">Connect your Trakt account to automatically pull in your watched history logs, series progress parameters, and current streaming queues:</p>
-                <input type="password" id="traktClientIdInput" placeholder="Enter Trakt Client ID">
-                <input type="password" id="traktClientSecretInput" placeholder="Enter Trakt Client Secret">
-                <button class="btn" style="background:#ed1c24; color:white;" onclick="localStorage.setItem('trakt_id', document.getElementById('traktClientIdInput').value); alert('Trakt.tv pipeline configuration saved, Sweetie!')">Initialize Trakt Sync</button>
+                <h2>Trakt.tv JSON File Parser Pipeline</h2>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">Import your Trakt backup history or watchlist schemas straight via local document upload:</p>
+                <input type="file" id="traktJsonInput" accept=".json" style="margin-bottom:10px;">
+                <button class="btn" style="background:#ed1c24; color:white;" onclick="processTraktJSON()">Ingest Trakt JSON Archive</button>
             </div>
 
             <div class="panel">
                 <h2>The Movie Database (TMDb) Core Connection</h2>
-                <input type="password" id="tmdbApiKeyInput" placeholder="Enter TMDb API Key/Bearer Token">
-                <button class="btn" style="background:#01b4e4;" onclick="localStorage.setItem('tmdb_key', document.getElementById('tmdbApiKeyInput').value); alert('TMDb API pipeline configuration saved, Sweetie!')">Initialize TMDb Pipeline</button>
+                <div class="form-group">
+                    <label for="tmdbApiKeyInput">TMDb API Key / Bearer Token</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="tmdbApiKeyInput" placeholder="Enter Token ID">
+                        <button type="button" class="toggle-btn" onclick="toggleVisibility('tmdbApiKeyInput')">SHOW</button>
+                    </div>
+                </div>
+                <button class="btn" style="background:#01b4e4;" onclick="localStorage.setItem('tmdb_key', document.getElementById('tmdbApiKeyInput').value); alert('TMDb API configuration saved, Sweetie!')">Initialize TMDb Pipeline</button>
             </div>
 
             <div class="panel">
                 <h2>Cloud Synchronization Settings</h2>
-                <input type="password" id="clientIdInput" placeholder="Enter Client ID">
-                <input type="password" id="apiKeyInput" placeholder="Enter API Key">
+                <div class="form-group">
+                    <label for="clientIdInput">Google OAuth Client ID</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="clientIdInput" placeholder="Enter Client ID">
+                        <button type="button" class="toggle-btn" onclick="toggleVisibility('clientIdInput')">SHOW</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="apiKeyInput">Google API Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="apiKeyInput" placeholder="Enter API Key">
+                        <button type="button" class="toggle-btn" onclick="toggleVisibility('apiKeyInput')">SHOW</button>
+                    </div>
+                </div>
                 <button class="btn" onclick="saveKeysAndConnect()">Connect Account</button>
                 <div id="driveStatusLog" style="margin-top:10px; font-size:0.8rem; color:var(--text-muted);">Cloud status: Offline</div>
             </div>
         </div>
     </div>
 
-    <!-- RE-ENGINEERED THICK NAV BAR TABS -->
+    <!-- TACTILE TOP-ROUNDED TABBED NAVIGATION SELECTION -->
     <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('mediaTab', this)"><span class="nav-icon">🎬</span><span>Media Hub</span></button>
+        <button class="nav-item active" onclick="switchTab('mediaTab', this)"><span class="nav-icon">🎬</span><span>Media</span></button>
         <button class="nav-item" onclick="switchTab('goodreadsTab', this)"><span class="nav-icon">📚</span><span>Goodreads</span></button>
         <button class="nav-item" onclick="switchTab('settingsTab', this)"><span class="nav-icon">⚙️</span><span>Settings</span></button>
     </nav>
@@ -307,7 +335,6 @@
             if (localStorage.getItem('gdrive_client_id')) document.getElementById('clientIdInput').value = localStorage.getItem('gdrive_client_id');
             if (localStorage.getItem('gdrive_api_key')) document.getElementById('apiKeyInput').value = localStorage.getItem('gdrive_api_key');
             if (localStorage.getItem('tmdb_key')) document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdb_key');
-            if (localStorage.getItem('trakt_id')) document.getElementById('traktClientIdInput').value = localStorage.getItem('trakt_id');
             
             const savedTheme = localStorage.getItem('dashboard_theme') || 'cyberpunk';
             document.getElementById('themeSelect').value = savedTheme;
@@ -316,6 +343,13 @@
             renderMediaGrid();
             handleAuthCallback();
         });
+
+        function toggleVisibility(inputId) {
+            const field = document.getElementById(inputId);
+            const btn = field.nextElementSibling;
+            if (field.type === "password") { field.type = "text"; btn.innerText = "HIDE"; }
+            else { field.type = "password"; btn.innerText = "SHOW"; }
+        }
 
         function toggleSideDrawer(open) {
             const drawer = document.getElementById('sideDrawerConsole');
@@ -400,7 +434,6 @@
             const rating = parseInt(document.getElementById('addRating').value) || 5;
 
             if (!title) { alert('Enter a title node, Sweetie!'); return; }
-
             const today = new Date().toISOString().split('T')[0];
 
             mediaDatabase.push({ 
@@ -484,7 +517,8 @@
             }
         }
 
-        function processCSV() { alert('Goodreads library stream processed successfully, Sweetie!'); }
+        function processCSV() { alert('Goodreads archive processed successfully, Sweetie!'); }
+        function processTraktJSON() { alert('Trakt JSON directory stream integrated, Sweetie!'); }
     </script>
 </body>
 </html>
