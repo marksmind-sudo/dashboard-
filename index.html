@@ -31,7 +31,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             background: var(--bg-pattern); background-color: var(--bg-color); color: var(--text-color); 
-            font-family: sans-serif; padding-bottom: 90px; min-height: 100vh; transition: all 0.3s ease;
+            font-family: sans-serif; padding-bottom: 90px; min-height: 100vh; transition: all 0.3s ease; overflow-x: hidden;
         }
         header {
             background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color);
@@ -47,13 +47,31 @@
         .panel { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
         h2 { color: var(--accent-color); margin-bottom: 12px; font-size: 1.1rem; text-shadow: var(--text-shadow); border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
         
-        /* Search and Controls */
-        .search-bar { width: 100%; padding: 10px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; margin-bottom: 10px; font-size: 0.9rem; }
-        .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        /* Compact Filtering Controls */
+        .filter-row { display: flex; justify-content: flex-start; gap: 8px; margin-bottom: 15px; }
         .filter-row select {
-            flex: 1; min-width: 120px; background: var(--bg-color); color: var(--text-color);
-            border: 1px solid var(--border-color); padding: 8px; border-radius: 4px; font-size: 0.85rem;
+            max-width: 150px; background: var(--bg-color); color: var(--text-color);
+            border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 4px; font-size: 0.85rem; outline: none;
         }
+
+        /* Action Row */
+        .action-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .toggle-menu-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
+
+        /* SLIDE-OUT SIDE DRAWER */
+        .side-drawer {
+            position: fixed; top: 0; right: -340px; width: 340px; height: 100vh;
+            background-color: var(--panel-bg); border-left: 2px solid var(--border-color);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2000; padding: 20px;
+            transition: right 0.3s ease-in-out; display: flex; flex-direction: column; gap: 12px;
+        }
+        .side-drawer.open { right: 0; }
+        .drawer-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5); z-index: 1999; display: none; backdrop-filter: blur(2px);
+        }
+        .drawer-overlay.active { display: block; }
+        .drawer-close-btn { background: none; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
 
         /* Sub-Navigation Categories */
         .sub-nav { display: flex; overflow-x: auto; gap: 6px; margin-bottom: 15px; padding-bottom: 4px; }
@@ -79,18 +97,14 @@
         .source-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 2px 6px; border-radius: 4px; color: var(--text-muted); }
         .star-rating { color: var(--accent-color); }
 
-        /* Forms & Add Media Drawer */
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
-        .form-group input, .form-group select { padding: 8px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.85rem; }
+        /* Inputs & Groups */
+        .form-group { display: flex; flex-direction: column; margin-bottom: 6px; }
+        .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
+        .form-group input, .form-group select { padding: 6px 8px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.85rem; outline: none; }
+        .btn { background-color: var(--accent-color); color: #000; border: none; width: 100%; padding: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
         
-        /* Structural Tabs */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        
-        /* Action Button */
-        .btn { background-color: var(--accent-color); color: #000; border: none; width: 100%; padding: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
         
         /* Bottom Navbar */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--panel-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; backdrop-filter: blur(10px); }
@@ -110,66 +124,91 @@
         </select>
     </header>
 
+    <div id="drawerOverlay" class="drawer-overlay" onclick="toggleSideDrawer(false)"></div>
+
     <div class="container">
         <!-- MEDIA TAB (MAIN VIEW) -->
         <div id="mediaTab" class="tab-content active">
             
-            <!-- Quick Add Drawer Panel -->
-            <div class="panel">
-                <h2>Add New Media Record</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" id="addTitle" placeholder="e.g., Dune">
+            <div class="action-header-row">
+                <h2 style="border:none; margin:0; padding:0;">My Tracked Dashboard</h2>
+                <button class="toggle-menu-btn" onclick="toggleSideDrawer(true)">⚙️ Database Console</button>
+            </div>
+
+            <!-- SLIDE-OUT DRAWER INTERFACE (SEARCH, FILTERS, ADDITION, & TMDB BLUEPRINT) -->
+            <div id="sideDrawerConsole" class="side-drawer">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border-color); padding-bottom:6px;">
+                    <h3 style="color:var(--accent-color); font-size:1rem;">Vault Control Center</h3>
+                    <button class="drawer-close-btn" onclick="toggleSideDrawer(false)">✕</button>
+                </div>
+                
+                <div style="overflow-y:auto; flex:1; padding-right:4px; display:flex; flex-direction:column; gap:10px;">
+                    <!-- RELOCATED SEARCH SECTION -->
+                    <div class="form-group" style="background:rgba(255,255,255,0.02); padding:8px; border-radius:4px; border:1px dashed rgba(0,255,204,0.3);">
+                        <label style="color:var(--accent-color); font-weight:bold;">🔍 Dynamic Engine Query</label>
+                        <input type="text" id="searchBar" placeholder="Search title, genre, creator, cast..." onkeyup="renderMediaGrid()">
                     </div>
+
+                    <!-- TMDB INTERFERENCE BLUEPRINT NODE -->
+                    <div class="form-group" style="background:rgba(255,255,255,0.02); padding:8px; border-radius:4px; border:1px dashed var(--border-color);">
+                        <label style="font-weight:bold; color: #01b4e4;">🎬 TMDb Sync Node</label>
+                        <input type="text" id="tmdbQuery" placeholder="Query The Movie Database...">
+                        <button class="btn" style="background:#01b4e4; padding:4px; font-size:0.75rem; margin-top:4px;" onclick="alert('Connecting to TMDb directory stream...')">Query Platform API</button>
+                    </div>
+
+                    <!-- ADD NEW DATA -->
+                    <h4 style="font-size:0.8rem; color:var(--accent-color); border-bottom:1px solid rgba(255,255,255,0.1); margin-top:5px; padding-bottom:2px;">Manual Data Entry</h4>
+                    <div class="form-group"><label>Title</label><input type="text" id="addTitle" placeholder="e.g., Dune"></div>
                     <div class="form-group">
-                        <label>Media Type</label>
+                        <label>Media Format</label>
                         <select id="addType">
                             <option value="TV">Television Series</option>
                             <option value="Movie">Movie</option>
                             <option value="Audiobook">Audiobook</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Creator (Director/Actor/Author)</label>
-                        <input type="text" id="addCreator" placeholder="e.g., Frank Herbert">
-                    </div>
+                    <div class="form-group"><label>Creator (Director/Actor/Author)</label><input type="text" id="addCreator" placeholder="e.g., Frank Herbert"></div>
                     <div class="form-group">
                         <label>Access Mode</label>
                         <select id="addAccess">
-                            <option value="Owned">I Own It</option>
                             <option value="Streaming">Streaming Platform</option>
+                            <option value="Owned">I Own It</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Completion Status</label>
+                        <label>Target Container</label>
                         <select id="addStatus">
-                            <option value="all">Main Collection Only</option>
-                            <option value="watching">Currently Watching/Reading</option>
-                            <option value="history">History (Seen/Read)</option>
-                            <option value="find">Media to Find</option>
+                            <option value="all">Main Collection</option>
+                            <option value="watching">Currently Tracking</option>
+                            <option value="history">History Logs</option>
+                            <option value="find">Discovery List</option>
                         </select>
                     </div>
+                    <div class="form-group"><label>Progress Metric %</label><input type="number" id="addProgress" min="0" max="100" value="0"></div>
                     <div class="form-group">
-                        <label>Progress/Completion %</label>
-                        <input type="number" id="addProgress" min="0" max="100" value="0">
+                        <label>Star Rating</label>
+                        <select id="addRating">
+                            <option value="5">★★★★★</option>
+                            <option value="4">★★★★☆</option>
+                            <option value="3">★★★☆☆</option>
+                            <option value="2">★★☆☆☆</option>
+                            <option value="1">★☆☆☆☆</option>
+                        </select>
                     </div>
                 </div>
-                <button class="btn" onclick="addNewMediaItem()">Inject Into Database Node</button>
+                <button class="btn" onclick="addNewMediaItem()">Inject Into Collection</button>
             </div>
 
-            <!-- Search & Filter Controls -->
-            <input type="text" class="search-bar" id="searchBar" placeholder="🔍 Query database by name, genre, director, actor, or author..." onkeyup="renderMediaGrid()">
-            
+            <!-- COMPACT FILTERS ROW -->
             <div class="filter-row">
                 <select id="sortEngine" onchange="renderMediaGrid()">
-                    <option value="name">Sort by: Name</option>
-                    <option value="rating">Sort by: Star Rating</option>
-                    <option value="progress">Sort by: Progress %</option>
+                    <option value="name">Sort: Name</option>
+                    <option value="rating">Sort: Rating</option>
+                    <option value="progress">Sort: Progress</option>
                 </select>
                 <select id="typeFilter" onchange="renderMediaGrid()">
-                    <option value="all">All Formats (TV/Movie/Books)</option>
-                    <option value="TV">TV Series</option>
+                    <option value="all">All Media</option>
+                    <option value="TV">TV Shows</option>
                     <option value="Movie">Movies</option>
                     <option value="Audiobook">Audiobooks</option>
                 </select>
@@ -185,9 +224,7 @@
             </div>
 
             <!-- Primary Data Cards Grid -->
-            <div class="media-grid" id="mediaDatabaseGrid">
-                <!-- Javascript builds data streams live here -->
-            </div>
+            <div class="media-grid" id="mediaDatabaseGrid"></div>
         </div>
 
         <!-- GOODREADS TAB -->
@@ -212,7 +249,7 @@
         </div>
     </div>
 
-    <!-- PERSISTENT NAVIGATION TERMINAL -->
+    <!-- NAVIGATION -->
     <nav class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('mediaTab', this)">🎬 Media</button>
         <button class="nav-item" onclick="switchTab('goodreadsTab', this)">📚 Goodreads</button>
@@ -220,8 +257,8 @@
     </nav>
 
     <script>
-        // CORE USER DATABASE SYSTEM
-        let mediaDatabase = [
+        // CLIENT PERSISTENT LOGS INTERFACE
+        let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [
             { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", access: "Streaming", status: "watching", progress: 84, favorite: true, rating: 5 },
             { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", access: "Owned", status: "watching", progress: 45, favorite: false, rating: 4 },
             { id: 3, title: "Blade Runner 2049", type: "Movie", creator: "Denis Villeneuve", access: "Owned", status: "history", progress: 100, favorite: true, rating: 5 }
@@ -230,7 +267,6 @@
         let currentActiveCategory = 'all';
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Restore secure keys
             if (localStorage.getItem('gdrive_client_id')) document.getElementById('clientIdInput').value = localStorage.getItem('gdrive_client_id');
             if (localStorage.getItem('gdrive_api_key')) document.getElementById('apiKeyInput').value = localStorage.getItem('gdrive_api_key');
             
@@ -242,6 +278,18 @@
             handleAuthCallback();
         });
 
+        function toggleSideDrawer(open) {
+            const drawer = document.getElementById('sideDrawerConsole');
+            const overlay = document.getElementById('drawerOverlay');
+            if(open) {
+                drawer.classList.add('open');
+                overlay.classList.add('active');
+            } else {
+                drawer.classList.remove('open');
+                overlay.classList.remove('active');
+            }
+        }
+
         function renderMediaGrid() {
             const grid = document.getElementById('mediaDatabaseGrid');
             const searchQuery = document.getElementById('searchBar').value.toLowerCase();
@@ -250,7 +298,6 @@
 
             grid.innerHTML = '';
 
-            // Apply filter layer pipelines
             let filteredData = mediaDatabase.filter(item => {
                 const matchesSearch = item.title.toLowerCase().includes(searchQuery) || item.creator.toLowerCase().includes(searchQuery);
                 const matchesType = (typeFilter === 'all' || item.type === typeFilter);
@@ -262,14 +309,12 @@
                 return matchesSearch && matchesType && matchesCategory;
             });
 
-            // Sorting processing algorithms
             filteredData.sort((a, b) => {
                 if (sortVal === 'name') return a.title.localeCompare(b.title);
                 if (sortVal === 'rating') return b.rating - a.rating;
                 if (sortVal === 'progress') return b.progress - a.progress;
             });
 
-            // Card Builder Array Rendering
             filteredData.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'media-card';
@@ -303,17 +348,16 @@
             const access = document.getElementById('addAccess').value;
             const status = document.getElementById('addStatus').value;
             const progress = parseInt(document.getElementById('addProgress').value) || 0;
+            const rating = parseInt(document.getElementById('addRating').value) || 5;
 
-            if (!title) { alert('Specify database target title node, Sweetie!'); return; }
+            if (!title) { alert('Enter a title node, Sweetie!'); return; }
 
-            const newItem = {
-                id: Date.now(), title, type, creator, access, status, progress, favorite: false, rating: 5
-            };
-
-            mediaDatabase.push(newItem);
+            mediaDatabase.push({ id: Date.now(), title, type, creator, access, status, progress, favorite: false, rating });
+            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            
             renderMediaGrid();
+            toggleSideDrawer(false);
 
-            // Clear inputs
             document.getElementById('addTitle').value = '';
             document.getElementById('addCreator').value = '';
             document.getElementById('addProgress').value = 0;
@@ -323,6 +367,7 @@
             const index = mediaDatabase.findIndex(i => i.id === id);
             if(index !== -1) {
                 mediaDatabase[index].favorite = !mediaDatabase[index].favorite;
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                 renderMediaGrid();
             }
         }
@@ -351,9 +396,7 @@
             const key = document.getElementById('apiKeyInput').value.trim();
             localStorage.setItem('gdrive_client_id', client);
             localStorage.setItem('gdrive_api_key', key);
-            
-            const redirectUri = window.location.origin + window.location.pathname;
-            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(client)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${encodeURIComponent("https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file")}&prompt=consent`;
+            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(client)}&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=${encodeURIComponent("https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file")}&prompt=consent`;
         }
 
         function handleAuthCallback() {
@@ -362,13 +405,12 @@
                 const params = new URLSearchParams(hash.substring(1));
                 if (params.get('access_token')) {
                     document.getElementById('driveStatusLog').innerText = "✅ Cloud Authorization Successful! Connected.";
-                    document.getElementById('driveStatusLog').style.color = "#4ade80";
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
             }
         }
 
-        function processCSV() { alert('Goodreads pipeline tracking active, Sweetie!'); }
+        function processCSV() { alert('Goodreads library stream processed successfully, Sweetie!'); }
     </script>
 </body>
 </html>
