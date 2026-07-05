@@ -79,29 +79,39 @@
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
 
-        /* Media Cards Grid */
-        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; }
+        /* --- VISUAL POSTER ART MEDIA CARDS GRID --- */
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
         .media-card {
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px;
-            padding: 12px; display: flex; flex-direction: column; justify-content: space-between; position: relative;
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 0; display: flex; position: relative; overflow: hidden; min-height: 125px;
         }
         .media-card.pinned { border: 2px solid var(--accent-color); box-shadow: 0 0 8px rgba(0,255,204,0.3); }
+        
+        .poster-frame {
+            width: 85px; min-width: 85px; height: 100%; background: rgba(255,255,255,0.05);
+            border-right: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
+        }
+        .poster-img { width: 100%; height: 100%; object-fit: cover; }
+        .poster-placeholder { font-size: 1.5rem; color: var(--text-muted); opacity: 0.4; }
+
+        .card-details-pane { flex: 1; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; }
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 4px; }
-        .media-title { font-size: 0.95rem; font-weight: bold; color: var(--text-color); margin-bottom: 4px; }
+        .media-title { font-size: 0.95rem; font-weight: bold; color: var(--text-color); margin-bottom: 2px; }
         
         /* Action Tray on Cards */
         .card-controls { display: flex; gap: 6px; align-items: center; }
         .card-ctrl-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; }
         .card-ctrl-btn:hover { color: var(--accent-color); }
         .heart-icon { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 1.1rem; }
-        .media-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; line-height: 1.3; }
+        .media-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; line-height: 1.2; }
         
         /* Progress & Badges */
-        .progress-container { background: rgba(255,255,255,0.1); border-radius: 4px; height: 6px; margin: 8px 0; overflow: hidden; }
+        .progress-container { background: rgba(255,255,255,0.1); border-radius: 4px; height: 5px; margin: 4px 0; overflow: hidden; }
         .progress-bar { background: var(--accent-color); height: 100%; width: 0%; }
         .percentage-text { font-size: 0.75rem; font-weight: bold; color: var(--accent-color); text-align: right; }
-        .badge-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 0.7rem; }
-        .source-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 2px 6px; border-radius: 4px; color: var(--text-muted); }
+        .badge-row { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 0.7rem; }
+        .source-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 1px 5px; border-radius: 4px; color: var(--text-muted); }
         .star-rating { color: var(--accent-color); }
 
         /* WIDE SETTINGS FORM INPUT LAYOUTS */
@@ -109,7 +119,6 @@
         .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
         .form-group input, .form-group select { padding: 8px 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem; outline: none; width: 100%; }
         
-        /* OVERSIZED MAXI FILE PICKERS FOR TABLET USERS */
         .maxi-file-picker {
             width: 100%; padding: 20px; background: rgba(255,255,255,0.02);
             border: 2px dashed var(--border-color); border-radius: 6px; color: var(--text-color);
@@ -124,7 +133,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* --- DYNAMIC FOLDER FILE TAB NAVIGATION SYSTEM --- */
+        /* --- FILING TABS INDIVIDUAL DIRECTORY BAR --- */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; 
             background-color: transparent; border: none;
@@ -274,7 +283,6 @@
             <div class="panel">
                 <h2>Goodreads Library Import Engine</h2>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Upload your exported Goodreads *.csv file to dynamically parse and rebuild your audiobook log:</p>
-                <!-- OVERSIZED UPLOAD AREA -->
                 <input type="file" id="csvFileInput" accept=".csv" class="maxi-file-picker">
                 <button class="btn" onclick="processCSV()">Process Audiobook Log</button>
             </div>
@@ -282,11 +290,9 @@
 
         <!-- SETTINGS TAB -->
         <div id="settingsTab" class="tab-content">
-            <!-- LOCAL DATA FILES LOADER -->
             <div class="panel">
                 <h2>Trakt.tv JSON Archive Ingestion</h2>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Import your backup watchlists or history dumps here via local file upload:</p>
-                <!-- OVERSIZED UPLOAD AREA -->
                 <input type="file" id="traktJsonInput" accept=".json" class="maxi-file-picker">
                 <button class="btn" style="background:#ed1c24; color:white;" onclick="processTraktJSON()">Ingest Trakt JSON Archive</button>
             </div>
@@ -334,9 +340,9 @@
 
     <script>
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [
-            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", genre: "Sci-Fi", releaseDate: "1997-07-27", dateAdded: "2026-01-01", access: "Streaming", status: "watching", progress: 84, favorite: true, rating: 5, pinned: false, manualOrder: 0 },
-            { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", genre: "Cyberpunk", releaseDate: "1984-07-01", dateAdded: "2026-02-15", access: "Owned", status: "watching", progress: 45, favorite: false, rating: 4, pinned: false, manualOrder: 1 },
-            { id: 3, title: "Blade Runner 2049", type: "Movie", creator: "Denis Villeneuve", genre: "Sci-Fi", releaseDate: "2017-10-06", dateAdded: "2026-03-10", access: "Owned", status: "history", progress: 100, favorite: true, rating: 5, pinned: false, manualOrder: 2 }
+            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", genre: "Sci-Fi", releaseDate: "1997-07-27", dateAdded: "2026-01-01", access: "Streaming", status: "watching", progress: 84, favorite: true, rating: 5, pinned: false, manualOrder: 0, poster: "" },
+            { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", genre: "Cyberpunk", releaseDate: "1984-07-01", dateAdded: "2026-02-15", access: "Owned", status: "watching", progress: 45, favorite: false, rating: 4, pinned: false, manualOrder: 1, poster: "" },
+            { id: 3, title: "Blade Runner 2049", type: "Movie", creator: "Denis Villeneuve", genre: "Sci-Fi", releaseDate: "2017-10-06", dateAdded: "2026-03-10", access: "Owned", status: "history", progress: 100, favorite: true, rating: 5, pinned: false, manualOrder: 2, poster: "" }
         ];
 
         let currentActiveCategory = 'all';
@@ -402,34 +408,89 @@
             filteredData.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = `media-card ${item.pinned ? 'pinned' : ''}`;
+                
+                // Build Left Poster Visual Block
+                let posterContent = `<span class="poster-placeholder">🎬</span>`;
+                if (item.poster) {
+                    posterContent = `<img src="${item.poster}" class="poster-img" alt="Poster">`;
+                } else {
+                    // Fire asynchronous smart artwork lookup pipelines
+                    fetchMediaArtwork(item);
+                }
+
                 card.innerHTML = `
-                    <div>
-                        <div class="card-header">
-                            <div class="media-title">${item.title}</div>
-                            <div class="card-controls">
-                                <button class="card-ctrl-btn" onclick="pinItem(${item.id})">${item.pinned ? '📌' : '📎'}</button>
-                                <button class="heart-icon" onclick="toggleHeartItem(${item.id})">${item.favorite ? '❤️' : '🖤'}</button>
-                            </div>
-                        </div>
-                        <div class="media-meta">${item.type} • ${item.genre}<br>By ${item.creator}</div>
+                    <div class="poster-frame" id="poster-${item.id}">
+                        ${posterContent}
                     </div>
-                    <div>
-                        <div class="progress-container">
-                            <div class="progress-bar" style="width: ${item.progress}%"></div>
+                    <div class="card-details-pane">
+                        <div>
+                            <div class="card-header">
+                                <div class="media-title">${item.title}</div>
+                                <div class="card-controls">
+                                    <button class="card-ctrl-btn" onclick="pinItem(${item.id})">${item.pinned ? '📌' : '📎'}</button>
+                                    <button class="heart-icon" onclick="toggleHeartItem(${item.id})">${item.favorite ? '❤️' : '🖤'}</button>
+                                </div>
+                            </div>
+                            <div class="media-meta">${item.type} • ${item.genre}<br>By ${item.creator}</div>
                         </div>
-                        <div class="percentage-text">${item.progress}%</div>
-                        <div class="badge-row">
-                            <span class="source-badge">${item.access}</span>
-                            <span class="star-rating">${'★'.repeat(item.rating)}${'☆'.repeat(5-item.rating)}</span>
-                        </div>
-                        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:6px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:4px;">
-                            <button class="card-ctrl-btn" onclick="moveItemPosition(${index}, -1)">▲</button>
-                            <button class="card-ctrl-btn" onclick="moveItemPosition(${index}, 1)">▼</button>
+                        <div>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: ${item.progress}%"></div>
+                            </div>
+                            <div class="percentage-text">${item.progress}%</div>
+                            <div class="badge-row">
+                                <span class="source-badge">${item.access}</span>
+                                <span class="star-rating">${'★'.repeat(item.rating)}${'☆'.repeat(5-item.rating)}</span>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:4px; border-top:1px dashed rgba(255,255,255,0.05); padding-top:2px;">
+                                <button class="card-ctrl-btn" onclick="moveItemPosition(${index}, -1)">▲</button>
+                                <button class="card-ctrl-btn" onclick="moveItemPosition(${index}, 1)">▼</button>
+                            </div>
                         </div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
+        }
+
+        // --- ASYNCHRONOUS CROSS-PLATFORM ARTWORK RETRIEVAL SYSTEM ---
+        function fetchMediaArtwork(item) {
+            const tmdbKey = localStorage.getItem('tmdb_key');
+            
+            if ((item.type === 'Movie' || item.type === 'TV') && tmdbKey) {
+                const searchType = item.type === 'Movie' ? 'movie' : 'tv';
+                const url = `https://api.themoviedb.org/3/search/${searchType}?api_key=${tmdbKey}&query=${encodeURIComponent(item.title)}`;
+                
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.results && data.results.length > 0 && data.results[0].poster_path) {
+                            const imgUrl = `https://image.tmdb.org/t/p/w185${data.results[0].poster_path}`;
+                            updateItemPosterMemory(item.id, imgUrl);
+                        }
+                    }).catch(() => {});
+            } else if (item.type === 'Audiobook') {
+                // Public Open Library Cover Art Engine query lookup
+                const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(item.title)}&limit=1`;
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.docs && data.docs.length > 0 && data.docs[0].cover_i) {
+                            const imgUrl = `https://covers.openlibrary.org/b/id/${data.docs[0].cover_i}-M.jpg`;
+                            updateItemPosterMemory(item.id, imgUrl);
+                        }
+                    }).catch(() => {});
+            }
+        }
+
+        function updateItemPosterMemory(id, imgUrl) {
+            const index = mediaDatabase.findIndex(i => i.id === id);
+            if (index !== -1) {
+                mediaDatabase[index].poster = imgUrl;
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                const frame = document.getElementById(`poster-${id}`);
+                if (frame) frame.innerHTML = `<img src="${imgUrl}" class="poster-img" alt="Poster">`;
+            }
         }
 
         function addNewMediaItem() {
@@ -448,7 +509,7 @@
 
             mediaDatabase.push({ 
                 id: Date.now(), title, type, creator, genre, releaseDate, dateAdded: today, 
-                access, status, progress, favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length 
+                access, status, progress, favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length, poster: "" 
             });
             saveAndRefresh();
             toggleSideDrawer(false);
@@ -459,86 +520,59 @@
             document.getElementById('addProgress').value = 0;
         }
 
-        // --- FULLY FUNCTIONAL TRAKT JSON PARSER ENGINE ---
         function processTraktJSON() {
             const fileInput = document.getElementById('traktJsonInput');
             if (!fileInput.files.length) { alert('Select a Trakt JSON file first, Sweetie!'); return; }
-
-            const file = fileInput.files[0];
             const reader = new FileReader();
-
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
                     let count = 0;
                     const today = new Date().toISOString().split('T')[0];
-
-                    // Process dynamic array elements handles formats
                     const items = Array.isArray(data) ? data : (data.movies || data.shows || data.watched || []);
 
                     items.forEach(entry => {
-                        let title = "";
-                        let type = "Movie";
-                        let creator = "Unknown";
-
-                        if (entry.movie) {
-                            title = entry.movie.title;
-                            type = "Movie";
-                            creator = entry.movie.year ? `Year ${entry.movie.year}` : "Cinema";
-                        } else if (entry.show) {
-                            title = entry.show.title;
-                            type = "TV";
-                            creator = "TV Series";
-                        } else if (entry.title) {
-                            title = entry.title;
-                            type = entry.type === "show" ? "TV" : "Movie";
-                        }
+                        let title = ""; let type = "Movie"; let creator = "Unknown";
+                        if (entry.movie) { title = entry.movie.title; type = "Movie"; creator = entry.movie.year ? `Year ${entry.movie.year}` : "Cinema"; }
+                        else if (entry.show) { title = entry.show.title; type = "TV"; creator = "TV Series"; }
+                        else if (entry.title) { title = entry.title; type = entry.type === "show" ? "TV" : "Movie"; }
 
                         if (title) {
                             mediaDatabase.push({
                                 id: Date.now() + Math.random(), title, type, creator, genre: "Imported",
                                 releaseDate: "2026-01-01", dateAdded: today, access: "Streaming",
-                                status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length
+                                status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: ""
                             });
                             count++;
                         }
                     });
-
                     saveAndRefresh();
                     alert(`Successfully ingested ${count} records from Trakt log file, Sweetie!`);
-                } catch(err) {
-                    alert('Error compiling file matrix. Ensure standard structure, Sweetie.');
-                }
+                } catch(err) { alert('Error compiling file matrix.'); }
             };
-            reader.readAsText(file);
+            reader.readAsText(fileInput.files[0]);
         }
 
-        // --- FULLY FUNCTIONAL GOODREADS CSV PARSER ENGINE ---
         function processCSV() {
             const fileInput = document.getElementById('csvFileInput');
             if (!fileInput.files.length) { alert('Select a Goodreads CSV file first, Sweetie!'); return; }
-
-            const file = fileInput.files[0];
             const reader = new FileReader();
-
             reader.onload = function(e) {
                 const text = e.target.result;
                 const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
                 let count = 0;
                 const today = new Date().toISOString().split('T')[0];
 
-                // Simple client side CSV row split
                 for(let i = 1; i < lines.length; i++) {
                     const columns = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if(columns.length > 1) {
                         const title = columns[1].replace(/"/g, '').trim();
                         const author = columns[2].replace(/"/g, '').trim();
-                        
                         if(title) {
                             mediaDatabase.push({
                                 id: Date.now() + Math.random(), title, type: "Audiobook", creator: author,
                                 genre: "Goodreads", releaseDate: "2026-01-01", dateAdded: today, access: "Owned",
-                                status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length
+                                status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: ""
                             });
                             count++;
                         }
@@ -547,7 +581,7 @@
                 saveAndRefresh();
                 alert(`Successfully processed ${count} audiobooks from Goodreads file, Sweetie!`);
             };
-            reader.readAsText(file);
+            reader.readAsText(fileInput.files[0]);
         }
 
         function toggleHeartItem(id) {
