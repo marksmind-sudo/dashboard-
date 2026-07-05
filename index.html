@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entertainment Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #0d0e15;
+            --panel-bg: #161925;
+            --accent-color: #00f0ff;
+            --text-color: #e2e8f0;
+            --text-muted: #718096;
+            --border-color: #2d3748;
+            --button-hover: #00b8cc;
+        }
+
+        [data-theme="steampunk"] {
+            --bg-color: #1a1412;
+            --panel-bg: #2b1f1d;
+            --accent-color: #d4af37;
+            --text-color: #f5edd6;
+            --text-muted: #a08070;
+            --border-color: #5c4033;
+            --button-hover: #b8972f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            padding-bottom: 70px;
+        }
+
+        header {
+            background-color: var(--panel-bg);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+        }
+
+        .theme-selector select {
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 45px 10px 12px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 5px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 5px;
+            user-select: none;
+        }
+
+        button.btn {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        button.btn:hover {
+            background-color: var(--button-hover);
+        }
+
+        #driveStatusLog {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        nav.nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--panel-bg);
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+
+        .nav-icon {
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Entertainment Dashboard</h1>
+        <div class="theme-selector">
+            <select id="themeSelect" onchange="changeTheme(this.value)">
+                <option value="cyberpunk">Cyberpunk Neon</option>
+                <option value="steampunk">Steampunk Brass</option>
+            </select>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Main Media Tab -->
+        <div id="mediaTab" class="tab-content active">
+            <div class="panel">
+                <h2>Your Media Hub</h2>
+                <p>Welcome back! Connect your Google Account in Settings to view your secure media files.</p>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settingsTab" class="tab-content">
+            <div class="panel">
+                <h2>Cloud Synchronization Settings</h2>
+                
+                <div class="input-group">
+                    <label for="clientIdInput">Google OAuth Client ID</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="clientIdInput" placeholder="Enter Client ID">
+                        <button type="button" class="toggle-password" onclick="toggleVisibility('clientIdInput')">SHOW</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="apiKeyInput">Google API Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="apiKeyInput" placeholder="Enter API Key">
+                        <button type="button" class="toggle-password" onclick="toggleVisibility('apiKeyInput')">SHOW</button>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="saveKeysAndConnect()">Connect Account</button>
+                <div id="driveStatusLog">Cloud status: Offline</div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('mediaTab', this)">
+            <span class="nav-icon">🎬</span>
+            <span>Media</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('settingsTab', this)">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </div>
+    </nav>
+
+    <script>
+        let gdriveClientId = localStorage.getItem('gdrive_client_id') || '';
+        let gdriveApiKey = localStorage.getItem('gdrive_api_key') || '';
+
+        // Initialize values and load saved credentials
+        document.addEventListener("DOMContentLoaded", () => {
+            if (gdriveClientId) document.getElementById('clientIdInput').value = gdriveClientId;
+            if (gdriveApiKey) document.getElementById('apiKeyInput').value = gdriveApiKey;
+            
+            const savedTheme = localStorage.getItem('dashboard_theme') || 'cyberpunk';
+            document.getElementById('themeSelect').value = savedTheme;
+            changeTheme(savedTheme);
+
+            // Catch authorization tokens returning from Google
+            handleAuthCallback();
+        });
+
+        function switchTab(tabId, navElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            navElement.classList.add('active');
+        }
+
+        function changeTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('dashboard_theme', themeName);
+        }
+
+        function toggleVisibility(inputId) {
+            const inputField = document.getElementById(inputId);
+            const button = inputField.nextElementSibling;
+            if (inputField.type === "password") {
+                inputField.type = "text";
+                button.innerText = "HIDE";
+            } else {
+                inputField.type = "password";
+                button.innerText = "SHOW";
+            }
+        }
+
+        function saveKeysAndConnect() {
+            gdriveClientId = document.getElementById('clientIdInput').value.trim();
+            gdriveApiKey = document.getElementById('apiKeyInput').value.trim();
+
+            localStorage.setItem('gdrive_client_id', gdriveClientId);
+            localStorage.setItem('gdrive_api_key', gdriveApiKey);
+
+            handleAuthClick();
+        }
+
+        // Corrected modern Web OAuth Redirect Flow
+        function handleAuthClick() {
+            const logDiv = document.getElementById('driveStatusLog');
+            if (!gdriveClientId || !gdriveApiKey) {
+                logDiv.innerText = "⚠️ Please fill in both secure cloud keys first.";
+                return;
+            }
+            
+            const redirectUri = window.location.origin + window.location.pathname;
+            const authUrl = "https://accounts.google.com/o/oauth2/v2/auth?" + 
+                "client_id=" + encodeURIComponent(gdriveClientId) +
+                "&redirect_uri=" + encodeURIComponent(redirectUri) +
+                "&response_type=token" +
+                "&scope=" + encodeURIComponent("https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file") +
+                "&prompt=consent";
+                
+            logDiv.innerText = "🚀 Redirecting securely to Google Vault...";
+            window.location.href = authUrl;
+        }
+
+        // Checks if Google successfully sent a clean security token back in the URL
+        function handleAuthCallback() {
+            const hash = window.location.hash;
+            if (hash) {
+                const params = new URLSearchParams(hash.substring(1));
+                const accessToken = params.get('access_token');
+                if (accessToken) {
+                    localStorage.setItem('gdrive_access_token', accessToken);
+                    document.getElementById('driveStatusLog').innerText = "✅ Cloud Authorization Successful! Connected.";
+                    document.getElementById('driveStatusLog').style.color = "#4ade80";
+                    // Clear the hash token out of the URL bar for security
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
