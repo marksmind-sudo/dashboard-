@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Entertainment Dashboard</title>
     <style>
-        /* --- THEME DESIGN SYSTEM WITH ISOLATED PATTERN LAYERS --- */
+        /* --- THEME DESIGN SYSTEM WITH HIGH-DENSITY PSEUDO LAYERS --- */
         :root { --bg-image: none; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -14,7 +14,6 @@
             font-family: sans-serif; padding-bottom: 120px; min-height: 100vh; position: relative; overflow-x: hidden;
         }
 
-        /* Fixed background element prevents gradient/image layout collision bugs */
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: var(--bg-image) no-repeat center center fixed, var(--bg-pattern);
@@ -23,24 +22,24 @@
         }
         
         [data-theme="cyberpunk"] {
-            --bg-color: #03030d; --panel-bg: rgba(12, 15, 38, 0.93); --text-color: #00ffcc; 
-            --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(20, 24, 59, 0.85);
-            --text-shadow: 0 0 5px rgba(0,255,204,0.5);
-            --bg-pattern: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(0, 255, 204, 0.04), rgba(0, 0, 0, 0), rgba(255, 0, 127, 0.04));
-            --pattern-size: 100% 6px, 6px 100%;
+            --bg-color: #020208; --panel-bg: rgba(10, 12, 32, 0.95); --text-color: #00ffcc; 
+            --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(16, 20, 48, 0.9);
+            --text-shadow: 0 0 5px rgba(0,255,204,0.6);
+            --bg-pattern: linear-gradient(to bottom, rgba(255, 0, 127, 0.05) 1px, transparent 1px), linear-gradient(to right, rgba(0, 255, 204, 0.05) 1px, transparent 1px);
+            --pattern-size: 30px 30px, 30px 30px;
         }
         [data-theme="steampunk"] {
-            --bg-color: #2b1d12; --panel-bg: rgba(61, 42, 29, 0.93); --text-color: #f4eae1; 
-            --accent-color: #df9b16; --border-color: #614633; --card-bg: #3d2a1d;
-            --bg-pattern: linear-gradient(rgba(97, 70, 51, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(97, 70, 51, 0.15) 1px, transparent 1px);
-            --pattern-size: 24px 24px, 24px 24px; --text-shadow: none;
+            --bg-color: #1a110a; --panel-bg: rgba(43, 30, 20, 0.96); --text-color: #fcefd2; 
+            --accent-color: #e29c1d; --border-color: #8c5e38; --card-bg: #2d1f15;
+            --bg-pattern: radial-gradient(circle, #000000 20%, transparent 20%), radial-gradient(circle, #000000 20%, transparent 20?), linear-gradient(rgba(140, 94, 56, 0.12) 1px, transparent 1px);
+            --pattern-size: 16px 16px, 16px 16px, 32px 32px; background-position: 0 0, 8px 8px, 0 0; --text-shadow: none;
         }
         [data-theme="star-trek"] {
-            --bg-color: #000000; --panel-bg: rgba(11, 19, 43, 0.9); --text-color: #ff9900; 
-            --accent-color: #cc6699; --border-color: #ff9900; --card-bg: rgba(28, 37, 65, 0.85);
-            --text-shadow: 0 0 4px rgba(255,153,0,0.4);
-            --bg-pattern: radial-gradient(circle at 15% 20%, #ffffff 1px, transparent 1px), radial-gradient(circle at 65% 70%, #ffffff 1px, transparent 1px), radial-gradient(circle at 40% 85%, rgba(255,255,255,0.4) 1px, transparent 1px);
-            --pattern-size: 60px 60px, 90px 90px, 140px 140px;
+            --bg-color: #000000; --panel-bg: rgba(10, 16, 36, 0.93); --text-color: #ffaa00; 
+            --accent-color: #dd77aa; --border-color: #ffaa00; --card-bg: rgba(24, 32, 56, 0.88);
+            --text-shadow: 0 0 4px rgba(255,170,0,0.5);
+            --bg-pattern: radial-gradient(circle at 20% 15%, #ffffff 1px, transparent 1px), radial-gradient(circle at 70% 65%, #ffffff 1px, transparent 1px), radial-gradient(circle at 45% 80%, rgba(255,255,255,0.5) 1px, transparent 1px);
+            --pattern-size: 70px 70px, 100px 100px, 150px 150px;
         }
         [data-theme="tvtime-dark"] {
             --bg-color: #141414; --panel-bg: rgba(31, 31, 31, 0.95); --text-color: #ffffff; 
@@ -65,26 +64,28 @@
         .action-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .toggle-menu-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
 
-        /* SLIDE-OUT DRAWERS */
+        /* DRAWERS */
         .side-drawer { position: fixed; top: 0; right: -340px; width: 340px; height: 100vh; background-color: var(--panel-bg); border-left: 2px solid var(--border-color); box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2000; padding: 20px; transition: right 0.3s ease-in-out; display: flex; flex-direction: column; gap: 12px; }
         .side-drawer.open { right: 0; }
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1999; display: none; backdrop-filter: blur(2px); }
         .drawer-overlay.active { display: block; }
         .drawer-close-btn { background: none; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
 
-        /* Sub-Navigation Buttons */
         .sub-nav { display: flex; overflow-x: auto; gap: 6px; margin-bottom: 15px; padding-bottom: 4px; }
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
 
-        /* --- MEDIA CARD TILES DESIGN --- */
+        /* --- MEDIA CARD CARRIER TILES DESIGN --- */
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
         .media-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; display: flex; flex-direction: column; position: relative; overflow: hidden; cursor: pointer; }
         .media-card.pinned { border: 2px solid var(--accent-color); box-shadow: 0 0 8px rgba(0,255,204,0.3); }
         
-        .poster-frame { width: 100%; height: 230px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .poster-frame { width: 100%; height: 230px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
         .poster-img { width: 100%; height: 100%; object-fit: cover; }
         .poster-placeholder { font-size: 2.5rem; color: var(--text-muted); opacity: 0.3; }
+
+        /* High Visibility Face Banners */
+        .face-status-badge { position: absolute; top: 8px; left: 8px; padding: 3px 6px; background: rgba(0,0,0,0.85); color: var(--accent-color); border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.65rem; font-weight: bold; z-index: 5; text-transform: uppercase; }
 
         .card-details-pane { flex: 1; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }
         .media-title { font-size: 0.9rem; font-weight: bold; color: var(--text-color); line-height: 1.3; word-break: break-word; }
@@ -99,28 +100,31 @@
         .card-ctrl-btn:hover { opacity: 1; color: var(--accent-color); }
         .heart-icon { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 1rem; }
 
-        /* --- PROFILE DETAIL MODAL OVERLAYS --- */
-        .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 15px; }
+        /* --- MAXI EXPANDED PROFILE DETAIL MODAL CANVAS --- */
+        .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-canvas.active { display: flex; }
-        .modal-box { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 550px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
-        .modal-hero { width: 100%; height: 220px; position: relative; background: #111; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid var(--border-color); }
+        .modal-box { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 800px; height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        .modal-hero { width: 100%; height: 260px; position: relative; background: #05050a; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
         .modal-hero-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.35; position: absolute; top:0; left:0; }
-        .modal-hero-title { position: relative; z-index: 2; font-size: 1.3rem; font-weight: bold; color: var(--text-color); text-align: center; padding: 0 15px; text-shadow: 0 2px 4px #000; }
-        .modal-body { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px; }
-        .modal-desc { font-size: 0.85rem; line-height: 1.5; color: var(--text-color); opacity: 0.9; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; max-height: 150px; overflow-y: auto; }
-        .modal-meta-line { font-size: 0.8rem; color: var(--text-muted); }
+        .modal-hero-title { position: relative; z-index: 2; font-size: 1.7rem; font-weight: bold; color: var(--text-color); text-align: center; padding: 0 20px; text-shadow: 0 3px 6px #000; }
+        .modal-body { padding: 25px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .modal-desc { font-size: 0.95rem; line-height: 1.6; color: var(--text-color); opacity: 0.95; border-bottom: 1px dashed rgba(255,255,255,0.15); padding-bottom: 12px; }
+        .modal-meta-line { font-size: 0.85rem; color: var(--text-color); margin-bottom: 2px; }
         
-        .modal-episodes-deck { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
-        .modal-ep-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px; color: var(--text-color); }
-        .modal-ep-row input { width: 16px; height: 16px; cursor: pointer; margin-left: 8px; }
+        .modal-sub-selector { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px; border-radius: 4px; width: 100%; outline: none; margin-top: 5px; font-size: 0.9rem; }
+        .modal-episodes-deck { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; margin-top: 5px; }
+        .modal-ep-row { background: rgba(255,255,255,0.02); padding: 8px; border-radius: 4px; display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .modal-ep-top-line { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; font-weight: bold; color: var(--text-color); }
+        .modal-ep-text-desc { font-size: 0.75rem; color: var(--text-color); opacity: 0.75; line-height: 1.4; padding-top: 4px; padding-right: 10px; }
+        .modal-ep-top-line input { width: 18px; height: 18px; cursor: pointer; }
 
-        /* Form Layouts */
+        /* Forms */
         .form-group { display: flex; flex-direction: column; margin-bottom: 12px; width: 100%; }
         .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
         .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem; outline: none; width: 100%; }
         .maxi-label-picker { display: block; width: 100%; padding: 25px 15px; background: rgba(255,255,255,0.02); border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-color); font-size: 0.9rem; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 12px; }
         .hidden-file-input { position: absolute; width: 1px; height: 1px; opacity: 0.01; overflow: hidden; z-index: -1; }
-        .btn { background-color: var(--accent-color); color: #000; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.95rem; }
+        .btn { background-color: var(--accent-color); color: #000; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
         .password-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
         .password-wrapper input { padding-right: 65px; }
         .toggle-btn { position: absolute; right: 6px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 4px 8px; font-size: 0.75rem; cursor: pointer; border-radius: 4px; color: var(--text-color); }
@@ -155,7 +159,7 @@
 
     <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
 
-    <!-- HOLOGRAPHIC DETAIL PROFILE MODAL -->
+    <!-- HOLOGRAPHIC DETAIL MAXI MODAL -->
     <div id="mediaDetailModal" class="modal-canvas" onclick="if(event.target === this) closeProfileModal()">
         <div class="modal-box">
             <div class="modal-hero">
@@ -163,20 +167,27 @@
                 <div id="modalTitle" class="modal-hero-title">Media Title</div>
             </div>
             <div class="modal-body">
-                <div id="modalDescription" class="modal-desc">Loading tracking logs...</div>
+                <div id="modalDescription" class="modal-desc">Loading metadata matrix streams...</div>
                 <div id="modalCreatorLine" class="modal-meta-line"><b>Director/Author:</b> -</div>
                 <div id="modalActorLine" class="modal-meta-line"><b>Lead Cast:</b> -</div>
                 <div id="modalReleaseLine" class="modal-meta-line"><b>Release Date:</b> -</div>
                 <div id="modalAccessLine" class="modal-meta-line"><b>Source Profile:</b> -</div>
-                <div id="modalEpisodesHeader" style="font-size:0.8rem; font-weight:bold; margin-top:4px; display:none;">📺 System Episode Logs:</div>
-                <div id="modalEpisodesContainer" class="modal-episodes-deck" style="display:none;"></div>
-                <button class="btn" style="margin-top:10px;" onclick="closeProfileModal()">Close Profile Node</button>
+                
+                <!-- Expanded Multi-Season Target Block -->
+                <div id="modalTvSection" style="display:none; margin-top:5px; width:100%;">
+                    <label for="modalSeasonSelector" style="font-size:0.8rem; font-weight:bold; color:var(--accent-color);">⚡ Select Ingestion Season:</label>
+                    <select id="modalSeasonSelector" class="modal-sub-selector" onchange="loadSelectedSeasonDeck()"></select>
+                    <div style="font-size:0.8rem; font-weight:bold; margin-top:10px; color:var(--accent-color);">📺 Season Episode Runlogs:</div>
+                    <div id="modalEpisodesContainer" class="modal-episodes-deck"></div>
+                </div>
+
+                <button class="btn" style="margin-top:15px;" onclick="closeProfileModal()">Close Profile Node</button>
             </div>
         </div>
     </div>
 
     <div class="container">
-        <!-- ================= MEDIA TAB (MOVIES & TV ONLY) ================= -->
+        <!-- ================= MEDIA TAB ================= -->
         <div id="mediaTab" class="tab-content active">
             <div class="action-header-row">
                 <h2 style="border:none; margin:0; padding:0;">Cinema Collection</h2>
@@ -199,12 +210,12 @@
                     <div class="form-group"><label>Director / Showrunner</label><input type="text" id="addCreator" placeholder="Director Name"></div>
                     <div class="form-group"><label>Main Actor / Star</label><input type="text" id="addActor" placeholder="Lead Actor Name"></div>
                     <div class="form-group"><label>Genre Tags</label><input type="text" id="addGenre" placeholder="e.g., Sci-Fi, Cyberpunk"></div>
-                    <div class="form-group"><label>Description / Overview</label><textarea id="addOverview" rows="2" placeholder="Manual overview description text..."></textarea></div>
+                    <div class="form-group"><label>Description / Overview</label><textarea id="addOverview" rows="2" placeholder="Manual entry profile overview..."></textarea></div>
                     <div class="form-group"><label>Release Date</label><input type="date" id="addReleaseDate"></div>
                     <div class="form-group"><label>Date Seen / Completed</label><input type="date" id="addSeenDate"></div>
-                    <div class="form-group"><label>Access Profile</label><select id="addAccess"><option value="Streaming">Streaming Platform</option><option value="Owned">I Own It</option></select></div>
+                    <div class="form-group"><label>Access Profile</label><select id="addAccess"><option value="Streaming">Streaming Platform</option><option value="Owned">I Own It</option><option value="Wishlist">Wishlist / Discovery</option></select></div>
+                    <div class="form-group"><label>Watch Status Indicator</label><select id="addWatchState"><option value="unwatched">Unwatched</option><option value="watching">Currently Watching</option><option value="completed">Completed Logs</option></select></div>
                     <div class="form-group"><label>Target Container</label><select id="addStatus"><option value="all">Main Collection</option><option value="watching">Currently Tracking</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
-                    <div class="form-group"><label>Progress Metric % (Ignored if TV Show)</label><input type="number" id="addProgress" min="0" max="100" value="0"></div>
                     <div class="form-group"><label>Star Rating</label><select id="addRating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></div>
                 </div>
                 <button class="btn" onclick="addNewMediaItem('cinema')">Inject Screening Node</button>
@@ -230,7 +241,7 @@
             <div class="media-grid" id="cinemaDatabaseGrid"></div>
         </div>
 
-        <!-- ================= GOODREADS TAB (AUDIOBOOKS EXCLUSIVE) ================= -->
+        <!-- ================= GOODREADS TAB ================= -->
         <div id="goodreadsTab" class="tab-content">
             <div class="action-header-row">
                 <h2 style="border:none; margin:0; padding:0;">Audiobook Library</h2>
@@ -255,6 +266,8 @@
                     <div class="form-group"><label>Author</label><input type="text" id="addBookAuthor" placeholder="William Gibson"></div>
                     <div class="form-group"><label>Genre Tags</label><input type="text" id="addBookGenre" placeholder="e.g., Cyberpunk, Sci-Fi"></div>
                     <div class="form-group"><label>Book Summary / Description</label><textarea id="addBookOverview" rows="2" placeholder="Enter book overview details..."></textarea></div>
+                    <div class="form-group"><label>Access Profile</label><select id="addBookAccess"><option value="Owned">I Own It</option><option value="Streaming">Streaming Platform</option><option value="Wishlist">Wishlist</option></select></div>
+                    <div class="form-group"><label>Reading Status Indicator</label><select id="addBookWatchState"><option value="unwatched">Unwatched</option><option value="watching">Currently Reading</option><option value="completed">Completed Logs</option></select></div>
                     <div class="form-group"><label>Date Read / Finished</label><input type="date" id="addBookReadDate"></div>
                     <div class="form-group"><label>Target Container</label><select id="addBookStatus"><option value="all">Main Collection</option><option value="watching">Currently Tracking</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
                     <div class="form-group"><label>Manual Progress Metric %</label><input type="number" id="addBookProgress" min="0" max="100" value="0"></div>
@@ -335,9 +348,8 @@
 
     <script>
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [
-            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", actor: "Richard Dean Anderson", genre: "Sci-Fi", overview: "A secret military team explores the galaxy using an ancient network of alien portals.", releaseDate: "1997-07-27", dateAdded: "2026-01-01", completionDate: "", access: "Streaming", status: "watching", progress: 66, favorite: true, rating: 5, pinned: false, manualOrder: 0, poster: "" },
-            { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", actor: "N/A", genre: "Cyberpunk", overview: "Case, a washed-up computer hacker, is hired by a mysterious benefactor for one final ultimate run.", releaseDate: "1984-07-01", dateAdded: "2026-02-15", completionDate: "", access: "Owned", status: "watching", progress: 45, favorite: false, rating: 4, pinned: false, manualOrder: 1, poster: "" },
-            { id: 3, title: "Blade Runner 2049", type: "Movie", creator: "Denis Villeneuve", actor: "Ryan Gosling", genre: "Sci-Fi", overview: "A new blade runner, LAPD Officer K, unearths a long-buried secret that could plunge society into chaos.", releaseDate: "2017-10-06", dateAdded: "2026-03-10", completionDate: "2026-03-11", access: "Owned", status: "history", progress: 100, favorite: true, rating: 5, pinned: false, manualOrder: 2, poster: "" }
+            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", actor: "Richard Dean Anderson", genre: "Sci-Fi", overview: "A secret military team explores the galaxy using an ancient network of alien portals.", releaseDate: "1997-07-27", dateAdded: "2026-01-01", completionDate: "", access: "Streaming", watchState: "watching", status: "watching", progress: 66, favorite: true, rating: 5, pinned: false, manualOrder: 0, poster: "" },
+            { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", actor: "N/A", genre: "Cyberpunk", overview: "Case, a washed-up computer hacker, is hired by a mysterious benefactor for one final ultimate run.", releaseDate: "1984-07-01", dateAdded: "2026-02-15", completionDate: "", access: "Owned", watchState: "watching", status: "watching", progress: 45, favorite: false, rating: 4, pinned: false, manualOrder: 1, poster: "" }
         ];
 
         let currentCinemaCategory = 'all';
@@ -389,13 +401,14 @@
             document.getElementById('drawerOverlay').classList.remove('active');
         }
 
-        /* --- INTERACTIVE ON-TAP METADATA ENHANCEMENT ENGINE --- */
+        /* --- DECOUPLED ON-TAP HYDRO METADATA RETRIEVAL ENGINE --- */
         function openProfileModal(id) {
             activeProfileModalId = id;
             const item = mediaDatabase.find(m => m.id === id);
-            
-            // If the description or episodes are missing from storage, trigger a background pipeline update instantly on click
-            if (item && (!item.overview || item.overview.includes("Loading") || (item.type === 'TV' && !item.episodes))) {
+            if (!item) return;
+
+            // Trigger real-time background lookup if properties are generic placeholders
+            if (!item.overview || item.overview.includes("Loading") || item.overview.includes("Ingested") || (item.type === 'TV' && (!item.seasons || item.seasons.length === 0))) {
                 fetchMediaArtwork(item, true); 
             } else {
                 updateProfileModalState(id);
@@ -414,44 +427,116 @@
 
             document.getElementById('modalTitle').innerText = item.title;
             document.getElementById('modalHeroImg').src = item.poster || "";
-            document.getElementById('modalDescription').innerText = item.overview || "No extended overview text found for this profile node.";
+            document.getElementById('modalDescription').innerText = item.overview || "No extended text description loaded for this asset.";
             document.getElementById('modalCreatorLine').innerHTML = `<b>${item.type === 'Audiobook' ? 'Author' : 'Director'}:</b> ${item.creator || 'Unknown'}`;
             document.getElementById('modalActorLine').innerHTML = `<b>Lead Cast:</b> ${item.actor || 'N/A'}`;
             document.getElementById('modalReleaseLine').innerHTML = `<b>Release Date:</b> ${item.releaseDate || 'Unknown'}`;
-            document.getElementById('modalAccessLine').innerHTML = `<b>Source Profile:</b> ${item.access} (${item.type})`;
+            
+            let displayWatch = item.watchState || 'unwatched';
+            document.getElementById('modalAccessLine').innerHTML = `<b>Source Profile:</b> ${item.access} (${item.type}) — <span style="text-transform:uppercase; color:var(--accent-color); font-weight:bold;">${displayWatch}</span>`;
 
-            const epHeader = document.getElementById('modalEpisodesHeader');
-            const epContainer = document.getElementById('modalEpisodesContainer');
-
-            if (item.type === 'TV' && item.episodes && item.episodes.length > 0) {
-                epHeader.style.display = 'block';
-                epContainer.style.display = 'flex';
-                epContainer.innerHTML = '';
-                item.episodes.forEach(ep => {
-                    const row = document.createElement('div');
-                    row.className = 'modal-ep-row';
-                    row.innerHTML = `<span>${ep.title}</span><input type="checkbox" ${ep.watched ? 'checked' : ''} onchange="toggleEpisodeWatch(${item.id}, ${ep.id})">`;
-                    epContainer.appendChild(row);
+            const tvSection = document.getElementById('modalTvSection');
+            if (item.type === 'TV' && item.seasons && item.seasons.length > 0) {
+                tvSection.style.display = 'block';
+                const selector = document.getElementById('modalSeasonSelector');
+                selector.innerHTML = '';
+                item.seasons.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.seasonNumber;
+                    opt.innerText = s.name || `Season ${s.seasonNumber}`;
+                    selector.appendChild(opt);
                 });
+                loadSelectedSeasonDeck();
             } else {
-                epHeader.style.display = 'none';
-                epContainer.style.display = 'none';
+                tvSection.style.display = 'none';
             }
         }
 
-        function toggleEpisodeWatch(seriesId, epId) {
-            const idx = mediaDatabase.findIndex(m => m.id === seriesId);
-            if (idx !== -1 && mediaDatabase[idx].episodes) {
-                const epIdx = mediaDatabase[idx].episodes.findIndex(e => e.id === epId);
-                if (epIdx !== -1) {
-                    mediaDatabase[idx].episodes[epIdx].watched = !mediaDatabase[idx].episodes[epIdx].watched;
-                    const total = mediaDatabase[idx].episodes.length;
-                    const watchedCount = mediaDatabase[idx].episodes.filter(e => e.watched).length;
-                    mediaDatabase[idx].progress = Math.round((watchedCount / total) * 100);
+        function loadSelectedSeasonDeck() {
+            const item = mediaDatabase.find(m => m.id === activeProfileModalId);
+            if (!item || !item.seasons) return;
+
+            const seasonNum = parseInt(document.getElementById('modalSeasonSelector').value);
+            const season = item.seasons.find(s => s.seasonNumber === seasonNum);
+            const container = document.getElementById('modalEpisodesContainer');
+            container.innerHTML = '';
+
+            if (season && season.episodes) {
+                season.episodes.forEach(ep => {
+                    const row = document.createElement('div');
+                    row.className = 'modal-ep-row';
                     
-                    localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                    refreshAllViews();
+                    // Tap row header to show/hide dynamic episode specific summary overlays
+                    row.innerHTML = `
+                        <div class="modal-ep-top-line" onclick="document.getElementById('ep-desc-${ep.id}').style.display = (document.getElementById('ep-desc-${ep.id}').style.display === 'none' ? 'block' : 'none')">
+                            <span style="cursor:pointer;">🎬 S${seasonNum}E${ep.episodeNumber}: ${ep.name}</span>
+                            <input type="checkbox" ${ep.watched ? 'checked' : ''} onclick="event.stopPropagation(); toggleEpisodeWatchState(${item.id}, ${seasonNum}, ${ep.id})">
+                        </div>
+                        <div id="ep-desc-${ep.id}" class="modal-ep-text-desc" style="display:none;">${ep.overview || 'No transmission logs reported for this individual broadcast node.'}</div>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+        }
+
+        function toggleEpisodeWatchState(seriesId, seasonNum, epId) {
+            const idx = mediaDatabase.findIndex(m => m.id === seriesId);
+            if (idx === -1 || !mediaDatabase[idx].seasons) return;
+
+            const sIdx = mediaDatabase[idx].seasons.findIndex(s => s.seasonNumber === seasonNum);
+            if (sIdx === -1 || !mediaDatabase[idx].seasons[sIdx].episodes) return;
+
+            const eIdx = mediaDatabase[idx].seasons[sIdx].episodes.findIndex(e => e.id === epId);
+            if (eIdx !== -1) {
+                mediaDatabase[idx].seasons[sIdx].episodes[eIdx].watched = !mediaDatabase[idx].seasons[sIdx].episodes[eIdx].watched;
+                
+                // Recalculate whole tracking status array metrics
+                let total = 0, watched = 0;
+                mediaDatabase[idx].seasons.forEach(s => {
+                    if (s.episodes) {
+                        s.episodes.forEach(e => {
+                            total++; if (e.watched) watched++;
+                        });
+                    }
+                });
+                
+                mediaDatabase[idx].progress = total > 0 ? Math.round((watched / total) * 100) : 0;
+                mediaDatabase[idx].watchState = mediaDatabase[idx].progress === 100 ? 'completed' : (watched > 0 ? 'watching' : 'unwatched');
+                
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                renderMediaGrid();
+                renderSimulatedWidgets();
+            }
+        }
+
+        /* --- STAMP GENERATOR COMPILER --- */
+        function calculateFaceBadgeMarkup(item) {
+            if (item.type === 'TV') {
+                if (item.watchState === 'completed' || item.progress === 100) return 'Completed';
+                
+                // Find current tracked coordinate indexes
+                let currentString = 'Unwatched';
+                if (item.seasons) {
+                    let breaking = false;
+                    for (let s of item.seasons) {
+                        if (s.episodes) {
+                            for (let e of s.episodes) {
+                                if (e.watched) {
+                                    currentString = `Watching: S${s.seasonNumber} E${e.episodeNumber}`;
+                                } else if (currentString !== 'Unwatched') {
+                                    breaking = true; break;
+                                }
+                            }
+                        }
+                        if (breaking) break;
+                    }
                 }
+                return currentString;
+            } else {
+                // Return clear asset state mapping profiles
+                let accessTag = item.access || 'Owned';
+                let watchTag = item.watchState || 'unwatched';
+                return `${accessTag} | ${watchTag}`;
             }
         }
 
@@ -462,7 +547,7 @@
                 if (sortVal === 'name') return a.title.localeCompare(b.title);
                 if (sortVal === 'releaseDate') return new Date(a.releaseDate) - new Date(b.releaseDate);
                 if (sortVal === 'dateAdded') return new Date(a.dateAdded) - new Date(b.dateAdded);
-                if (sortVal === 'genre') return a.genre.localeCompare(b.genre);
+                if (sortVal === 'genre') return (a.genre || '').localeCompare(b.genre || '');
                 if (sortVal === 'rating') return b.rating - a.rating;
                 if (sortVal === 'progress') return b.progress - a.progress;
                 if (sortVal === 'director' || sortVal === 'author') return a.creator.localeCompare(b.creator);
@@ -477,18 +562,17 @@
                 let posterContent = `<span class="poster-placeholder">${item.type === 'Audiobook' ? '📚' : '🎬'}</span>`;
                 if (item.poster) posterContent = `<img src="${item.poster}" class="poster-img" alt="Poster">`;
 
-                let completionBadge = '';
-                if (item.completionDate) {
-                    completionBadge = `<div class="media-meta" style="color:var(--accent-color); font-weight:bold; font-size:0.7rem;">🏁 Finished: ${item.completionDate}</div>`;
-                }
+                let faceBadgeText = calculateFaceBadgeMarkup(item);
 
                 card.innerHTML = `
-                    <div class="poster-frame" id="poster-${item.id}">${posterContent}</div>
+                    <div class="poster-frame" id="poster-${item.id}">
+                        <div class="face-status-badge">${faceBadgeText}</div>
+                        ${posterContent}
+                    </div>
                     <div class="card-details-pane">
                         <div>
                             <div class="media-title">${item.title}</div>
                             <div class="media-meta">${item.type === 'Audiobook' ? 'By ' + item.creator : item.genre}</div>
-                            ${completionBadge}
                         </div>
                         <div>
                             <div class="progress-container"><div class="progress-bar" style="width: ${item.progress}%"></div></div>
@@ -515,6 +599,7 @@
 
         function renderMediaGrid() {
             const grid = document.getElementById('cinemaDatabaseGrid');
+            if(!grid) return;
             const searchQuery = document.getElementById('cinemaSearchBar').value.toLowerCase();
             const sortVal = document.getElementById('sortEngine').value;
             const typeFilter = document.getElementById('typeFilter').value;
@@ -534,6 +619,7 @@
 
         function renderBookGrid() {
             const grid = document.getElementById('bookDatabaseGrid');
+            if(!grid) return;
             const searchQuery = document.getElementById('bookSearchBar').value.toLowerCase();
             const sortVal = document.getElementById('bookSortEngine').value;
             grid.innerHTML = '';
@@ -556,7 +642,7 @@
             const trackingMedia = mediaDatabase.filter(item => item.status === 'watching');
             const videoItems = trackingMedia.filter(i => i.type !== 'Audiobook').slice(0, 2);
             let videoWidgetHtml = `<div class="sim-widget"><div class="widget-title">📺 Cinema Widget</div>`;
-            videoItems.forEach(item => { videoWidgetHtml += `<div class="widget-item">${item.poster ? `<img class="widget-thumb" src="${item.poster}">` : `<div class="widget-thumb" style="display:flex;align-items:center;justify-content:center;">🎬</div>`}<div class="widget-info"><b>${item.title}</b><br><span style="color:#ff007f">${item.progress}% done</span></div></div>`; });
+            videoItems.forEach(item => { videoWidgetHtml += `<div class="widget-item">${item.poster ? `<img class="widget-thumb" src="${item.poster}">` : `<div class="widget-thumb" style="display:flex;align-items:center;justify-content:center;">🎬</div>`}<div class="widget-info"><b>${item.title}</b><br><span style="color:#ff007f">${item.progress}% tracked</span></div></div>`; });
             videoWidgetHtml += `</div>`;
             const bookItems = trackingMedia.filter(i => i.type === 'Audiobook').slice(0, 2);
             let bookWidgetHtml = `<div class="sim-widget"><div class="widget-title">📚 Audiobook Widget</div>`;
@@ -565,63 +651,76 @@
             widgetGrid.innerHTML = videoWidgetHtml + bookWidgetHtml;
         }
 
-        /* ================= DEEP-DATA HARVESTING PIPELINE ================= */
+        /* ================= NETWORK PIPELINE SYNC MATRIX ================= */
         function fetchMediaArtwork(item, openModalOnComplete = false) {
             const tmdbKey = localStorage.getItem('tmdb_key');
             
             if ((item.type === 'Movie' || item.type === 'TV') && tmdbKey) {
                 const searchType = item.type === 'Movie' ? 'movie' : 'tv';
-                fetch(`https://api.themoviedb.org/3/search/${searchType}?api_key=${tmdbKey}&query=${encodeURIComponent(item.title)}`)
+                fetch(`https://api.themoviedb.org/3/search/${searchType}?api_key=%7BtmdbKey%7D&query=${encodeURIComponent(item.title)}`)
                     .then(res => res.json()).then(data => {
                         if (data.results && data.results.length > 0) {
                             const resObj = data.results[0];
                             const idx = mediaDatabase.findIndex(i => i.id === item.id);
-                            if (idx !== -1) {
-                                mediaDatabase[idx].poster = resObj.poster_path ? `https://image.tmdb.org/t/p/w342${resObj.poster_path}` : "";
-                                if (resObj.overview) mediaDatabase[idx].overview = resObj.overview;
-                                
-                                if (item.type === 'TV') {
-                                    // Deep season parsing lookup loop
-                                    fetch(`https://api.themoviedb.org/3/tv/${resObj.id}/season/1?api_key=${tmdbKey}`)
-                                        .then(r => r.json()).then(seasonData => {
-                                            if(seasonData.episodes && seasonData.episodes.length > 0) {
-                                                mediaDatabase[idx].episodes = seasonData.episodes.map(e => ({
-                                                    id: e.id,
-                                                    title: `Episode ${e.episode_number}: ${e.name || 'Chapter'}`,
-                                                    watched: false
-                                                }));
-                                            } else {
-                                                mediaDatabase[idx].episodes = [{id:1, title: "Episode 1: Pilot", watched: false}];
-                                            }
-                                            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                                            refreshAllViews();
-                                            if(openModalOnComplete) updateProfileModalState(item.id);
-                                        }).catch(() => {
-                                            mediaDatabase[idx].episodes = [{id:1, title: "Episode 1: Pilot", watched: false}];
-                                            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                                            refreshAllViews();
-                                            if(openModalOnComplete) updateProfileModalState(item.id);
-                                        });
-                                } else {
-                                    localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                                    refreshAllViews();
-                                    if(openModalOnComplete) updateProfileModalState(item.id);
-                                }
-                            }
+                            if (idx === -1) return;
+
+                            mediaDatabase[idx].poster = resObj.poster_path ? `https://image.tmdb.org/t/p/w342${resObj.poster_path}` : "";
+                            if (resObj.overview) mediaDatabase[idx].overview = resObj.overview;
+                            if (resObj.release_date || resObj.first_air_date) mediaDatabase[idx].releaseDate = resObj.release_date || resObj.first_air_date;
+
+                            // Ingest lead actors list matrix entries
+                            fetch(`https://api.themoviedb.org/3/${searchType}/${resObj.id}/credits?api_key=${tmdbKey}`)
+                                .then(cr => cr.json()).then(credits => {
+                                    if(credits.cast && credits.cast.length > 0) {
+                                        mediaDatabase[idx].actor = credits.cast.slice(0, 4).map(c => c.name).join(", ");
+                                    }
+                                    
+                                    if (item.type === 'TV') {
+                                        // Dynamic multi-season lookup loop integration
+                                        fetch(`https://api.themoviedb.org/3/tv/${resObj.id}?api_key=${tmdbKey}`)
+                                            .then(r => r.json()).then(fullShow => {
+                                                let seasonPromises = fullShow.seasons.map(s => {
+                                                    return fetch(`https://api.themoviedb.org/3/tv/${resObj.id}/season/${s.season_number}?api_key=${tmdbKey}`)
+                                                        .then(resEp => resEp.json())
+                                                        .then(sData => ({
+                                                            seasonNumber: s.season_number,
+                                                            name: s.name,
+                                                            episodes: sData.episodes ? sData.episodes.map(e => ({
+                                                                id: e.id,
+                                                                episodeNumber: e.episode_number,
+                                                                name: e.name,
+                                                                overview: e.overview || "No transmission log overview found for this node.",
+                                                                watched: false
+                                                            })) : []
+                                                        })).catch(() => null);
+                                                });
+
+                                                Promise.all(seasonPromises).then(compiledSeasons => {
+                                                    mediaDatabase[idx].seasons = compiledSeasons.filter(s => s !== null && s.episodes.length > 0);
+                                                    localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                                                    refreshAllViews();
+                                                    if(openModalOnComplete) updateProfileModalState(item.id);
+                                                });
+                                            });
+                                    } else {
+                                        localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                                        refreshAllViews();
+                                        if(openModalOnComplete) updateProfileModalState(item.id);
+                                    }
+                                });
                         }
                     }).catch(() => {});
             } else if (item.type === 'Audiobook') {
-                // Fixed Open Library document parser pipeline using text lookup paths
-                fetch(`https://openlibrary.org/search.json?q=title:${encodeURIComponent(item.title)}&limit=5`)
+                // Fixed Open Library query parameter string construction matches
+                fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(item.title)}`)
                     .then(res => res.json()).then(data => {
                         if (data.docs && data.docs.length > 0) {
                             const match = data.docs.find(d => d.cover_i) || data.docs[0];
                             const idx = mediaDatabase.findIndex(i => i.id === item.id);
-                            if (idx !== -1 && match.cover_i) {
-                                mediaDatabase[idx].poster = `https://covers.openlibrary.org/b/id/${match.cover_i}-L.jpg`;
-                                if(!mediaDatabase[idx].overview && match.first_sentence) {
-                                    mediaDatabase[idx].overview = match.first_sentence.join(" ");
-                                }
+                            if (idx !== -1) {
+                                if (match.cover_i) mediaDatabase[idx].poster = `https://covers.openlibrary.org/b/id/${match.cover_i}-L.jpg`;
+                                if (match.first_sentence) mediaDatabase[idx].overview = Array.isArray(match.first_sentence) ? match.first_sentence.join(" ") : match.first_sentence;
+                                else mediaDatabase[idx].overview = "Goodreads library audiobook log reference profile.";
                                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                                 refreshAllViews();
                                 if(openModalOnComplete) updateProfileModalState(item.id);
@@ -644,12 +743,12 @@
                 const releaseDate = document.getElementById('addReleaseDate').value || today;
                 const seenDate = document.getElementById('addSeenDate').value;
                 const access = document.getElementById('addAccess').value;
+                const watchState = document.getElementById('addWatchState').value;
                 const status = document.getElementById('addStatus').value;
-                const progress = parseInt(document.getElementById('addProgress').value) || 0;
                 const rating = parseInt(document.getElementById('addRating').value) || 5;
                 if (!title) { alert('Enter title, Sweetie!'); return; }
                 
-                let itemObj = { id: newItemId, title, type, creator, actor, genre, overview, releaseDate, dateAdded: today, completionDate: seenDate, access, status, progress, favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
+                let itemObj = { id: newItemId, title, type, creator, actor, genre, overview, releaseDate, dateAdded: today, completionDate: seenDate, access, watchState, status, progress: (watchState==='completed'?100:0), favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
                 mediaDatabase.push(itemObj);
                 fetchMediaArtwork(itemObj);
             } else {
@@ -657,12 +756,14 @@
                 const author = document.getElementById('addBookAuthor').value.trim() || "Unknown Author";
                 const genre = document.getElementById('addBookGenre').value.trim() || "Audiobook";
                 const overview = document.getElementById('addBookOverview').value.trim();
+                const access = document.getElementById('addBookAccess').value;
+                const watchState = document.getElementById('addBookWatchState').value;
                 const readDate = document.getElementById('addBookReadDate').value;
                 const status = document.getElementById('addBookStatus').value;
                 const progress = parseInt(document.getElementById('addBookProgress').value) || 0;
                 if (!title) { alert('Enter title, Sweetie!'); return; }
                 
-                let itemObj = { id: newItemId, title, type: "Audiobook", creator: author, actor: "N/A", genre, overview, releaseDate: today, dateAdded: today, completionDate: readDate, access: "Owned", status: status, progress, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
+                let itemObj = { id: newItemId, title, type: "Audiobook", creator: author, actor: "N/A", genre, overview, releaseDate: today, dateAdded: today, completionDate: readDate, access, watchState, status, progress: (watchState==='completed'?100:progress), favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
                 mediaDatabase.push(itemObj);
                 fetchMediaArtwork(itemObj);
             }
@@ -688,7 +789,7 @@
                         if (columns.length > Math.max(titleIdx, authorIdx)) {
                             const title = columns[titleIdx]; const author = columns[authorIdx];
                             if (title) {
-                                let bookObj = { id: Date.now() + Math.random(), title, type: "Audiobook", creator: author || "Unknown Author", actor: "N/A", genre: "Goodreads Log", overview: "Ingested via Goodreads backup CSV profile.", releaseDate: today, dateAdded: today, completionDate: today, access: "Owned", status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
+                                let bookObj = { id: Date.now() + Math.random(), title, type: "Audiobook", creator: author || "Unknown Author", actor: "N/A", genre: "Goodreads Log", overview: "Ingested via Goodreads backup CSV profile.", releaseDate: today, dateAdded: today, completionDate: today, access: "Owned", watchState: "completed", status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
                                 mediaDatabase.push(bookObj);
                                 fetchMediaArtwork(bookObj);
                                 count++;
@@ -717,7 +818,7 @@
                         if (entry.movie) { title = entry.movie.title; type = "Movie"; creator = entry.movie.year ? `Year ${entry.movie.year}` : "Cinema"; }
                         else if (entry.show) { title = entry.show.title; type = "TV"; creator = "TV Series"; }
                         if (title) {
-                            let videoObj = { id: Date.now() + Math.random(), title, type, creator, actor: "N/A", genre: "Imported", overview: "Trakt Sync Log Entry.", releaseDate: today, dateAdded: today, completionDate: today, access: "Streaming", status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
+                            let videoObj = { id: Date.now() + Math.random(), title, type, creator, actor: "N/A", genre: "Imported", overview: "Trakt Sync Log Entry.", releaseDate: today, dateAdded: today, completionDate: today, access: "Streaming", watchState: "completed", status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
                             mediaDatabase.push(videoObj);
                             fetchMediaArtwork(videoObj);
                             count++;
