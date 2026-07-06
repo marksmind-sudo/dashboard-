@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Entertainment Dashboard</title>
     <style>
-        /* --- THEME DESIGN SYSTEM --- */
+        /* --- THEME DESIGN SYSTEM & BACKGROUND GRIDS --- */
         [data-theme="cyberpunk"] {
             --bg-color: #03030d; --panel-bg: rgba(12, 15, 38, 0.95); --text-color: #00ffcc; 
             --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(20, 24, 59, 0.85);
@@ -24,7 +24,8 @@
         [data-theme="steampunk"] {
             --bg-color: #2b1d12; --panel-bg: rgba(61, 42, 29, 0.95); --text-color: #f4eae1; 
             --accent-color: #df9b16; --border-color: #614633; --card-bg: #3d2a1d;
-            --bg-pattern: radial-gradient(circle at 50% 50%, #523824 0%, #2b1d12 100%); --text-shadow: none;
+            --bg-pattern: radial-gradient(circle at 50% 50%, #523824 0%, #2b1d12 100%), linear-gradient(rgba(0,0,0,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.15) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px, 20px 20px; --text-shadow: none;
         }
 
         /* --- STRUCTURAL LAYOUT --- */
@@ -105,18 +106,24 @@
         .heart-icon { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 1rem; }
         .media-meta { font-size: 0.75rem; color: var(--text-muted); line-height: 1.3; margin-top: 2px; }
         
+        .desc-text { font-size: 0.75rem; color: var(--text-color); opacity: 0.85; margin: 4px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        /* EPISODE CHECKBOX LIST SUB-CHASSIS */
+        .episode-box-deck { background: rgba(0,0,0,0.2); padding: 6px; border-radius: 4px; margin-top: 6px; max-height: 110px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; border: 1px solid rgba(255,255,255,0.05); }
+        .ep-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--text-color); }
+        .ep-row input { cursor: pointer; }
+
         .progress-container { background: rgba(255,255,255,0.1); border-radius: 4px; height: 5px; margin: 4px 0; overflow: hidden; }
         .progress-bar { background: var(--accent-color); height: 100%; width: 0%; }
         .percentage-text { font-size: 0.75rem; font-weight: bold; color: var(--accent-color); text-align: right; }
         .badge-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; margin-top: 2px; }
         .source-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 1px 5px; border-radius: 4px; color: var(--text-muted); }
-        .source-badge.streaming-badge { background: rgba(255, 0, 127, 0.15); color: var(--accent-color); }
         .star-rating { color: var(--accent-color); }
 
         /* Form Controls */
         .form-group { display: flex; flex-direction: column; margin-bottom: 12px; width: 100%; }
         .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
-        .form-group input, .form-group select { padding: 8px 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem; outline: none; width: 100%; }
+        .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem; outline: none; width: 100%; font-family: sans-serif; }
         
         .maxi-label-picker {
             display: block; width: 100%; padding: 25px 15px; background: rgba(255,255,255,0.02);
@@ -132,7 +139,7 @@
         
         /* --- DYNAMIC SIMULATED HOME WIDGET DECK --- */
         .widget-preview-deck {
-            margin-top: 30px; padding: 15px; background: rgba(255, 255, 255, 0.02);
+            margin-top: 15px; padding: 15px; background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
         }
         .widget-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 10px; }
@@ -213,6 +220,7 @@
                     <div class="form-group"><label>Director / Showrunner</label><input type="text" id="addCreator" placeholder="Director Name"></div>
                     <div class="form-group"><label>Main Actor / Star</label><input type="text" id="addActor" placeholder="Lead Actor Name"></div>
                     <div class="form-group"><label>Genre Tags</label><input type="text" id="addGenre" placeholder="e.g., Sci-Fi, Cyberpunk"></div>
+                    <div class="form-group"><label>Description / Overview</label><textarea id="addOverview" rows="2" placeholder="Enter storyline description..."></textarea></div>
                     <div class="form-group"><label>Release Date</label><input type="date" id="addReleaseDate"></div>
                     <div class="form-group"><label>Date Seen / Completed</label><input type="date" id="addSeenDate"></div>
                     <div class="form-group">
@@ -231,7 +239,7 @@
                             <option value="find">Discovery List</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>Progress Metric % (Or Episode Tracker)</label><input type="number" id="addProgress" min="0" max="100" value="0"></div>
+                    <div class="form-group"><label>Progress Metric % (Ignored if TV Show)</label><input type="number" id="addProgress" min="0" max="100" value="0"></div>
                     <div class="form-group">
                         <label>Star Rating</label>
                         <select id="addRating">
@@ -308,6 +316,7 @@
                     <div class="form-group"><label>Book Title</label><input type="text" id="addBookTitle" placeholder="e.g., Neuromancer"></div>
                     <div class="form-group"><label>Author</label><input type="text" id="addBookAuthor" placeholder="William Gibson"></div>
                     <div class="form-group"><label>Genre Tags</label><input type="text" id="addBookGenre" placeholder="e.g., Cyberpunk, Sci-Fi"></div>
+                    <div class="form-group"><label>Book Summary / Description</label><textarea id="addBookOverview" rows="2" placeholder="Enter book overview details..."></textarea></div>
                     <div class="form-group"><label>Date Read / Finished</label><input type="date" id="addBookReadDate"></div>
                     <div class="form-group">
                         <label>Target Container</label>
@@ -371,14 +380,34 @@
                 </div>
                 <button class="btn" style="background:#01b4e4;" onclick="localStorage.setItem('tmdb_key', document.getElementById('tmdbApiKeyInput').value); alert('TMDb API configuration saved, Sweetie!')">Initialize TMDb Pipeline</button>
             </div>
-        </div>
 
-        <!-- --- DYNAMIC TABLET WIDGET MODULE --- -->
-        <div class="widget-preview-deck">
-            <div class="widget-title">📌 Live Home Screen Widgets (Currently Tracking)</div>
-            <div class="widget-grid" id="simulatedWidgetGrid"></div>
-        </div>
+            <!-- RESTORED CLOUD SYNCHRONIZATION DECKS -->
+            <div class="panel">
+                <h2>Cloud Synchronization Settings</h2>
+                <div class="form-group">
+                    <label for="clientIdInput">Google OAuth Client ID</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="clientIdInput" placeholder="Enter Client ID">
+                        <button type="button" class="toggle-btn" onclick="toggleVisibility('clientIdInput')">SHOW</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="apiKeyInput">Google API Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="apiKeyInput" placeholder="Enter API Key">
+                        <button type="button" class="toggle-btn" onclick="toggleVisibility('apiKeyInput')">SHOW</button>
+                    </div>
+                </div>
+                <button class="btn" onclick="saveKeysAndConnect()">Connect Account</button>
+                <div id="driveStatusLog" style="margin-top:10px; font-size:0.8rem; color:var(--text-muted);">Cloud status: Offline</div>
+            </div>
 
+            <!-- RELOCATED TABLET WIDGET MODULE -->
+            <div class="widget-preview-deck">
+                <div class="widget-title">📌 Live Home Screen Widgets (Currently Tracking)</div>
+                <div class="widget-grid" id="simulatedWidgetGrid"></div>
+            </div>
+        </div>
     </div>
 
     <!-- NAVIGATION TABS -->
@@ -389,16 +418,20 @@
     </nav>
 
     <script>
+        // Pre-hydrated with overview descriptions and structural episode lists to showcase backend processing
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [
-            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", actor: "Richard Dean Anderson", genre: "Sci-Fi", releaseDate: "1997-07-27", dateAdded: "2026-01-01", completionDate: "2026-03-15", access: "Streaming", status: "watching", progress: 84, favorite: true, rating: 5, pinned: false, manualOrder: 0, poster: "" },
-            { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", actor: "N/A", genre: "Cyberpunk", releaseDate: "1984-07-01", dateAdded: "2026-02-15", completionDate: "", access: "Owned", status: "watching", progress: 45, favorite: false, rating: 4, pinned: false, manualOrder: 1, poster: "" },
-            { id: 3, title: "Blade Runner 2049", type: "Movie", creator: "Denis Villeneuve", actor: "Ryan Gosling", genre: "Sci-Fi", releaseDate: "2017-10-06", dateAdded: "2026-03-10", completionDate: "2026-03-11", access: "Owned", status: "history", progress: 100, favorite: true, rating: 5, pinned: false, manualOrder: 2, poster: "" }
+            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", actor: "Richard Dean Anderson", genre: "Sci-Fi", overview: "A secret military team explores the galaxy using an ancient network of alien portals.", releaseDate: "1997-07-27", dateAdded: "2026-01-01", completionDate: "", access: "Streaming", status: "watching", progress: 66, favorite: true, rating: 5, pinned: false, manualOrder: 0, poster: "", 
+              episodes: [{id:101, title:"Children of the Gods", watched:true}, {id:102, title:"The Enemy Within", watched:true}, {id:103, title:"Emancipation", watched:false}] },
+            { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", actor: "N/A", genre: "Cyberpunk", overview: "Case, a washed-up computer hacker, is hired by a mysterious benefactor for one final ultimate run.", releaseDate: "1984-07-01", dateAdded: "2026-02-15", completionDate: "", access: "Owned", status: "watching", progress: 45, favorite: false, rating: 4, pinned: false, manualOrder: 1, poster: "" },
+            { id: 3, title: "Blade Runner 2049", type: "Movie", creator: "Denis Villeneuve", actor: "Ryan Gosling", genre: "Sci-Fi", overview: "A new blade runner, LAPD Officer K, unearths a long-buried secret that could plunge society into chaos.", releaseDate: "2017-10-06", dateAdded: "2026-03-10", completionDate: "2026-03-11", access: "Owned", status: "history", progress: 100, favorite: true, rating: 5, pinned: false, manualOrder: 2, poster: "" }
         ];
 
         let currentCinemaCategory = 'all';
         let currentBookCategory = 'all';
 
         document.addEventListener("DOMContentLoaded", () => {
+            if (localStorage.getItem('gdrive_client_id')) document.getElementById('clientIdInput').value = localStorage.getItem('gdrive_client_id');
+            if (localStorage.getItem('gdrive_api_key')) document.getElementById('apiKeyInput').value = localStorage.getItem('gdrive_api_key');
             if (localStorage.getItem('tmdb_key')) document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdb_key');
             
             const savedTheme = localStorage.getItem('dashboard_theme') || 'cyberpunk';
@@ -406,6 +439,7 @@
             changeTheme(savedTheme);
 
             refreshAllViews();
+            handleAuthCallback();
         });
 
         function refreshAllViews() {
@@ -523,6 +557,20 @@
                     completionBadge = `<div class="media-meta" style="color:var(--accent-color); font-weight:bold;">🏁 ${item.type === 'Audiobook' ? 'Read' : 'Seen'}: ${item.completionDate}</div>`;
                 }
 
+                // Inject checkable episode rows if item is a TV Show
+                let episodeChassisHtml = '';
+                if (item.type === 'TV' && item.episodes) {
+                    episodeChassisHtml = `<div class="episode-box-deck">`;
+                    item.episodes.forEach(ep => {
+                        episodeChassisHtml += `
+                            <div class="ep-row">
+                                <span style="max-width:80%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${ep.title}</span>
+                                <input type="checkbox" ${ep.watched ? 'checked' : ''} onclick="toggleEpisodeWatch(${item.id}, ${ep.id})">
+                            </div>`;
+                    });
+                    episodeChassisHtml += `</div>`;
+                }
+
                 card.innerHTML = `
                     <div class="poster-frame" id="poster-${item.id}">
                         ${posterContent}
@@ -533,7 +581,9 @@
                                 <div class="media-title">${item.title}</div>
                             </div>
                             <div class="media-meta">${item.type === 'Audiobook' ? 'By ' + item.creator : item.genre}</div>
+                            <div class="desc-text">${item.overview || 'No structural log overview injected yet.'}</div>
                             ${completionBadge}
+                            ${episodeChassisHtml}
                         </div>
                         <div>
                             <div class="progress-container">
@@ -560,14 +610,14 @@
             });
         }
 
-        /* ================= LIVE PREVIEW WIDGETS ENGINE ================= */
+        /* ================= DYNAMIC WIDGET PREVIEW CONTROLLER ================= */
         function renderSimulatedWidgets() {
             const widgetGrid = document.getElementById('simulatedWidgetGrid');
+            if (!widgetGrid) return;
             widgetGrid.innerHTML = '';
 
             const trackingMedia = mediaDatabase.filter(item => item.status === 'watching');
             
-            // Movie/TV Widget
             const videoItems = trackingMedia.filter(i => i.type !== 'Audiobook').slice(0, 2);
             let videoWidgetHtml = `<div class="sim-widget"><div class="widget-title">📺 Cinema Widget</div>`;
             if(videoItems.length === 0) videoWidgetHtml += `<div class="widget-info">No shows tracking</div>`;
@@ -575,12 +625,11 @@
                 videoWidgetHtml += `
                     <div class="widget-item">
                         ${item.poster ? `<img class="widget-thumb" src="${item.poster}">` : `<div class="widget-thumb" style="display:flex;align-items:center;justify-content:center;">🎬</div>`}
-                        <div class="widget-info"><b>${item.title}</b><br><span style="color:#ff007f">${item.progress}% watched</span></div>
+                        <div class="widget-info"><b>${item.title}</b><br><span style="color:#ff007f">${item.progress}% done</span></div>
                     </div>`;
             });
             videoWidgetHtml += `</div>`;
 
-            // Books Widget
             const bookItems = trackingMedia.filter(i => i.type === 'Audiobook').slice(0, 2);
             let bookWidgetHtml = `<div class="sim-widget"><div class="widget-title">📚 Audiobook Widget</div>`;
             if(bookItems.length === 0) bookWidgetHtml += `<div class="widget-info">No books tracking</div>`;
@@ -596,6 +645,23 @@
             widgetGrid.innerHTML = videoWidgetHtml + bookWidgetHtml;
         }
 
+        function toggleEpisodeWatch(seriesId, epId) {
+            const idx = mediaDatabase.findIndex(m => m.id === seriesId);
+            if (idx !== -1 && mediaDatabase[idx].episodes) {
+                const epIdx = mediaDatabase[idx].episodes.findIndex(e => e.id === epId);
+                if (epIdx !== -1) {
+                    mediaDatabase[idx].episodes[epIdx].watched = !mediaDatabase[idx].episodes[epIdx].watched;
+                    
+                    // Recalculate percentage of completion
+                    const total = mediaDatabase[idx].episodes.length;
+                    const watchedCount = mediaDatabase[idx].episodes.filter(e => e.watched).length;
+                    mediaDatabase[idx].progress = Math.round((watchedCount / total) * 100);
+                    
+                    saveAndRefreshBoth('cinema');
+                }
+            }
+        }
+
         function fetchMediaArtwork(item) {
             const tmdbKey = localStorage.getItem('tmdb_key');
             
@@ -606,9 +672,25 @@
                 fetch(url)
                     .then(res => res.json())
                     .then(data => {
-                        if (data.results && data.results.length > 0 && data.results[0].poster_path) {
-                            const imgUrl = `https://image.tmdb.org/t/p/w342${data.results[0].poster_path}`;
-                            updateItemPosterMemory(item.id, imgUrl);
+                        if (data.results && data.results.length > 0) {
+                            const resObj = data.results[0];
+                            const imgUrl = resObj.poster_path ? `https://image.tmdb.org/t/p/w342${resObj.poster_path}` : "";
+                            
+                            const index = mediaDatabase.findIndex(i => i.id === item.id);
+                            if (index !== -1) {
+                                mediaDatabase[index].poster = imgUrl;
+                                if (resObj.overview) mediaDatabase[index].overview = resObj.overview;
+                                
+                                // Dynamic episode stub generation for mock pipeline backend testing
+                                if (item.type === 'TV' && !mediaDatabase[index].episodes) {
+                                    mediaDatabase[index].episodes = [
+                                        {id: Date.now()+1, title: "Pilot Episode Overview", watched: false},
+                                        {id: Date.now()+2, title: "Secondary Chapter Run", watched: false},
+                                        {id: Date.now()+3, title: "Midseason Finale Deck", watched: false}
+                                    ];
+                                }
+                                saveAndRefreshBoth('cinema');
+                            }
                         }
                     }).catch(() => {});
             } else if (item.type === 'Audiobook') {
@@ -616,22 +698,16 @@
                 fetch(url)
                     .then(res => res.json())
                     .then(data => {
-                        if (data.docs && data.docs.length > 0 && data.docs[0].cover_i) {
-                            const imgUrl = `https://covers.openlibrary.org/b/id/${data.docs[0].cover_i}-L.jpg`;
-                            updateItemPosterMemory(item.id, imgUrl);
+                        if (data.docs && data.docs.length > 0) {
+                            const doc = data.docs[0];
+                            const imgUrl = doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : "";
+                            const index = mediaDatabase.findIndex(i => i.id === item.id);
+                            if (index !== -1) {
+                                mediaDatabase[index].poster = imgUrl;
+                                saveAndRefreshBoth('book');
+                            }
                         }
                     }).catch(() => {});
-            }
-        }
-
-        function updateItemPosterMemory(id, imgUrl) {
-            const index = mediaDatabase.findIndex(i => i.id === id);
-            if (index !== -1) {
-                mediaDatabase[index].poster = imgUrl;
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                const frame = document.getElementById(`poster-${id}`);
-                if (frame) frame.innerHTML = `<img src="${imgUrl}" class="poster-img" alt="Poster">`;
-                renderSimulatedWidgets();
             }
         }
 
@@ -644,6 +720,7 @@
                 const creator = document.getElementById('addCreator').value.trim();
                 const actor = document.getElementById('addActor').value.trim() || "N/A";
                 const genre = document.getElementById('addGenre').value.trim() || "General";
+                const overview = document.getElementById('addOverview').value.trim();
                 const releaseDate = document.getElementById('addReleaseDate').value || today;
                 const seenDate = document.getElementById('addSeenDate').value;
                 const access = document.getElementById('addAccess').value;
@@ -654,13 +731,14 @@
                 if (!title) { alert('Enter a cinema title, Sweetie!'); return; }
 
                 mediaDatabase.push({ 
-                    id: Date.now(), title, type, creator, actor, genre, releaseDate, dateAdded: today, 
+                    id: Date.now(), title, type, creator, actor, genre, overview, releaseDate, dateAdded: today, 
                     completionDate: seenDate, access, status, progress, favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length, poster: "" 
                 });
             } else {
                 const title = document.getElementById('addBookTitle').value.trim();
                 const author = document.getElementById('addBookAuthor').value.trim() || "Unknown Author";
                 const genre = document.getElementById('addBookGenre').value.trim() || "Audiobook";
+                const overview = document.getElementById('addBookOverview').value.trim();
                 const readDate = document.getElementById('addBookReadDate').value;
                 const status = document.getElementById('addBookStatus').value;
                 const progress = parseInt(document.getElementById('addBookProgress').value) || 0;
@@ -668,7 +746,7 @@
                 if (!title) { alert('Enter a book title, Sweetie!'); return; }
 
                 mediaDatabase.push({ 
-                    id: Date.now(), title, type: "Audiobook", creator: author, actor: "N/A", genre, releaseDate: today, dateAdded: today, 
+                    id: Date.now(), title, type: "Audiobook", creator: author, actor: "N/A", genre, overview, releaseDate: today, dateAdded: today, 
                     completionDate: readDate, access: "Owned", status: status, progress, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" 
                 });
             }
@@ -680,7 +758,7 @@
 
         function processCSV() {
             const fileInput = document.getElementById('csvFileInput');
-            if (!fileInput.files.length) { alert('Select your Goodreads CSV backup file first, Sweetie!'); return; }
+            if (!fileInput.files.length) { alert('Select your file first, Sweetie!'); return; }
             
             const file = fileInput.files[0];
             const reader = new FileReader();
@@ -692,9 +770,8 @@
                     const headerRow = lines[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(h => h.replace(/"/g, '').trim().toLowerCase());
                     let titleIdx = headerRow.findIndex(h => h.includes('title'));
                     let authorIdx = headerRow.findIndex(h => h.includes('author'));
-                    let ratingIdx = headerRow.findIndex(h => h.includes('rating'));
 
-                    if (titleIdx === -1 || authorIdx === -1) { alert('Invalid file alignment.'); return; }
+                    if (titleIdx === -1 || authorIdx === -1) { alert('Invalid layout logic.'); return; }
 
                     let count = 0;
                     const today = new Date().toISOString().split('T')[0];
@@ -704,14 +781,12 @@
                         if (columns.length > Math.max(titleIdx, authorIdx)) {
                             const title = columns[titleIdx];
                             const author = columns[authorIdx];
-                            let rating = ratingIdx !== -1 ? parseInt(columns[ratingIdx]) : 5;
-                            if (!rating || rating < 1 || rating > 5) rating = 5;
 
                             if (title) {
                                 mediaDatabase.push({
                                     id: Date.now() + Math.random(), title: title, type: "Audiobook", creator: author || "Unknown Author",
-                                    actor: "N/A", genre: "Goodreads Log", releaseDate: today, dateAdded: today, completionDate: today, access: "Owned",
-                                    status: "history", progress: 100, favorite: false, rating: rating, pinned: false, manualOrder: mediaDatabase.length, poster: ""
+                                    actor: "N/A", genre: "Goodreads Log", overview: "Ingested via Goodreads backup CSV profile.", releaseDate: today, dateAdded: today, completionDate: today, access: "Owned",
+                                    status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: ""
                                 });
                                 count++;
                             }
@@ -721,15 +796,15 @@
                     localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                     closeAllDrawers();
                     refreshAllViews();
-                    alert(`Successfully imported ${count} audiobooks into your tab, Sweetie!`);
-                } catch (err) { alert('Error compiling string matrix.'); }
+                    alert(`Imported ${count} books, Sweetie!`);
+                } catch (err) { alert('Error compilation text string.'); }
             };
             reader.readAsText(file);
         }
 
         function processTraktJSON() {
             const fileInput = document.getElementById('traktJsonInput');
-            if (!fileInput.files.length) { alert('Select a Trakt JSON file first, Sweetie!'); return; }
+            if (!fileInput.files.length) { alert('Select file, Sweetie!'); return; }
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -742,11 +817,10 @@
                         let title = ""; let type = "Movie"; let creator = "Unknown";
                         if (entry.movie) { title = entry.movie.title; type = "Movie"; creator = entry.movie.year ? `Year ${entry.movie.year}` : "Cinema"; }
                         else if (entry.show) { title = entry.show.title; type = "TV"; creator = "TV Series"; }
-                        else if (entry.title) { title = entry.title; type = entry.type === "show" ? "TV" : "Movie"; }
 
                         if (title) {
                             mediaDatabase.push({
-                                id: Date.now() + Math.random(), title, type, creator, actor: "N/A", genre: "Imported",
+                                id: Date.now() + Math.random(), title, type, creator, actor: "N/A", genre: "Imported", overview: "Trakt Sync Log Entry.",
                                 releaseDate: today, dateAdded: today, completionDate: today, access: "Streaming",
                                 status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: ""
                             });
@@ -756,8 +830,8 @@
                     localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                     closeAllDrawers();
                     refreshAllViews();
-                    alert(`Successfully ingested ${count} records from Trakt, Sweetie!`);
-                } catch(err) { alert('Error compiling file matrix.'); }
+                    alert(`Ingested ${count} records from Trakt, Sweetie!`);
+                } catch(err) { alert('Error file matrix.'); }
             };
             reader.readAsText(fileInput.files[0]);
         }
@@ -767,6 +841,26 @@
             if(index !== -1) { 
                 mediaDatabase[index].favorite = !mediaDatabase[index].favorite; 
                 saveAndRefreshBoth(context); 
+            }
+        }
+
+        /* --- CLOUD ACCESS TOKEN HANDLING VECTORS --- */
+        function saveKeysAndConnect() {
+            const client = document.getElementById('clientIdInput').value.trim();
+            const key = document.getElementById('apiKeyInput').value.trim();
+            localStorage.setItem('gdrive_client_id', client);
+            localStorage.setItem('gdrive_api_key', key);
+            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(client)}&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=${encodeURIComponent("https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file")}&prompt=consent`;
+        }
+
+        function handleAuthCallback() {
+            const hash = window.location.hash;
+            if (hash) {
+                const params = new URLSearchParams(hash.substring(1));
+                if (params.get('access_token')) {
+                    document.getElementById('driveStatusLog').innerText = "✅ Cloud Authorization Successful! Connected.";
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
             }
         }
 
