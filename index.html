@@ -7,9 +7,11 @@
     <style>
         /* --- THEME DESIGN SYSTEM & STRUCTURAL GRID OVERLAYS --- */
         :root { --bg-image: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
             background: var(--bg-image) no-repeat center center fixed, var(--bg-pattern);
-            background-size: cover, 100% 6px, 6px 100%;
+            background-size: cover, 100% 100%;
             background-color: var(--bg-color); color: var(--text-color); 
             font-family: sans-serif; padding-bottom: 120px; min-height: 100vh; transition: all 0.3s ease; overflow-x: hidden;
         }
@@ -18,21 +20,21 @@
             --bg-color: #03030d; --panel-bg: rgba(12, 15, 38, 0.93); --text-color: #00ffcc; 
             --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(20, 24, 59, 0.85);
             --text-shadow: 0 0 5px rgba(0,255,204,0.5);
-            --bg-pattern: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+            --bg-pattern: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(0, 255, 204, 0.03), rgba(0, 0, 0, 0), rgba(255, 0, 127, 0.03));
             background-size: 100% 6px, 6px 100%;
         }
         [data-theme="steampunk"] {
             --bg-color: #2b1d12; --panel-bg: rgba(61, 42, 29, 0.93); --text-color: #f4eae1; 
             --accent-color: #df9b16; --border-color: #614633; --card-bg: #3d2a1d;
-            --bg-pattern: linear-gradient(rgba(0,0,0,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.15) 1px, transparent 1px);
-            background-size: 20px 20px, 20px 20px; --text-shadow: none;
+            --bg-pattern: linear-gradient(rgba(97, 70, 51, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(97, 70, 51, 0.1) 1px, transparent 1px);
+            background-size: 24px 24px, 24px 24px; --text-shadow: none;
         }
         [data-theme="star-trek"] {
-            --bg-color: #000000; --panel-bg: rgba(15, 23, 42, 0.9); --text-color: #ff9900; 
-            --accent-color: #cc6699; --border-color: #ff9900; --card-bg: rgba(30, 41, 59, 0.85);
+            --bg-color: #000000; --panel-bg: rgba(11, 19, 43, 0.9); --text-color: #ff9900; 
+            --accent-color: #cc6699; --border-color: #ff9900; --card-bg: rgba(28, 37, 65, 0.85);
             --text-shadow: 0 0 4px rgba(255,153,0,0.4);
-            --bg-pattern: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08) 1px, transparent 1px), radial-gradient(circle at 75% 60%, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 40px 40px, 60px 60px; border-radius: 0px;
+            --bg-pattern: radial-gradient(circle at 15% 20%, #ffffff 1px, transparent 1px), radial-gradient(circle at 65% 70%, #ffffff 1px, transparent 1px), radial-gradient(circle at 40% 85%, rgba(255,255,255,0.4) 1px, transparent 1px);
+            background-size: 50px 50px, 80px 80px, 120px 120px;
         }
         [data-theme="tvtime-dark"] {
             --bg-color: #141414; --panel-bg: rgba(31, 31, 31, 0.95); --text-color: #ffffff; 
@@ -44,37 +46,21 @@
         }
 
         /* --- STRUCTURAL LAYOUT --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        header {
-            background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color);
-            padding: 12px 15px; display: flex; justify-content: space-between; align-items: center;
-        }
+        header { background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
         h1 { font-size: 1.2rem; color: var(--accent-color); text-shadow: var(--text-shadow); }
-        
-        .theme-dropdown {
-            background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
-            padding: 5px 10px; border-radius: 4px; font-size: 0.85rem; outline: none;
-        }
+        .theme-dropdown { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 4px; font-size: 0.85rem; outline: none; }
         .container { max-width: 950px; margin: 15px auto; padding: 0 12px; }
         .panel { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(4px); }
         h2 { color: var(--accent-color); margin-bottom: 12px; font-size: 1.1rem; text-shadow: var(--text-shadow); border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
         
         .filter-row { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 8px; margin-bottom: 15px; }
-        .filter-row select {
-            background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
-            padding: 6px 10px; border-radius: 4px; font-size: 0.85rem; outline: none;
-        }
+        .filter-row select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 4px; font-size: 0.85rem; outline: none; }
         .reset-btn { background: none; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 6px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
         .action-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .toggle-menu-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
 
-        /* SLIDE-OUT DECK DRAWERS */
-        .side-drawer {
-            position: fixed; top: 0; right: -340px; width: 340px; height: 100vh;
-            background-color: var(--panel-bg); border-left: 2px solid var(--border-color);
-            box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2000; padding: 20px;
-            transition: right 0.3s ease-in-out; display: flex; flex-direction: column; gap: 12px;
-        }
+        /* SLIDE-OUT DRAWERS */
+        .side-drawer { position: fixed; top: 0; right: -340px; width: 340px; height: 100vh; background-color: var(--panel-bg); border-left: 2px solid var(--border-color); box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2000; padding: 20px; transition: right 0.3s ease-in-out; display: flex; flex-direction: column; gap: 12px; }
         .side-drawer.open { right: 0; }
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1999; display: none; backdrop-filter: blur(2px); }
         .drawer-overlay.active { display: block; }
@@ -111,16 +97,16 @@
         .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 15px; }
         .modal-canvas.active { display: flex; }
         .modal-box { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 550px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
-        .modal-hero { width: 100%; height: 200px; position: relative; background: #111; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid var(--border-color); }
-        .modal-hero-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; filter: blur(2px); position: absolute; }
-        .modal-hero-title { position: relative; z-index: 2; font-size: 1.4rem; font-weight: bold; color: var(--text-color); text-align: center; padding: 0 15px; text-shadow: 0 2px 4px #000; }
+        .modal-hero { width: 100%; height: 220px; position: relative; background: #111; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid var(--border-color); }
+        .modal-hero-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.35; position: absolute; top:0; left:0; }
+        .modal-hero-title { position: relative; z-index: 2; font-size: 1.3rem; font-weight: bold; color: var(--text-color); text-align: center; padding: 0 15px; text-shadow: 0 2px 4px #000; }
         .modal-body { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px; }
-        .modal-desc { font-size: 0.85rem; line-height: 1.5; color: var(--text-color); opacity: 0.9; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .modal-desc { font-size: 0.85rem; line-height: 1.5; color: var(--text-color); opacity: 0.9; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; max-height: 150px; overflow-y: auto; }
         .modal-meta-line { font-size: 0.8rem; color: var(--text-muted); }
         
-        .modal-episodes-deck { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; }
-        .modal-ep-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px; }
-        .modal-ep-row input { width: 16px; height: 16px; cursor: pointer; }
+        .modal-episodes-deck { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+        .modal-ep-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px; color: var(--text-color); }
+        .modal-ep-row input { width: 16px; height: 16px; cursor: pointer; margin-left: 8px; }
 
         /* Form Layouts */
         .form-group { display: flex; flex-direction: column; margin-bottom: 12px; width: 100%; }
@@ -163,7 +149,7 @@
 
     <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
 
-    <!-- HOLOGRAPHIC DETAIL PROFILE MODAL CONTAINER -->
+    <!-- HOLOGRAPHIC DETAIL PROFILE MODAL -->
     <div id="mediaDetailModal" class="modal-canvas" onclick="if(event.target === this) closeProfileModal()">
         <div class="modal-box">
             <div class="modal-hero">
@@ -171,12 +157,12 @@
                 <div id="modalTitle" class="modal-hero-title">Media Title</div>
             </div>
             <div class="modal-body">
-                <div id="modalDescription" class="modal-desc">Plot summary context details go here...</div>
+                <div id="modalDescription" class="modal-desc">Loading metadata deck streams...</div>
                 <div id="modalCreatorLine" class="modal-meta-line"><b>Director/Author:</b> -</div>
                 <div id="modalActorLine" class="modal-meta-line"><b>Lead Cast:</b> -</div>
                 <div id="modalReleaseLine" class="modal-meta-line"><b>Release Date:</b> -</div>
                 <div id="modalAccessLine" class="modal-meta-line"><b>Source Format:</b> -</div>
-                <div id="modalEpisodesHeader" style="font-size:0.8rem; font-weight:bold; margin-top:4px; display:none;">📺 Episode Ingestion Checklist:</div>
+                <div id="modalEpisodesHeader" style="font-size:0.8rem; font-weight:bold; margin-top:4px; display:none;">📺 System Episode Logs:</div>
                 <div id="modalEpisodesContainer" class="modal-episodes-deck" style="display:none;"></div>
                 <button class="btn" style="margin-top:10px;" onclick="closeProfileModal()">Close Profile Node</button>
             </div>
@@ -184,7 +170,6 @@
     </div>
 
     <div class="container">
-        
         <!-- ================= MEDIA TAB (MOVIES & TV ONLY) ================= -->
         <div id="mediaTab" class="tab-content active">
             <div class="action-header-row">
@@ -208,7 +193,7 @@
                     <div class="form-group"><label>Director / Showrunner</label><input type="text" id="addCreator" placeholder="Director Name"></div>
                     <div class="form-group"><label>Main Actor / Star</label><input type="text" id="addActor" placeholder="Lead Actor Name"></div>
                     <div class="form-group"><label>Genre Tags</label><input type="text" id="addGenre" placeholder="e.g., Sci-Fi, Cyberpunk"></div>
-                    <div class="form-group"><label>Description / Overview</label><textarea id="addOverview" rows="2" placeholder="Enter storyline description..."></textarea></div>
+                    <div class="form-group"><label>Description / Overview</label><textarea id="addOverview" rows="2" placeholder="Manual entry (overridden by TMDb connection if key exists)"></textarea></div>
                     <div class="form-group"><label>Release Date</label><input type="date" id="addReleaseDate"></div>
                     <div class="form-group"><label>Date Seen / Completed</label><input type="date" id="addSeenDate"></div>
                     <div class="form-group"><label>Access Profile</label><select id="addAccess"><option value="Streaming">Streaming Platform</option><option value="Owned">I Own It</option></select></div>
@@ -415,23 +400,23 @@
 
             document.getElementById('modalTitle').innerText = item.title;
             document.getElementById('modalHeroImg').src = item.poster || "";
-            document.getElementById('modalDescription').innerText = item.overview || "No structural log description profile recorded.";
+            document.getElementById('modalDescription').innerText = item.overview || "No extended text description loaded for this asset.";
             document.getElementById('modalCreatorLine').innerHTML = `<b>${item.type === 'Audiobook' ? 'Author' : 'Director'}:</b> ${item.creator || 'Unknown'}`;
             document.getElementById('modalActorLine').innerHTML = `<b>Lead Cast:</b> ${item.actor || 'N/A'}`;
             document.getElementById('modalReleaseLine').innerHTML = `<b>Release Date:</b> ${item.releaseDate || 'Unknown'}`;
-            document.getElementById('modalAccessLine').innerHTML = `<b>Source Format:</b> ${item.access} (${item.type})`;
+            document.getElementById('modalAccessLine').innerHTML = `<b>Source Profile:</b> ${item.access} (${item.type})`;
 
             const epHeader = document.getElementById('modalEpisodesHeader');
             const epContainer = document.getElementById('modalEpisodesContainer');
 
-            if (item.type === 'TV' && item.episodes) {
+            if (item.type === 'TV' && item.episodes && item.episodes.length > 0) {
                 epHeader.style.display = 'block';
                 epContainer.style.display = 'flex';
                 epContainer.innerHTML = '';
                 item.episodes.forEach(ep => {
                     const row = document.createElement('div');
                     row.className = 'modal-ep-row';
-                    row.innerHTML = `<span>${ep.title}</span><input type="checkbox" ${ep.watched ? 'checked' : ''} onclick="toggleEpisodeWatch(${item.id}, ${ep.id}); event.stopPropagation();">`;
+                    row.innerHTML = `<span>${ep.title}</span><input type="checkbox" ${ep.watched ? 'checked' : ''} onchange="toggleEpisodeWatch(${item.id}, ${ep.id})">`;
                     epContainer.appendChild(row);
                 });
             } else {
@@ -456,6 +441,7 @@
             }
         }
 
+        /* --- HARD ARCHITECTURE DATA CARD CARRIER RENDERING LOOP --- */
         function sortAndRenderDeck(data, gridContainer, sortVal, contextTag) {
             data.sort((a, b) => {
                 if (a.pinned !== b.pinned) return b.pinned - a.pinned; 
@@ -480,7 +466,7 @@
 
                 let completionBadge = '';
                 if (item.completionDate) {
-                    completionBadge = `<div class="media-meta" style="color:var(--accent-color); font-weight:bold; font-size:0.7rem;">🏁 Finished: ${item.completionDate}</div>`;
+                    completionBadge = `<div class="media-meta" style="color:var(--accent-color); font-weight:bold; font-size:0.7rem;">🏁 Completed: ${item.completionDate}</div>`;
                 }
 
                 card.innerHTML = `
@@ -557,7 +543,7 @@
             const trackingMedia = mediaDatabase.filter(item => item.status === 'watching');
             const videoItems = trackingMedia.filter(i => i.type !== 'Audiobook').slice(0, 2);
             let videoWidgetHtml = `<div class="sim-widget"><div class="widget-title">📺 Cinema Widget</div>`;
-            videoItems.forEach(item => { videoWidgetHtml += `<div class="widget-item">${item.poster ? `<img class="widget-thumb" src="${item.poster}">` : `<div class="widget-thumb" style="display:flex;align-items:center;justify-content:center;">🎬</div>`}<div class="widget-info"><b>${item.title}</b><br><span style="color:#ff007f">${item.progress}% tracked</span></div></div>`; });
+            videoItems.forEach(item => { videoWidgetHtml += `<div class="widget-item">${item.poster ? `<img class="widget-thumb" src="${item.poster}">` : `<div class="widget-thumb" style="display:flex;align-items:center;justify-content:center;">🎬</div>`}<div class="widget-info"><b>${item.title}</b><br><span style="color:#ff007f">${item.progress}% done</span></div></div>`; });
             videoWidgetHtml += `</div>`;
             const bookItems = trackingMedia.filter(i => i.type === 'Audiobook').slice(0, 2);
             let bookWidgetHtml = `<div class="sim-widget"><div class="widget-title">📚 Audiobook Widget</div>`;
@@ -566,6 +552,7 @@
             widgetGrid.innerHTML = videoWidgetHtml + bookWidgetHtml;
         }
 
+        /* ================= DYNAMIC METADATA INGESTION ENGINE ================= */
         function fetchMediaArtwork(item) {
             const tmdbKey = localStorage.getItem('tmdb_key');
             if ((item.type === 'Movie' || item.type === 'TV') && tmdbKey) {
@@ -578,26 +565,45 @@
                             if (idx !== -1) {
                                 mediaDatabase[idx].poster = resObj.poster_path ? `https://image.tmdb.org/t/p/w342${resObj.poster_path}` : "";
                                 if (resObj.overview) mediaDatabase[idx].overview = resObj.overview;
-                                if (item.type === 'TV' && !mediaDatabase[idx].episodes) {
-                                    mediaDatabase[idx].episodes = [
-                                        {id: Date.now()+1, title: "Episode 1: Ingestion Vector", watched: false},
-                                        {id: Date.now()+2, title: "Episode 2: Core Transmission", watched: false},
-                                        {id: Date.now()+3, title: "Episode 3: Terminal Node", watched: false}
-                                    ];
+                                
+                                // Dynamic episode tracking generation loop via TV Show ID connection
+                                if (item.type === 'TV') {
+                                    fetch(`https://api.themoviedb.org/3/tv/${resObj.id}/season/1?api_key=${tmdbKey}`)
+                                        .then(r => r.json()).then(seasonData => {
+                                            if(seasonData.episodes && seasonData.episodes.length > 0) {
+                                                mediaDatabase[idx].episodes = seasonData.episodes.map(e => ({
+                                                    id: e.id,
+                                                    title: `Ep ${e.episode_number}: ${e.name}`,
+                                                    watched: false
+                                                }));
+                                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                                                refreshAllViews();
+                                            }
+                                        }).catch(() => {
+                                            // Fallback default list if show has missing season indexes
+                                            if(!mediaDatabase[idx].episodes) {
+                                                mediaDatabase[idx].episodes = [{id:1, title:"Episode 1: Pilot Vector", watched:false}];
+                                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                                                refreshAllViews();
+                                            }
+                                        });
+                                } else {
+                                    localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                                    refreshAllViews();
                                 }
-                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                                refreshAllViews();
                             }
                         }
                     }).catch(() => {});
             } else if (item.type === 'Audiobook') {
-                fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(item.title)}&limit=1`)
+                // Completely re-engineered Open Library cover search engine
+                fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(item.title)}&limit=3`)
                     .then(res => res.json()).then(data => {
                         if (data.docs && data.docs.length > 0) {
-                            const doc = data.docs[0];
+                            const match = data.docs.find(d => d.cover_i) || data.docs[0];
                             const idx = mediaDatabase.findIndex(i => i.id === item.id);
-                            if (idx !== -1) {
-                                mediaDatabase[idx].poster = doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : "";
+                            if (idx !== -1 && match.cover_i) {
+                                mediaDatabase[idx].poster = `https://covers.openlibrary.org/b/id/${match.cover_i}-L.jpg`;
+                                if(match.first_publish_year) mediaDatabase[idx].releaseDate = `${match.first_publish_year}-01-01`;
                                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                                 refreshAllViews();
                             }
@@ -608,6 +614,7 @@
 
         function addNewMediaItem(context) {
             const today = new Date().toISOString().split('T')[0];
+            let newItemId = Date.now();
             if (context === 'cinema') {
                 const title = document.getElementById('addTitle').value.trim();
                 const type = document.getElementById('addType').value;
@@ -622,7 +629,10 @@
                 const progress = parseInt(document.getElementById('addProgress').value) || 0;
                 const rating = parseInt(document.getElementById('addRating').value) || 5;
                 if (!title) { alert('Enter title, Sweetie!'); return; }
-                mediaDatabase.push({ id: Date.now(), title, type, creator, actor, genre, overview, releaseDate, dateAdded: today, completionDate: seenDate, access, status, progress, favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length, poster: "" });
+                
+                let itemObj = { id: newItemId, title, type, creator, actor, genre, overview, releaseDate, dateAdded: today, completionDate: seenDate, access, status, progress, favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
+                mediaDatabase.push(itemObj);
+                fetchMediaArtwork(itemObj);
             } else {
                 const title = document.getElementById('addBookTitle').value.trim();
                 const author = document.getElementById('addBookAuthor').value.trim() || "Unknown Author";
@@ -632,7 +642,10 @@
                 const status = document.getElementById('addBookStatus').value;
                 const progress = parseInt(document.getElementById('addBookProgress').value) || 0;
                 if (!title) { alert('Enter title, Sweetie!'); return; }
-                mediaDatabase.push({ id: Date.now(), title, type: "Audiobook", creator: author, actor: "N/A", genre, overview, releaseDate: today, dateAdded: today, completionDate: readDate, access: "Owned", status: status, progress, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" });
+                
+                let itemObj = { id: newItemId, title, type: "Audiobook", creator: author, actor: "N/A", genre, overview, releaseDate: today, dateAdded: today, completionDate: readDate, access: "Owned", status: status, progress, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
+                mediaDatabase.push(itemObj);
+                fetchMediaArtwork(itemObj);
             }
             localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
             closeAllDrawers();
@@ -656,7 +669,9 @@
                         if (columns.length > Math.max(titleIdx, authorIdx)) {
                             const title = columns[titleIdx]; const author = columns[authorIdx];
                             if (title) {
-                                mediaDatabase.push({ id: Date.now() + Math.random(), title, type: "Audiobook", creator: author || "Unknown Author", actor: "N/A", genre: "Goodreads Log", overview: "Ingested via Goodreads backup CSV profile.", releaseDate: today, dateAdded: today, completionDate: today, access: "Owned", status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" });
+                                let bookObj = { id: Date.now() + Math.random(), title, type: "Audiobook", creator: author || "Unknown Author", actor: "N/A", genre: "Goodreads Log", overview: "Ingested via Goodreads backup CSV profile.", releaseDate: today, dateAdded: today, completionDate: today, access: "Owned", status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
+                                mediaDatabase.push(bookObj);
+                                fetchMediaArtwork(bookObj);
                                 count++;
                             }
                         }
@@ -683,7 +698,9 @@
                         if (entry.movie) { title = entry.movie.title; type = "Movie"; creator = entry.movie.year ? `Year ${entry.movie.year}` : "Cinema"; }
                         else if (entry.show) { title = entry.show.title; type = "TV"; creator = "TV Series"; }
                         if (title) {
-                            mediaDatabase.push({ id: Date.now() + Math.random(), title, type, creator, actor: "N/A", genre: "Imported", overview: "Trakt Sync Log Entry.", releaseDate: today, dateAdded: today, completionDate: today, access: "Streaming", status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" });
+                            let videoObj = { id: Date.now() + Math.random(), title, type, creator, actor: "N/A", genre: "Imported", overview: "Trakt Sync Log Entry.", releaseDate: today, dateAdded: today, completionDate: today, access: "Streaming", status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
+                            mediaDatabase.push(videoObj);
+                            fetchMediaArtwork(videoObj);
                             count++;
                         }
                     });
@@ -695,77 +712,28 @@
             reader.readAsText(fileInput.files[0]);
         }
 
-        function toggleHeartItem(id, context) {
-            const index = mediaDatabase.findIndex(i => i.id === id);
-            if(index !== -1) { mediaDatabase[index].favorite = !mediaDatabase[index].favorite; saveAndRefreshBoth(context); }
-        }
-        function pinItem(id, context) {
-            const index = mediaDatabase.findIndex(i => i.id === id);
-            if(index !== -1) { mediaDatabase[index].pinned = !mediaDatabase[index].pinned; saveAndRefreshBoth(context); }
-        }
-        function moveItemPosition(currentIndex, direction, context) {
-            const targetIndex = currentIndex + direction;
-            if (targetIndex >= 0 && targetIndex < mediaDatabase.length) {
-                let temp = mediaDatabase[currentIndex].manualOrder;
-                mediaDatabase[currentIndex].manualOrder = mediaDatabase[targetIndex].manualOrder;
-                mediaDatabase[targetIndex].manualOrder = temp;
-                saveAndRefreshBoth(context);
-            }
-        }
-        function resetListToDefault(context) {
-            mediaDatabase.forEach((item, index) => { item.manualOrder = index; item.pinned = false; });
-            saveAndRefreshBoth(context);
-        }
+        function toggleHeartItem(id, context) { const index = mediaDatabase.findIndex(i => i.id === id); if(index !== -1) { mediaDatabase[index].favorite = !mediaDatabase[index].favorite; saveAndRefreshBoth(context); } }
+        function pinItem(id, context) { const index = mediaDatabase.findIndex(i => i.id === id); if(index !== -1) { mediaDatabase[index].pinned = !mediaDatabase[index].pinned; saveAndRefreshBoth(context); } }
+        function moveItemPosition(currentIndex, direction, context) { const targetIndex = currentIndex + direction; if (targetIndex >= 0 && targetIndex < mediaDatabase.length) { let temp = mediaDatabase[currentIndex].manualOrder; mediaDatabase[currentIndex].manualOrder = mediaDatabase[targetIndex].manualOrder; mediaDatabase[targetIndex].manualOrder = temp; saveAndRefreshBoth(context); } }
+        function resetListToDefault(context) { mediaDatabase.forEach((item, index) => { item.manualOrder = index; item.pinned = false; }); saveAndRefreshBoth(context); }
+        
         function saveAndRefreshBoth(context) {
             localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
             if (context === 'cinema') renderMediaGrid(); else renderBookGrid();
             renderSimulatedWidgets();
             if(activeProfileModalId) updateProfileModalState(activeProfileModalId);
         }
+        
         function filterCategory(deck, catId) {
-            if (deck === 'cinema') {
-                currentCinemaCategory = catId;
-                document.querySelectorAll('#mediaTab .sub-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById(`cinema-sub-${catId}`).classList.add('active');
-                renderMediaGrid();
-            } else {
-                currentBookCategory = catId;
-                document.querySelectorAll('#goodreadsTab .sub-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById(`book-sub-${catId}`).classList.add('active');
-                renderBookGrid();
-            }
+            if (deck === 'cinema') { currentCinemaCategory = catId; document.querySelectorAll('#mediaTab .sub-btn').forEach(b => b.classList.remove('active')); document.getElementById(`cinema-sub-${catId}`).classList.add('active'); renderMediaGrid(); }
+            else { currentBookCategory = catId; document.querySelectorAll('#goodreadsTab .sub-btn').forEach(b => b.classList.remove('active')); document.getElementById(`book-sub-${catId}`).classList.add('active'); renderBookGrid(); }
         }
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active'); closeAllDrawers();
-        }
-        function changeTheme(themeName) {
-            document.documentElement.setAttribute('data-theme', themeName);
-            localStorage.setItem('dashboard_theme', themeName);
-        }
-        function updateFileLabel(inputId, statusId) {
-            const input = document.getElementById(inputId);
-            const status = document.getElementById(statusId);
-            if(input.files.length > 0) status.innerText = `📄 Selected: ${input.files[0].name}`;
-        }
-        function toggleVisibility(inputId) {
-            const field = document.getElementById(inputId);
-            field.type = field.type === "password" ? "text" : "password";
-        }
-        function saveKeysAndConnect() {
-            const client = document.getElementById('clientIdInput').value.trim();
-            localStorage.setItem('gdrive_client_id', client);
-            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(client)}&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=${encodeURIComponent("https://www.googleapis.com/auth/drive.file")}&prompt=consent`;
-        }
-        function handleAuthCallback() {
-            const hash = window.location.hash;
-            if (hash && hash.includes('access_token')) {
-                document.getElementById('driveStatusLog').innerText = "✅ Connected to Google Drive.";
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        }
+        function switchTab(tabId, btn) { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); document.getElementById(tabId).classList.add('active'); btn.classList.add('active'); closeAllDrawers(); }
+        function changeTheme(themeName) { document.documentElement.setAttribute('data-theme', themeName); localStorage.setItem('dashboard_theme', themeName); }
+        function updateFileLabel(inputId, statusId) { const input = document.getElementById(inputId); const status = document.getElementById(statusId); if(input.files.length > 0) status.innerText = `📄 Selected: ${input.files[0].name}`; }
+        function toggleVisibility(inputId) { const field = document.getElementById(inputId); field.type = field.type === "password" ? "text" : "password"; }
+        function saveKeysAndConnect() { const client = document.getElementById('clientIdInput').value.trim(); localStorage.setItem('gdrive_client_id', client); window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(client)}&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=${encodeURIComponent("https://www.googleapis.com/auth/drive.file")}&prompt=consent`; }
+        function handleAuthCallback() { const hash = window.location.hash; if (hash && hash.includes('access_token')) { document.getElementById('driveStatusLog').innerText = "✅ Connected to Google Drive."; window.history.replaceState({}, document.title, window.location.pathname); } }
     </script>
 </body>
 </html>
