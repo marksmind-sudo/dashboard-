@@ -50,7 +50,7 @@
             --accent-color: #ffcc00; --border-color: #e5e5ea; --card-bg: #ffffff; --bg-pattern: none; --text-shadow: none;
         }
 
-        /* --- STYLES --- */
+        /* --- BASIC WIREFRAME CHANNELS --- */
         header { background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
         h1 { font-size: 1.2rem; color: var(--accent-color); text-shadow: var(--text-shadow); }
         .theme-dropdown { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 4px; font-size: 0.85rem; outline: none; }
@@ -119,7 +119,7 @@
         .card-controls { display: flex; gap: 6px; align-items: center; position: relative; z-index: 70; }
         .card-ctrl-btn { background: none; border: none; color: var(--text-color); opacity: 0.6; cursor: pointer; font-size: 0.85rem; }
 
-        /* --- CONSOLE DETAIL MODAL WINDOW --- */
+        /* --- CONSOLE DETAIL MODAL --- */
         .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-canvas.active { display: flex; }
         .modal-box { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 820px; height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 35px rgba(0,0,0,0.8); }
@@ -182,7 +182,7 @@
 
     <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
 
-    <!-- COMMAND MODAL BOX -->
+    <!-- MAIN COMMAND DETAIL BOX MODAL -->
     <div id="mediaDetailModal" class="modal-canvas" onclick="if(event.target === this) closeProfileModal()">
         <div class="modal-box">
             <div class="modal-hero">
@@ -340,7 +340,7 @@
 
             <div class="panel">
                 <h2>Cloud Synchronization Settings</h2>
-                <p style="font-size:0.8rem; color:#aaa; margin-bottom:10px;">⚠️ Hit 'Save Keys' to lock your inputs before tapping connect to avoid token redirect wipes!</p>
+                <p style="font-size:0.8rem; color:#aaa; margin-bottom:10px;">⚡ Credentials are permanently locked. Press connect to re-authenticate session loops.</p>
                 <div class="form-group">
                     <label>Google OAuth Client ID</label>
                     <div class="password-wrapper"><input type="password" id="clientIdInput" placeholder="Enter Client ID"><button type="button" class="toggle-btn" onclick="toggleVisibility('clientIdInput')">SHOW</button></div>
@@ -391,7 +391,10 @@
 
             setupSwipeGestureListeners();
             refreshAllViews();
+            
+            // Core Authentication Initialization & Reconnect sequence loops
             handleAuthCallback();
+            executeAutoBackgroundReconnectLoop();
         });
 
         function saveSyncCredentialsToStorage() {
@@ -417,11 +420,31 @@
                 const params = new URLSearchParams(hash.replace('#', '?'));
                 const token = params.get('access_token');
                 localStorage.setItem('gdrive_access_token', token);
-                document.getElementById('driveStatusLog').innerText = "✅ Connected to Google Drive.";
                 window.history.replaceState({}, document.title, window.location.pathname);
-                
-                // Immediately force a synchronization ingestion pull right upon authenticating callback
-                checkAndPullDatabaseFromCloud();
+            }
+        }
+
+        function executeAutoBackgroundReconnectLoop() {
+            const token = localStorage.getItem('gdrive_access_token');
+            const apiKey = localStorage.getItem('gdrive_api_key');
+            const logField = document.getElementById('driveStatusLog');
+
+            if (token && apiKey) {
+                logField.innerText = "🔄 Syncing with Google Drive Matrix...";
+                // Verify token state with Google Drive Core endpoint
+                fetch(`https://www.googleapis.com/drive/v3/files?maxResults=1&key=${apiKey}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+                .then(res => {
+                    if (res.status === 401) {
+                        // Token has timed out naturally, flag status gracefully
+                        logField.innerText = "❌ Session Expired. Tap Connect to re-sync.";
+                    } else {
+                        logField.innerText = "✅ Connected to Google Drive.";
+                        checkAndPullDatabaseFromCloud();
+                    }
+                })
+                .catch(() => { logField.innerText = "Cloud status: Offline"; });
             }
         }
 
@@ -430,7 +453,6 @@
             const apiKey = localStorage.getItem('gdrive_api_key');
             if (!token || !apiKey) return;
 
-            // Search for existing vault file on Drive endpoint arrays
             fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'vault_media_db.json'&key=${apiKey}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
@@ -444,17 +466,18 @@
                     .then(res => res.json())
                     .then(cloudDb => {
                         if (cloudDb && Array.isArray(cloudDb) && cloudDb.length > 0) {
-                            mediaDatabase = cloudDb;
-                            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                            refreshAllViews();
-                            alert("Database streams downloaded from Google Drive slot successfully, Sweetie!");
-                        } else {
-                            // If file exists but is clean/empty, upload our tablet array back-fill
-                            pushDatabaseToCloud();
+                            // Master overwrite safety gate block
+                            if (mediaDatabase.length === 0 || confirm("Master cloud data array detected! Overwrite clean local screen with backup logs, Sweetie?")) {
+                                mediaDatabase = cloudDb;
+                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                                refreshAllViews();
+                            } else {
+                                // If you decline or have newer active content, push instead
+                                pushDatabaseToCloud();
+                            }
                         }
                     }).catch(() => {});
                 } else {
-                    // No file found, create it with current database content
                     pushDatabaseToCloud();
                 }
             });
@@ -470,12 +493,8 @@
             })
             .then(res => res.json())
             .then(data => {
-                const metadata = { name: 'vault_media_db.json', mimeType: 'application/json' };
                 const blob = new Blob([JSON.stringify(mediaDatabase)], { type: 'application/json' });
-                const form = new FormData();
-                
                 if (data.files && data.files.length > 0) {
-                    // Update existing backup node
                     const fileId = data.files[0].id;
                     fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media&key=${apiKey}`, {
                         method: 'PATCH',
@@ -483,7 +502,8 @@
                         body: blob
                     });
                 } else {
-                    // Inject fresh file array link node
+                    const metadata = { name: 'vault_media_db.json', mimeType: 'application/json' };
+                    const form = new FormData();
                     form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
                     form.append('media', blob);
                     fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&key=${apiKey}`, {
@@ -721,7 +741,7 @@
                 mediaDatabase[idx].watchState = 'unwatched'; mediaDatabase[idx].status = 'all';
             }
             localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-            pushDatabaseToCloud(); // Push updates directly to backup stream
+            pushDatabaseToCloud(); 
         }
 
         function changeCardAccessField(id, val, context) {
