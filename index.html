@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Entertainment Dashboard</title>
     <style>
-        /* --- THEME DESIGN SYSTEM WITH DEEP HIGH-DENSITY CHARCOAL OVERLAYS --- */
+        /* --- THEME DESIGN SYSTEM WITH HIGH-DENSITY PATTERN LAYERS --- */
         :root { --bg-image: none; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -50,7 +50,7 @@
             --accent-color: #ffcc00; --border-color: #e5e5ea; --card-bg: #ffffff; --bg-pattern: none; --text-shadow: none;
         }
 
-        /* --- STYLING BASICS --- */
+        /* --- BASIC WIREFRAMING --- */
         header { background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
         h1 { font-size: 1.2rem; color: var(--accent-color); text-shadow: var(--text-shadow); }
         .theme-dropdown { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 4px; font-size: 0.85rem; outline: none; }
@@ -75,7 +75,7 @@
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
 
-        /* --- NEW DYNAMIC INLINE OVERLAY SELECTORS & TILES --- */
+        /* --- GRID TILES WITH INLINE OVERLAY SELECTORS --- */
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
         .media-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; display: flex; flex-direction: column; position: relative; overflow: hidden; cursor: pointer; }
         .media-card.pinned { border: 2px solid var(--accent-color); box-shadow: 0 0 8px rgba(0,255,204,0.3); }
@@ -84,17 +84,14 @@
         .poster-img { width: 100%; height: 100%; object-fit: cover; }
         .poster-placeholder { font-size: 2.5rem; color: var(--text-muted); opacity: 0.3; }
 
-        /* Dynamic Selector Controls Container */
         .card-dropdown-rack { position: absolute; top: 6px; left: 6px; right: 6px; display: flex; flex-direction: column; gap: 4px; z-index: 10; }
         .card-dropdown-rack select { background: rgba(0, 0, 0, 0.85); color: var(--text-color); border: 1px solid var(--border-color); font-size: 0.68rem; padding: 3px 6px; border-radius: 4px; outline: none; cursor: pointer; width: 100%; font-weight: bold; }
-        .card-dropdown-rack select:focus { border-color: var(--accent-color); }
 
         .card-details-pane { flex: 1; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
         .media-title { font-size: 0.95rem; font-weight: bold; color: var(--text-color); line-height: 1.3; word-break: break-word; }
         .media-meta { font-size: 0.78rem; color: var(--text-muted); line-height: 1.3; }
         .tv-tracker-line { font-size: 0.75rem; font-weight: bold; color: var(--accent-color); margin: 2px 0; }
         
-        /* Inline Date Editor Box Styles */
         .card-date-row { display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 4px; margin-top: 4px; }
         .card-date-row label { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; }
         .card-date-row input { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); font-size: 0.68rem; padding: 2px 4px; border-radius: 3px; outline: none; flex: 1; min-width: 0; }
@@ -106,10 +103,9 @@
         .star-rating { color: var(--accent-color); }
         .card-controls { display: flex; gap: 6px; align-items: center; }
         .card-ctrl-btn { background: none; border: none; color: var(--text-color); opacity: 0.6; cursor: pointer; font-size: 0.85rem; }
-        .card-ctrl-btn:hover { opacity: 1; color: var(--accent-color); }
         .heart-icon { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 1rem; }
 
-        /* --- THE MASTER EXPANDED DETAIL MODAL DISPLAY DECK --- */
+        /* --- EXPANDED CINEMATIC DETAIL COMMAND CANVASES --- */
         .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.82); backdrop-filter: blur(10px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-canvas.active { display: flex; }
         .modal-box { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 780px; height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 35px rgba(0,0,0,0.75); }
@@ -168,7 +164,7 @@
 
     <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
 
-    <!-- HOLOGRAPHIC DETAIL COMMAND BOX -->
+    <!-- HOLOGRAPHIC DETAIL MODAL BOX -->
     <div id="mediaDetailModal" class="modal-canvas" onclick="if(event.target === this) closeProfileModal()">
         <div class="modal-box">
             <div class="modal-hero">
@@ -182,7 +178,6 @@
                 <div id="modalReleaseLine" class="modal-meta-line"><b>Release Date:</b> -</div>
                 <div id="modalAccessLine" class="modal-meta-line"><b>Source Profile:</b> -</div>
                 
-                <!-- Expanded Multi-Season Selector Area -->
                 <div id="modalTvSection" style="display:none; margin-top:5px; width:100%;">
                     <label for="modalSeasonSelector" style="font-size:0.85rem; font-weight:bold; color:var(--accent-color);">⚡ Ingested Show Seasons:</label>
                     <select id="modalSeasonSelector" class="modal-sub-selector" onchange="loadSelectedSeasonDeck()"></select>
@@ -223,7 +218,7 @@
                     <div class="form-group"><label>Release Date</label><input type="date" id="addReleaseDate"></div>
                     <div class="form-group"><label>Access Profile</label><select id="addAccess"><option value="Streaming">Streaming Platform</option><option value="Owned">I Own It</option><option value="Wishlist">Wishlist / Discovery</option></select></div>
                     <div class="form-group"><label>Watch Status Indicator</label><select id="addWatchState"><option value="unwatched">Unwatched</option><option value="watching">Currently Watching</option><option value="completed">Completed Logs</option></select></div>
-                    <div class="form-group"><label>Target Container</label><select id="addStatus"><option value="all">Main Collection</option><option value="watching">Currently Tracking</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
+                    <div class="form-group"><label>Target Container</label><select id="addStatus"><option value="all">Main Collection</option><option value="watching">Currently Watching</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
                     <div class="form-group"><label>Star Rating</label><select id="addRating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></div>
                 </div>
                 <button class="btn" onclick="addNewMediaItem('cinema')">Inject Screening Node</button>
@@ -238,10 +233,12 @@
                 <button class="reset-btn" onclick="resetListToDefault('cinema')">🔄 Reset Order</button>
             </div>
 
+            <!-- Overhauled Sub-Navigation with Correct Filter Streams -->
             <div class="sub-nav">
                 <button class="sub-btn active" id="cinema-sub-all" onclick="filterCategory('cinema', 'all')">Main Collection</button>
                 <button class="sub-btn" id="cinema-sub-favorites" onclick="filterCategory('cinema', 'favorites')">❤️ Favorites</button>
-                <button class="sub-btn" id="cinema-sub-watching" onclick="filterCategory('cinema', 'watching')">🎬 Currently Tracking</button>
+                <button class="sub-btn" id="cinema-sub-watching" onclick="filterCategory('cinema', 'watching')">🎬 Currently Watching</button>
+                <button class="sub-btn" id="cinema-sub-justwatched" onclick="filterCategory('cinema', 'justwatched')">⚡ Just Watched</button>
                 <button class="sub-btn" id="cinema-sub-history" onclick="filterCategory('cinema', 'history')">📜 History Logs</button>
                 <button class="sub-btn" id="cinema-sub-find" onclick="filterCategory('cinema', 'find')">🔍 Discovery List</button>
             </div>
@@ -276,7 +273,7 @@
                     <div class="form-group"><label>Book Summary / Description</label><textarea id="addBookOverview" rows="2" placeholder="Enter book overview details..."></textarea></div>
                     <div class="form-group"><label>Access Profile</label><select id="addBookAccess"><option value="Owned">I Own It</option><option value="Streaming">Streaming Platform</option><option value="Wishlist">Wishlist</option></select></div>
                     <div class="form-group"><label>Reading Status Indicator</label><select id="addBookWatchState"><option value="unwatched">Unwatched</option><option value="watching">Currently Reading</option><option value="completed">Completed Logs</option></select></div>
-                    <div class="form-group"><label>Target Container</label><select id="addBookStatus"><option value="all">Main Collection</option><option value="watching">Currently Tracking</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
+                    <div class="form-group"><label>Target Container</label><select id="addBookStatus"><option value="all">Main Collection</option><option value="watching">Currently Reading</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
                     <div class="form-group"><label>Manual Progress Metric %</label><input type="number" id="addBookProgress" min="0" max="100" value="0"></div>
                 </div>
                 <button class="btn" onclick="addNewMediaItem('book')">Inject Audiobook Node</button>
@@ -293,7 +290,8 @@
             <div class="sub-nav">
                 <button class="sub-btn active" id="book-sub-all" onclick="filterCategory('book', 'all')">Main Collection</button>
                 <button class="sub-btn" id="book-sub-favorites" onclick="filterCategory('book', 'favorites')">❤️ Favorites</button>
-                <button class="sub-btn" id="book-sub-watching" onclick="filterCategory('book', 'watching')">🎧 Currently Tracking</button>
+                <button class="sub-btn" id="book-sub-watching" onclick="filterCategory('book', 'watching')">🎧 Currently Reading</button>
+                <button class="sub-btn" id="book-sub-justread" onclick="filterCategory('book', 'justread')">⚡ Just Read</button>
                 <button class="sub-btn" id="book-sub-history" onclick="filterCategory('book', 'history')">📜 History Logs</button>
                 <button class="sub-btn" id="book-sub-find" onclick="filterCategory('book', 'find')">🔍 Discovery List</button>
             </div>
@@ -348,9 +346,9 @@
     </div>
 
     <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('mediaTab', this)"><span class="nav-icon">🎬</span><span>Media</span></button>
-        <button class="nav-item" onclick="switchTab('goodreadsTab', this)"><span class="nav-icon">📚</span><span>Goodreads</span></button>
-        <button class="nav-item" onclick="switchTab('settingsTab', this)"><span class="nav-icon">⚙️</span><span>Settings</span></button>
+        <button id="navBtn-mediaTab" class="nav-item active" onclick="switchTab('mediaTab', this)"><span class="nav-icon">🎬</span><span>Media</span></button>
+        <button id="navBtn-goodreadsTab" class="nav-item" onclick="switchTab('goodreadsTab', this)"><span class="nav-icon">📚</span><span>Goodreads</span></button>
+        <button id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab', this)"><span class="nav-icon">⚙️</span><span>Settings</span></button>
     </nav>
 
     <script>
@@ -361,6 +359,11 @@
         let currentCinemaCategory = 'all';
         let currentBookCategory = 'all';
         let activeProfileModalId = null;
+
+        // Swipe Gestures Tracking Indexes
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const tabSequence = ['mediaTab', 'goodreadsTab', 'settingsTab'];
 
         document.addEventListener("DOMContentLoaded", () => {
             if (localStorage.getItem('gdrive_client_id')) document.getElementById('clientIdInput').value = localStorage.getItem('gdrive_client_id');
@@ -376,9 +379,45 @@
             document.getElementById('themeSelect').value = savedTheme;
             changeTheme(savedTheme);
 
+            setupSwipeGestureListeners();
             refreshAllViews();
             handleAuthCallback();
         });
+
+        /* --- GLOBAL SWIPE GESTURE CONTROLS --- */
+        function setupSwipeGestureListeners() {
+            window.addEventListener('touchstart', e => {
+                // Ignore gestures inside open side-drawers or popups
+                if (e.target.closest('.side-drawer') || e.target.closest('.modal-box') || e.target.closest('select') || e.target.closest('input')) return;
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+
+            window.addEventListener('touchend', e => {
+                if (e.target.closest('.side-drawer') || e.target.closest('.modal-box') || e.target.closest('select') || e.target.closest('input')) return;
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipeGestureEvaluation();
+            }, false);
+        }
+
+        function handleSwipeGestureEvaluation() {
+            const threshold = 100; // Minimum swipe distance required
+            const currentTabActive = document.querySelector('.tab-content.active').id;
+            let currentIdx = tabSequence.indexOf(currentTabActive);
+
+            if (touchStartX - touchEndX > threshold) {
+                // Swiped Left -> Move to Next Tab
+                if (currentIdx < tabSequence.length - 1) {
+                    let targetTab = tabSequence[currentIdx + 1];
+                    switchTab(targetTab, document.getElementById(`navBtn-${targetTab}`));
+                }
+            } else if (touchEndX - touchStartX > threshold) {
+                // Swiped Right -> Move to Previous Tab
+                if (currentIdx > 0) {
+                    let targetTab = tabSequence[currentIdx - 1];
+                    switchTab(targetTab, document.getElementById(`navBtn-${targetTab}`));
+                }
+            }
+        }
 
         function updateApplicationPosterBackground(url) {
             if(url.trim() !== "") {
@@ -407,7 +446,6 @@
             document.getElementById('drawerOverlay').classList.remove('active');
         }
 
-        /* --- STABLE METADATA HYDRATION TRIGGER --- */
         function openProfileModal(id) {
             activeProfileModalId = id;
             const item = mediaDatabase.find(m => m.id === id);
@@ -508,10 +546,17 @@
                 });
                 
                 mediaDatabase[idx].progress = total > 0 ? Math.round((watched / total) * 100) : 0;
-                mediaDatabase[idx].watchState = mediaDatabase[idx].progress === 100 ? 'completed' : (watched > 0 ? 'watching' : 'unwatched');
                 
-                if(mediaDatabase[idx].progress === 100) {
+                if (mediaDatabase[idx].progress === 100) {
+                    mediaDatabase[idx].watchState = 'completed';
+                    mediaDatabase[idx].status = 'history';
                     mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0];
+                } else if (watched > 0) {
+                    mediaDatabase[idx].watchState = 'watching';
+                    mediaDatabase[idx].status = 'watching';
+                } else {
+                    mediaDatabase[idx].watchState = 'unwatched';
+                    mediaDatabase[idx].status = 'all';
                 }
 
                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
@@ -519,13 +564,21 @@
             }
         }
 
-        /* --- CORE FACE INLINE DROPDOWN HANDLERS --- */
+        /* --- OVERHAULED INTEGRATED RE-ROUTING DROPDOWN MATRIX CONTROLLERS --- */
         function changeCardAccessField(id, val, context) {
             const idx = mediaDatabase.findIndex(i => i.id === id);
             if(idx !== -1) {
                 mediaDatabase[idx].access = val;
+                
+                // If set to Wishlist, route automatically to the Discovery find tab
+                if (val === 'Wishlist') {
+                    mediaDatabase[idx].status = 'find';
+                } else if (mediaDatabase[idx].watchState === 'unwatched') {
+                    mediaDatabase[idx].status = 'all';
+                }
+                
                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                if(context === 'cinema') renderMediaGrid(); else renderBookGrid();
+                refreshAllViews();
             }
         }
 
@@ -533,24 +586,35 @@
             const idx = mediaDatabase.findIndex(i => i.id === id);
             if(idx !== -1) {
                 mediaDatabase[idx].watchState = val;
+                
+                // Seamlessly synchronize structural status tag targets
                 if(val === 'completed') {
                     mediaDatabase[idx].progress = 100;
+                    mediaDatabase[idx].status = 'history';
                     if(!mediaDatabase[idx].completionDate) {
                         mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0];
                     }
+                } else if(val === 'watching') {
+                    mediaDatabase[idx].status = 'watching';
+                    if (mediaDatabase[idx].progress === 100 || mediaDatabase[idx].progress === 0) {
+                        mediaDatabase[idx].progress = 10; // Default startup percentage
+                    }
                 } else if(val === 'unwatched') {
                     mediaDatabase[idx].progress = 0;
+                    mediaDatabase[idx].status = (mediaDatabase[idx].access === 'Wishlist') ? 'find' : 'all';
                 }
+                
                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                 refreshAllViews();
             }
         }
 
-        function updateManualCardDate(id, val) {
+        function updateManualCardDate(id, val, context) {
             const idx = mediaDatabase.findIndex(i => i.id === id);
             if(idx !== -1) {
                 mediaDatabase[idx].completionDate = val;
                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                if(context === 'cinema') renderMediaGrid(); else renderBookGrid();
             }
         }
 
@@ -569,13 +633,11 @@
                 if (item.watchState === 'completed' || item.progress === 100) return 'Completed';
                 let lastWatchedStr = 'Unwatched';
                 if (item.seasons) {
-                    let found = false;
                     for (let s of item.seasons) {
                         if (s.episodes) {
                             for (let e of s.episodes) {
                                 if (e.watched) {
                                     lastWatchedStr = `Track: S${s.seasonNumber} Ep${e.episodeNumber}`;
-                                    found = true;
                                 }
                             }
                         }
@@ -618,12 +680,12 @@
                         <div class="card-dropdown-rack" onclick="event.stopPropagation();">
                             <select onchange="changeCardAccessField(${item.id}, this.value, '${contextTag}')">
                                 <option value="Owned" ${item.access === 'Owned' ? 'selected' : ''}>I Own It</option>
-                                <option value="Streaming" ${item.access === 'Streaming' ? 'selected' : ''}>Streaming Platform</option>
+                                option value="Streaming" ${item.access === 'Streaming' ? 'selected' : ''}>Streaming Platform</option>
                                 <option value="Wishlist" ${item.access === 'Wishlist' ? 'selected' : ''}>Wishlist / Discover</option>
                             </select>
                             <select onchange="changeCardWatchField(${item.id}, this.value, '${contextTag}')">
                                 <option value="unwatched" ${item.watchState === 'unwatched' ? 'selected' : ''}>Unwatched</option>
-                                <option value="watching" ${item.watchState === 'watching' ? 'selected' : ''}>Currently Tracking</option>
+                                <option value="watching" ${item.watchState === 'watching' ? 'selected' : ''}>${item.type === 'Audiobook' ? 'Currently Reading' : 'Currently Watching'}</option>
                                 <option value="completed" ${item.watchState === 'completed' ? 'selected' : ''}>Completed Log</option>
                             </select>
                         </div>
@@ -636,7 +698,7 @@
                             ${currentTvIndicator}
                             <div class="card-date-row" onclick="event.stopPropagation();">
                                 <label>Date:</label>
-                                <input type="date" value="${savedDate}" onchange="updateManualCardDate(${item.id}, this.value)">
+                                <input type="date" value="${savedDate}" onchange="updateManualCardDate(${item.id}, this.value, '${contextTag}')">
                                 <button class="macro-today-btn" onclick="setCardDateToToday(${item.id}, '${contextTag}')">⚡ Today</button>
                             </div>
                         </div>
@@ -675,9 +737,15 @@
                 const searchStr = `${item.title} ${item.creator} ${item.actor} ${item.genre}`.toLowerCase();
                 const matchesSearch = searchStr.includes(searchQuery);
                 const matchesType = (typeFilter === 'all' || item.type === typeFilter);
+                
                 let matchesCategory = true;
-                if (currentCinemaCategory === 'favorites') matchesCategory = item.favorite;
-                else if (currentCinemaCategory !== 'all') matchesCategory = (item.status === currentCinemaCategory);
+                if (currentCinemaCategory === 'favorites') {
+                    matchesCategory = item.favorite;
+                } else if (currentCinemaCategory === 'justwatched') {
+                    matchesCategory = (item.completionDate && item.completionDate.trim() !== "");
+                } else if (currentCinemaCategory !== 'all') {
+                    matchesCategory = (item.status === currentCinemaCategory);
+                }
                 return matchesSearch && matchesType && matchesCategory;
             });
             sortAndRenderDeck(filteredData, grid, sortVal, 'cinema');
@@ -693,9 +761,17 @@
                 if (item.type !== 'Audiobook') return false;
                 const searchStr = `${item.title} ${item.creator} ${item.genre}`.toLowerCase();
                 const matchesSearch = searchStr.includes(searchQuery);
+                
                 let matchesCategory = true;
-                if (currentBookCategory === 'favorites') matchesCategory = item.favorite;
-                else if (currentBookCategory !== 'all') matchesCategory = (item.status === currentBookCategory);
+                if (currentBookCategory === 'favorites') {
+                    matchesCategory = item.favorite;
+                } else if (currentBookCategory === 'justread') {
+                    matchesCategory = (item.completionDate && item.completionDate.trim() !== "");
+                } else if (currentBookCategory !== 'all') {
+                    // Normalize old tracking references smoothly to reading values
+                    let targetStatus = currentBookCategory === 'watching' ? 'watching' : currentBookCategory;
+                    matchesCategory = (item.status === targetStatus);
+                }
                 return matchesSearch && matchesCategory;
             });
             sortAndRenderDeck(filteredData, grid, sortVal, 'book');
@@ -717,7 +793,7 @@
             widgetGrid.innerHTML = videoWidgetHtml + bookWidgetHtml;
         }
 
-        /* ================= HIGH-PERFORMANCE DATA HARVESTING PIPELINE ================= */
+        /* ================= APIS HARVESTING MATRIX PIPELINES ================= */
         function fetchMediaArtwork(item, openModalOnComplete = false) {
             const tmdbKey = localStorage.getItem('tmdb_key');
             
@@ -737,7 +813,7 @@
                             fetch(`https://api.themoviedb.org/3/${searchType}/${resObj.id}/credits?api_key=${tmdbKey}`)
                                 .then(cr => cr.json()).then(credits => {
                                     if(credits.cast && credits.cast.length > 0) {
-                                        mediaDatabase[idx].actor = credits.cast.slice(0, 4).map(c => c.name).join(", ");
+                                        mediaDatabase[idx].actor = credits.cast.slice(0, 6).map(c => c.name).join(", ");
                                     }
                                     
                                     if (item.type === 'TV') {
@@ -753,7 +829,7 @@
                                                                 id: e.id,
                                                                 episodeNumber: e.episode_number,
                                                                 name: e.name,
-                                                                overview: e.overview || "No extended overview reported for this episode.",
+                                                                overview: e.overview || "No transmission log overview found for this node.",
                                                                 watched: false
                                                             })) : []
                                                         })).catch(() => null);
@@ -783,7 +859,7 @@
                             if (idx !== -1) {
                                 if (match.cover_i) mediaDatabase[idx].poster = `https://covers.openlibrary.org/b/id/${match.cover_i}-L.jpg`;
                                 if (match.first_sentence) mediaDatabase[idx].overview = Array.isArray(match.first_sentence) ? match.first_sentence.join(" ") : match.first_sentence;
-                                else mediaDatabase[idx].overview = "Goodreads archive audiobook tracker log node.";
+                                else mediaDatabase[idx].overview = "Goodreads library audiobook log reference profile.";
                                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                                 refreshAllViews();
                                 if(openModalOnComplete) updateProfileModalState(item.id);
@@ -909,7 +985,7 @@
             if (deck === 'cinema') { currentCinemaCategory = catId; document.querySelectorAll('#mediaTab .sub-btn').forEach(b => b.classList.remove('active')); document.getElementById(`cinema-sub-${catId}`).classList.add('active'); renderMediaGrid(); }
             else { currentBookCategory = catId; document.querySelectorAll('#goodreadsTab .sub-btn').forEach(b => b.classList.remove('active')); document.getElementById(`book-sub-${catId}`).classList.add('active'); renderBookGrid(); }
         }
-        function switchTab(tabId, btn) { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); document.getElementById(tabId).classList.add('active'); btn.classList.add('active'); closeAllDrawers(); }
+        function switchTab(tabId, btn) { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); document.getElementById(tabId).classList.add('active'); if(btn) btn.classList.add('active'); closeAllDrawers(); }
         function changeTheme(themeName) { document.documentElement.setAttribute('data-theme', themeName); localStorage.setItem('dashboard_theme', themeName); }
         function updateFileLabel(inputId, statusId) { const input = document.getElementById(inputId); const status = document.getElementById(statusId); if(input.files.length > 0) status.innerText = `📄 Selected: ${input.files[0].name}`; }
         function toggleVisibility(inputId) { const field = document.getElementById(inputId); field.type = field.type === "password" ? "text" : "password"; }
