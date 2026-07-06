@@ -50,7 +50,6 @@
             --accent-color: #ffcc00; --border-color: #e5e5ea; --card-bg: #ffffff; --bg-pattern: none; --text-shadow: none;
         }
 
-        /* --- BASIC WIREFRAME CHANNELS --- */
         header { background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
         h1 { font-size: 1.2rem; color: var(--accent-color); text-shadow: var(--text-shadow); }
         .theme-dropdown { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 4px; font-size: 0.85rem; outline: none; }
@@ -64,7 +63,7 @@
         .action-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .toggle-menu-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
 
-        .side-drawer { position: fixed; top: 0; right: -340px; width: 340px; height: 100vh; background-color: var(--panel-bg); border-left: 2px solid var(--border-color); box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2000; padding: 20px; transition: right 0.3s ease-in-out; display: flex; flex-direction: column; gap: 12px; }
+        .side-drawer { position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background-color: var(--panel-bg); border-left: 2px solid var(--border-color); box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2000; padding: 20px; transition: right 0.3s ease-in-out; display: flex; flex-direction: column; gap: 12px; }
         .side-drawer.open { right: 0; }
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1999; display: none; backdrop-filter: blur(2px); }
         .drawer-overlay.active { display: block; }
@@ -96,8 +95,9 @@
         .media-meta { font-size: 0.75rem; color: var(--text-muted); line-height: 1.3; }
         .tv-tracker-inline-label { font-size: 0.76rem; font-weight: bold; color: var(--accent-color); margin-left: 4px; text-shadow: var(--text-shadow); }
         
-        .interactive-star-deck { display: inline-flex; gap: 3px; color: rgba(255,255,255,0.22); font-size: 1.1rem; cursor: pointer; position: relative; z-index: 80; pointer-events: auto !important; }
-        .interactive-star-deck span { pointer-events: auto !important; }
+        /* Fixed Star Interactive Properties */
+        .interactive-star-deck { display: inline-flex; gap: 3px; color: rgba(255,255,255,0.22); font-size: 1.1rem; cursor: pointer; position: relative; z-index: 999; }
+        .interactive-star-deck span { cursor: pointer; padding: 0 2px; }
         .interactive-star-deck span.active { color: var(--accent-color); text-shadow: var(--text-shadow); }
 
         .card-mini-selector-rack { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 5px; position: relative; z-index: 70; }
@@ -118,6 +118,12 @@
         .badge-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; }
         .card-controls { display: flex; gap: 6px; align-items: center; position: relative; z-index: 70; }
         .card-ctrl-btn { background: none; border: none; color: var(--text-color); opacity: 0.6; cursor: pointer; font-size: 0.85rem; }
+
+        /* --- GLOBAL IMPORT LIST CONTAINER --- */
+        .tmdb-search-results-box { background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); margin-top: 5px; max-height: 180px; overflow-y: auto; border-radius: 4px; display: flex; flex-direction: column; }
+        .tmdb-search-row { display: flex; align-items: center; justify-content: space-between; padding: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
+        .tmdb-search-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+        .import-mini-btn { background: var(--accent-color); color: #000; border: none; padding: 2px 6px; font-weight: bold; border-radius: 3px; cursor: pointer; font-size: 0.7rem; }
 
         /* --- CONSOLE DETAIL MODAL --- */
         .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
@@ -152,14 +158,6 @@
         .password-wrapper input { padding-right: 65px; }
         .toggle-btn { position: absolute; right: 6px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 4px 8px; font-size: 0.75rem; cursor: pointer; border-radius: 4px; color: var(--text-color); }
         
-        .widget-preview-deck { margin-top: 15px; padding: 15px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; }
-        .widget-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 10px; }
-        .sim-widget { background: #0c0f26; border: 2px solid #ff007f; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-        .widget-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #ff007f; font-weight: bold; }
-        .widget-item { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 6px; border-radius: 6px; }
-        .widget-thumb { width: 35px; height: 45px; background: #222; object-fit: cover; border-radius: 4px; }
-        .widget-info { flex: 1; font-size: 0.8rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; align-items: flex-end; padding: 0 10px; z-index: 1000; height: 65px; gap: 4px; }
@@ -182,7 +180,7 @@
 
     <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
 
-    <!-- MAIN COMMAND DETAIL BOX MODAL -->
+    <!-- MAIN CONSOLE DETAIL POPUP -->
     <div id="mediaDetailModal" class="modal-canvas" onclick="if(event.target === this) closeProfileModal()">
         <div class="modal-box">
             <div class="modal-hero">
@@ -221,15 +219,26 @@
                 <button class="toggle-menu-btn" onclick="toggleSideDrawer('cinemaDrawer', true)">⚙️ Cinema Console</button>
             </div>
 
+            <!-- CINEMA DRAWER CONTAINER -->
             <div id="cinemaDrawer" class="side-drawer">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border-color); padding-bottom:6px;">
                     <h3 style="color:var(--accent-color); font-size:1rem;">Cinema Console</h3>
                     <button class="drawer-close-btn" onclick="closeAllDrawers()">✕</button>
                 </div>
                 <div style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px;">
+                    <!-- LIVE GLOBAL TMDB ENGINE LOOKUP INPUT -->
+                    <div class="form-group" style="background:rgba(255,255,255,0.02); padding:8px; border-radius:6px; border:1px solid rgba(0,255,204,0.2);">
+                        <label style="color:var(--accent-color); font-weight:bold;">🔍 Global Cloud Database Search</label>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <input type="text" id="tmdbGlobalSearchQuery" placeholder="Type title...">
+                            <button class="macro-action-btn" style="font-size:0.75rem; padding:0 8px;" onclick="executeLiveTmdbDatabaseLookup()">Search</button>
+                        </div>
+                        <div id="tmdbGlobalResultsArea" class="tmdb-search-results-box" style="display:none;"></div>
+                    </div>
+
                     <div class="form-group">
-                        <label>🔍 Search Screenings</label>
-                        <input type="text" id="cinemaSearchBar" placeholder="Search titles..." onkeyup="renderMediaGrid()">
+                        <label>🔍 Local Filter Search</label>
+                        <input type="text" id="cinemaSearchBar" placeholder="Search saved titles..." onkeyup="renderMediaGrid()">
                     </div>
                     <div class="form-group"><label>Title</label><input type="text" id="addTitle" placeholder="e.g., Dune"></div>
                     <div class="form-group"><label>Format</label><select id="addType"><option value="Movie">Movie</option><option value="TV">Television Series</option></select></div>
@@ -392,10 +401,70 @@
             setupSwipeGestureListeners();
             refreshAllViews();
             
-            // Core Authentication Initialization & Reconnect sequence loops
             handleAuthCallback();
             executeAutoBackgroundReconnectLoop();
         });
+
+        /* ================= TMDB LIVE IMPORT MODULE ENGINE ================= */
+        function executeLiveTmdbDatabaseLookup() {
+            const tmdbKey = localStorage.getItem('tmdb_key');
+            const query = document.getElementById('tmdbGlobalSearchQuery').value.trim();
+            const container = document.getElementById('tmdbGlobalResultsArea');
+            
+            if(!tmdbKey) { alert("Please input your TMDb API Key inside the settings tab first, Sweetie!"); return; }
+            if(!query) return;
+
+            container.innerHTML = "<div style='padding:10px; font-size:0.8rem; color:#aaa;'>Querying interstellar records...</div>";
+            container.style.display = "flex";
+
+            // Query both movie and tv show channels simultaneously
+            Promise.all([
+                fetch(`https://api.themoviedb.org/3/search/movie?api_key=${tmdbKey}&query=${encodeURIComponent(query)}`).then(r => r.json()),
+                fetch(`https://api.themoviedb.org/3/search/tv?api_key=${tmdbKey}&query=${encodeURIComponent(query)}`).then(r => r.json())
+            ])
+            .then(([movieData, tvData]) => {
+                container.innerHTML = "";
+                let results = [];
+                if (movieData.results) results = results.concat(movieData.results.slice(0, 5).map(m => ({ ...m, media_type: 'Movie' })));
+                if (tvData.results) results = results.concat(tvData.results.slice(0, 5).map(t => ({ ...t, media_type: 'TV', title: t.name, release_date: t.first_air_date })));
+
+                if(results.length === 0) {
+                    container.innerHTML = "<div style='padding:10px; font-size:0.8rem; color:#ed1c24;'>No screening logs found in cloud channels.</div>";
+                    return;
+                }
+
+                results.forEach(item => {
+                    const year = item.release_date ? item.release_date.split("-")[0] : "N/A";
+                    const row = document.createElement('div');
+                    row.className = 'tmdb-search-row';
+                    row.innerHTML = `
+                        <span><b>[${item.media_type}]</b> ${item.title} (${year})</span>
+                        <button class="import-mini-btn" onclick="importTmdbItemToForm('${item.media_type}', ${item.id})">Import</button>
+                    `;
+                    container.appendChild(row);
+                });
+            })
+            .catch(() => { container.innerHTML = "<div style='padding:10px; font-size:0.8rem; color:#ed1c24;'>Pipeline transmission dropped.</div>"; });
+        }
+
+        function importTmdbItemToForm(type, id) {
+            const tmdbKey = localStorage.getItem('tmdb_key');
+            const searchType = type === 'Movie' ? 'movie' : 'tv';
+
+            fetch(`https://api.themoviedb.org/3/${searchType}/${id}?api_key=${tmdbKey}`)
+                .then(r => r.json())
+                .then(details => {
+                    document.getElementById('addTitle').value = details.title || details.name || "";
+                    document.getElementById('addType').value = type;
+                    document.getElementById('addOverview').value = details.overview || "";
+                    document.getElementById('addReleaseDate').value = details.release_date || details.first_air_date || "";
+                    document.getElementById('addGenre').value = details.genres ? details.genres.map(g => g.name).join(", ") : "General";
+                    
+                    document.getElementById('tmdbGlobalResultsArea').style.display = "none";
+                    document.getElementById('tmdbGlobalSearchQuery').value = "";
+                    alert(`Loaded "${details.title || details.name}" directly into manual fields! Tap "Inject Screening Node" below to lock it in, Sweetie!`);
+                });
+        }
 
         function saveSyncCredentialsToStorage() {
             const client = document.getElementById('clientIdInput').value.trim();
@@ -431,13 +500,11 @@
 
             if (token && apiKey) {
                 logField.innerText = "🔄 Syncing with Google Drive Matrix...";
-                // Verify token state with Google Drive Core endpoint
                 fetch(`https://www.googleapis.com/drive/v3/files?maxResults=1&key=${apiKey}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 .then(res => {
                     if (res.status === 401) {
-                        // Token has timed out naturally, flag status gracefully
                         logField.innerText = "❌ Session Expired. Tap Connect to re-sync.";
                     } else {
                         logField.innerText = "✅ Connected to Google Drive.";
@@ -466,13 +533,12 @@
                     .then(res => res.json())
                     .then(cloudDb => {
                         if (cloudDb && Array.isArray(cloudDb) && cloudDb.length > 0) {
-                            // Master overwrite safety gate block
-                            if (mediaDatabase.length === 0 || confirm("Master cloud data array detected! Overwrite clean local screen with backup logs, Sweetie?")) {
+                            // Automatically download data if your local array is clean/empty
+                            if (mediaDatabase.length === 0 || confirm("Cloud collection array detected! Overwrite local device dashboard with master data, Sweetie?")) {
                                 mediaDatabase = cloudDb;
                                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                                 refreshAllViews();
                             } else {
-                                // If you decline or have newer active content, push instead
                                 pushDatabaseToCloud();
                             }
                         }
@@ -550,7 +616,6 @@
         function refreshAllViews() {
             renderMediaGrid();
             renderBookGrid();
-            renderSimulatedWidgets();
         }
 
         function toggleSideDrawer(drawerId, open) {
@@ -781,7 +846,15 @@
         function updateManualCardDate(id, val, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].completionDate = val; saveAndRefreshBoth(context); } }
         function setCardDateToToday(id, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0]; saveAndRefreshBoth(context); } }
         function setCardDateToForgot(id, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].completionDate = "Unknown Date"; saveAndRefreshBoth(context); } }
-        function setManualStarRating(id, ratingVal, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].rating = parseInt(ratingVal); saveAndRefreshBoth(context); } }
+        
+        function setManualStarRating(id, ratingVal, context) { 
+            const idx = mediaDatabase.findIndex(i => i.id === id); 
+            if(idx !== -1) { 
+                mediaDatabase[idx].rating = parseInt(ratingVal); 
+                saveAndRefreshBoth(context); 
+            } 
+        }
+        
         function updateManualLibraryReturnDate(id, val, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].libraryReturnDate = val; localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); pushDatabaseToCloud(); } }
 
         function calculateLiveStringHeader(item) {
@@ -810,6 +883,7 @@
                 if (sortVal === 'progress') return b.progress - a.progress;
             });
 
+            gridContainer.innerHTML = '';
             data.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = `media-card ${item.pinned ? 'pinned' : ''}`;
@@ -919,7 +993,7 @@
             const grid = document.getElementById('cinemaDatabaseGrid'); if(!grid) return;
             const searchQuery = document.getElementById('cinemaSearchBar').value.toLowerCase();
             const sortVal = document.getElementById('sortEngine').value;
-            const typeFilter = document.getElementById('typeFilter').value; grid.innerHTML = '';
+            const typeFilter = document.getElementById('typeFilter').value;
             
             let filteredData = mediaDatabase.filter(item => {
                 if (item.type === 'Audiobook') return false;
@@ -942,7 +1016,7 @@
         function renderBookGrid() {
             const grid = document.getElementById('bookDatabaseGrid'); if(!grid) return;
             const searchQuery = document.getElementById('bookSearchBar').value.toLowerCase();
-            const sortVal = document.getElementById('bookSortEngine').value; grid.innerHTML = '';
+            const sortVal = document.getElementById('bookSortEngine').value;
             let filteredData = mediaDatabase.filter(item => {
                 if (item.type !== 'Audiobook') return false;
                 const searchStr = `${item.title} ${item.creator} ${item.genre}`.toLowerCase();
@@ -958,16 +1032,6 @@
                 filteredData = filteredData.slice(0, 6);
             }
             sortAndRenderDeck(filteredData, grid, sortVal, 'book');
-        }
-
-        function renderSimulatedWidgets() {
-            const widgetGrid = document.getElementById('simulatedWidgetGrid'); if (!widgetGrid) return; widgetGrid.innerHTML = '';
-            const trackingMedia = mediaDatabase.filter(item => item.status === 'watching');
-            const videoItems = trackingMedia.filter(i => i.type !== 'Audiobook').slice(0, 2);
-            let videoWidgetHtml = `<div class="sim-widget"><div class="widget-title">📺 Cinema Widget</div>`;
-            videoItems.forEach(item => { videoWidgetHtml += `<div class="widget-item">${item.poster ? `<img class="widget-thumb" src="${item.poster}">` : `<div class="widget-thumb">🎬</div>`}<div class="widget-info"><b>${item.title}</b><br><span style="color:#ff007f">${item.progress}% tracked</span></div></div>`; });
-            videoWidgetHtml += `</div>`;
-            widgetGrid.innerHTML = videoWidgetHtml;
         }
 
         function fetchMediaArtwork(item, openModalOnComplete = false) {
