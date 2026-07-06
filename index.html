@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Entertainment Dashboard</title>
     <style>
-        /* --- THEME DESIGN SYSTEM WITH HIGH-DENSITY PSEUDO LAYERS --- */
+        /* --- THEME DESIGN SYSTEM WITH DEEP HIGH-DENSITY CHARCOAL OVERLAYS --- */
         :root { --bg-image: none; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -22,17 +22,17 @@
         }
         
         [data-theme="cyberpunk"] {
-            --bg-color: #020208; --panel-bg: rgba(10, 12, 32, 0.95); --text-color: #00ffcc; 
-            --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(16, 20, 48, 0.9);
+            --bg-color: #020208; --panel-bg: rgba(10, 12, 32, 0.96); --text-color: #00ffcc; 
+            --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(16, 20, 48, 0.92);
             --text-shadow: 0 0 5px rgba(0,255,204,0.6);
-            --bg-pattern: linear-gradient(to bottom, rgba(255, 0, 127, 0.05) 1px, transparent 1px), linear-gradient(to right, rgba(0, 255, 204, 0.05) 1px, transparent 1px);
-            --pattern-size: 30px 30px, 30px 30px;
+            --bg-pattern: linear-gradient(to bottom, rgba(255, 0, 127, 0.08) 1px, transparent 1px), linear-gradient(to right, rgba(0, 255, 204, 0.08) 1px, transparent 1px);
+            --pattern-size: 40px 40px, 40px 40px;
         }
         [data-theme="steampunk"] {
-            --bg-color: #1a110a; --panel-bg: rgba(43, 30, 20, 0.96); --text-color: #fcefd2; 
-            --accent-color: #e29c1d; --border-color: #8c5e38; --card-bg: #2d1f15;
-            --bg-pattern: radial-gradient(circle, #000000 20%, transparent 20%), radial-gradient(circle, #000000 20%, transparent 20?), linear-gradient(rgba(140, 94, 56, 0.12) 1px, transparent 1px);
-            --pattern-size: 16px 16px, 16px 16px, 32px 32px; background-position: 0 0, 8px 8px, 0 0; --text-shadow: none;
+            --bg-color: #120b06; --panel-bg: rgba(33, 22, 14, 0.97); --text-color: #fcefd2; 
+            --accent-color: #e29c1d; --border-color: #6e4624; --card-bg: #21160e;
+            --bg-pattern: linear-gradient(rgba(0, 0, 0, 0.4) 2px, transparent 2px), linear-gradient(90deg, rgba(110, 70, 36, 0.15) 1px, transparent 1px);
+            --pattern-size: 30px 30px, 30px 30px; --text-shadow: none;
         }
         [data-theme="star-trek"] {
             --bg-color: #000000; --panel-bg: rgba(10, 16, 36, 0.93); --text-color: #ffaa00; 
@@ -50,7 +50,7 @@
             --accent-color: #ffcc00; --border-color: #e5e5ea; --card-bg: #ffffff; --bg-pattern: none; --text-shadow: none;
         }
 
-        /* --- STRUCTURAL LAYOUT --- */
+        /* --- STYLING BASICS --- */
         header { background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
         h1 { font-size: 1.2rem; color: var(--accent-color); text-shadow: var(--text-shadow); }
         .theme-dropdown { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 4px; font-size: 0.85rem; outline: none; }
@@ -64,7 +64,7 @@
         .action-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .toggle-menu-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
 
-        /* DRAWERS */
+        /* SLIDE-OUT DRAWERS */
         .side-drawer { position: fixed; top: 0; right: -340px; width: 340px; height: 100vh; background-color: var(--panel-bg); border-left: 2px solid var(--border-color); box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2000; padding: 20px; transition: right 0.3s ease-in-out; display: flex; flex-direction: column; gap: 12px; }
         .side-drawer.open { right: 0; }
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1999; display: none; backdrop-filter: blur(2px); }
@@ -75,50 +75,59 @@
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
 
-        /* --- MEDIA CARD CARRIER TILES DESIGN --- */
-        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+        /* --- NEW DYNAMIC INLINE OVERLAY SELECTORS & TILES --- */
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
         .media-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; display: flex; flex-direction: column; position: relative; overflow: hidden; cursor: pointer; }
         .media-card.pinned { border: 2px solid var(--accent-color); box-shadow: 0 0 8px rgba(0,255,204,0.3); }
         
-        .poster-frame { width: 100%; height: 230px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .poster-frame { width: 100%; height: 240px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
         .poster-img { width: 100%; height: 100%; object-fit: cover; }
         .poster-placeholder { font-size: 2.5rem; color: var(--text-muted); opacity: 0.3; }
 
-        /* High Visibility Face Banners */
-        .face-status-badge { position: absolute; top: 8px; left: 8px; padding: 3px 6px; background: rgba(0,0,0,0.85); color: var(--accent-color); border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.65rem; font-weight: bold; z-index: 5; text-transform: uppercase; }
+        /* Dynamic Selector Controls Container */
+        .card-dropdown-rack { position: absolute; top: 6px; left: 6px; right: 6px; display: flex; flex-direction: column; gap: 4px; z-index: 10; }
+        .card-dropdown-rack select { background: rgba(0, 0, 0, 0.85); color: var(--text-color); border: 1px solid var(--border-color); font-size: 0.68rem; padding: 3px 6px; border-radius: 4px; outline: none; cursor: pointer; width: 100%; font-weight: bold; }
+        .card-dropdown-rack select:focus { border-color: var(--accent-color); }
 
-        .card-details-pane { flex: 1; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }
-        .media-title { font-size: 0.9rem; font-weight: bold; color: var(--text-color); line-height: 1.3; word-break: break-word; }
-        .media-meta { font-size: 0.75rem; color: var(--text-muted); line-height: 1.3; }
+        .card-details-pane { flex: 1; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
+        .media-title { font-size: 0.95rem; font-weight: bold; color: var(--text-color); line-height: 1.3; word-break: break-word; }
+        .media-meta { font-size: 0.78rem; color: var(--text-muted); line-height: 1.3; }
+        .tv-tracker-line { font-size: 0.75rem; font-weight: bold; color: var(--accent-color); margin: 2px 0; }
         
+        /* Inline Date Editor Box Styles */
+        .card-date-row { display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 4px; margin-top: 4px; }
+        .card-date-row label { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; }
+        .card-date-row input { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); font-size: 0.68rem; padding: 2px 4px; border-radius: 3px; outline: none; flex: 1; min-width: 0; }
+        .macro-today-btn { background: var(--accent-color); color: #000; border: none; font-size: 0.6rem; font-weight: bold; padding: 3px 5px; border-radius: 3px; cursor: pointer; }
+
         .progress-container { background: rgba(255,255,255,0.1); border-radius: 4px; height: 5px; margin: 4px 0; overflow: hidden; }
         .progress-bar { background: var(--accent-color); height: 100%; width: 0%; }
-        .badge-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; }
+        .badge-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; }
         .star-rating { color: var(--accent-color); }
         .card-controls { display: flex; gap: 6px; align-items: center; }
         .card-ctrl-btn { background: none; border: none; color: var(--text-color); opacity: 0.6; cursor: pointer; font-size: 0.85rem; }
         .card-ctrl-btn:hover { opacity: 1; color: var(--accent-color); }
         .heart-icon { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 1rem; }
 
-        /* --- MAXI EXPANDED PROFILE DETAIL MODAL CANVAS --- */
-        .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        /* --- THE MASTER EXPANDED DETAIL MODAL DISPLAY DECK --- */
+        .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.82); backdrop-filter: blur(10px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-canvas.active { display: flex; }
-        .modal-box { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 800px; height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
-        .modal-hero { width: 100%; height: 260px; position: relative; background: #05050a; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+        .modal-box { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 780px; height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 35px rgba(0,0,0,0.75); }
+        .modal-hero { width: 100%; height: 240px; position: relative; background: #040408; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
         .modal-hero-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.35; position: absolute; top:0; left:0; }
-        .modal-hero-title { position: relative; z-index: 2; font-size: 1.7rem; font-weight: bold; color: var(--text-color); text-align: center; padding: 0 20px; text-shadow: 0 3px 6px #000; }
-        .modal-body { padding: 25px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .modal-hero-title { position: relative; z-index: 2; font-size: 1.6rem; font-weight: bold; color: var(--text-color); text-align: center; padding: 0 20px; text-shadow: 0 3px 6px #000; }
+        .modal-body { padding: 25px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 14px; }
         .modal-desc { font-size: 0.95rem; line-height: 1.6; color: var(--text-color); opacity: 0.95; border-bottom: 1px dashed rgba(255,255,255,0.15); padding-bottom: 12px; }
-        .modal-meta-line { font-size: 0.85rem; color: var(--text-color); margin-bottom: 2px; }
+        .modal-meta-line { font-size: 0.88rem; color: var(--text-color); margin-bottom: 1px; }
         
-        .modal-sub-selector { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px; border-radius: 4px; width: 100%; outline: none; margin-top: 5px; font-size: 0.9rem; }
-        .modal-episodes-deck { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; margin-top: 5px; }
-        .modal-ep-row { background: rgba(255,255,255,0.02); padding: 8px; border-radius: 4px; display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .modal-ep-top-line { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; font-weight: bold; color: var(--text-color); }
-        .modal-ep-text-desc { font-size: 0.75rem; color: var(--text-color); opacity: 0.75; line-height: 1.4; padding-top: 4px; padding-right: 10px; }
+        .modal-sub-selector { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px; border-radius: 4px; width: 100%; outline: none; margin-top: 5px; font-size: 0.9rem; font-weight: bold; }
+        .modal-episodes-deck { background: rgba(0,0,0,0.35); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; margin-top: 5px; }
+        .modal-ep-row { background: rgba(255,255,255,0.02); padding: 10px; border-radius: 4px; display: flex; flex-direction: column; gap: 5px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .modal-ep-top-line { display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; font-weight: bold; color: var(--text-color); }
+        .modal-ep-text-desc { font-size: 0.82rem; color: var(--text-color); opacity: 0.85; line-height: 1.5; padding: 6px 8px; background: rgba(0,0,0,0.2); border-left: 2px solid var(--accent-color); margin-top: 4px; border-radius: 2px; }
         .modal-ep-top-line input { width: 18px; height: 18px; cursor: pointer; }
 
-        /* Forms */
+        /* Forms Layout */
         .form-group { display: flex; flex-direction: column; margin-bottom: 12px; width: 100%; }
         .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
         .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem; outline: none; width: 100%; }
@@ -159,7 +168,7 @@
 
     <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
 
-    <!-- HOLOGRAPHIC DETAIL MAXI MODAL -->
+    <!-- HOLOGRAPHIC DETAIL COMMAND BOX -->
     <div id="mediaDetailModal" class="modal-canvas" onclick="if(event.target === this) closeProfileModal()">
         <div class="modal-box">
             <div class="modal-hero">
@@ -173,15 +182,15 @@
                 <div id="modalReleaseLine" class="modal-meta-line"><b>Release Date:</b> -</div>
                 <div id="modalAccessLine" class="modal-meta-line"><b>Source Profile:</b> -</div>
                 
-                <!-- Expanded Multi-Season Target Block -->
+                <!-- Expanded Multi-Season Selector Area -->
                 <div id="modalTvSection" style="display:none; margin-top:5px; width:100%;">
-                    <label for="modalSeasonSelector" style="font-size:0.8rem; font-weight:bold; color:var(--accent-color);">⚡ Select Ingestion Season:</label>
+                    <label for="modalSeasonSelector" style="font-size:0.85rem; font-weight:bold; color:var(--accent-color);">⚡ Ingested Show Seasons:</label>
                     <select id="modalSeasonSelector" class="modal-sub-selector" onchange="loadSelectedSeasonDeck()"></select>
-                    <div style="font-size:0.8rem; font-weight:bold; margin-top:10px; color:var(--accent-color);">📺 Season Episode Runlogs:</div>
+                    <div style="font-size:0.85rem; font-weight:bold; margin-top:12px; color:var(--accent-color);">📺 Season Episode Runlogs (Tap line for plot synopsis):</div>
                     <div id="modalEpisodesContainer" class="modal-episodes-deck"></div>
                 </div>
 
-                <button class="btn" style="margin-top:15px;" onclick="closeProfileModal()">Close Profile Node</button>
+                <button class="btn" style="margin-top:10px;" onclick="closeProfileModal()">Close Profile Node</button>
             </div>
         </div>
     </div>
@@ -210,9 +219,8 @@
                     <div class="form-group"><label>Director / Showrunner</label><input type="text" id="addCreator" placeholder="Director Name"></div>
                     <div class="form-group"><label>Main Actor / Star</label><input type="text" id="addActor" placeholder="Lead Actor Name"></div>
                     <div class="form-group"><label>Genre Tags</label><input type="text" id="addGenre" placeholder="e.g., Sci-Fi, Cyberpunk"></div>
-                    <div class="form-group"><label>Description / Overview</label><textarea id="addOverview" rows="2" placeholder="Manual entry profile overview..."></textarea></div>
+                    <div class="form-group"><label>Description / Overview</label><textarea id="addOverview" rows="2" placeholder="Manual entry overview text..."></textarea></div>
                     <div class="form-group"><label>Release Date</label><input type="date" id="addReleaseDate"></div>
-                    <div class="form-group"><label>Date Seen / Completed</label><input type="date" id="addSeenDate"></div>
                     <div class="form-group"><label>Access Profile</label><select id="addAccess"><option value="Streaming">Streaming Platform</option><option value="Owned">I Own It</option><option value="Wishlist">Wishlist / Discovery</option></select></div>
                     <div class="form-group"><label>Watch Status Indicator</label><select id="addWatchState"><option value="unwatched">Unwatched</option><option value="watching">Currently Watching</option><option value="completed">Completed Logs</option></select></div>
                     <div class="form-group"><label>Target Container</label><select id="addStatus"><option value="all">Main Collection</option><option value="watching">Currently Tracking</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
@@ -268,7 +276,6 @@
                     <div class="form-group"><label>Book Summary / Description</label><textarea id="addBookOverview" rows="2" placeholder="Enter book overview details..."></textarea></div>
                     <div class="form-group"><label>Access Profile</label><select id="addBookAccess"><option value="Owned">I Own It</option><option value="Streaming">Streaming Platform</option><option value="Wishlist">Wishlist</option></select></div>
                     <div class="form-group"><label>Reading Status Indicator</label><select id="addBookWatchState"><option value="unwatched">Unwatched</option><option value="watching">Currently Reading</option><option value="completed">Completed Logs</option></select></div>
-                    <div class="form-group"><label>Date Read / Finished</label><input type="date" id="addBookReadDate"></div>
                     <div class="form-group"><label>Target Container</label><select id="addBookStatus"><option value="all">Main Collection</option><option value="watching">Currently Tracking</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
                     <div class="form-group"><label>Manual Progress Metric %</label><input type="number" id="addBookProgress" min="0" max="100" value="0"></div>
                 </div>
@@ -348,8 +355,7 @@
 
     <script>
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [
-            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", actor: "Richard Dean Anderson", genre: "Sci-Fi", overview: "A secret military team explores the galaxy using an ancient network of alien portals.", releaseDate: "1997-07-27", dateAdded: "2026-01-01", completionDate: "", access: "Streaming", watchState: "watching", status: "watching", progress: 66, favorite: true, rating: 5, pinned: false, manualOrder: 0, poster: "" },
-            { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", actor: "N/A", genre: "Cyberpunk", overview: "Case, a washed-up computer hacker, is hired by a mysterious benefactor for one final ultimate run.", releaseDate: "1984-07-01", dateAdded: "2026-02-15", completionDate: "", access: "Owned", watchState: "watching", status: "watching", progress: 45, favorite: false, rating: 4, pinned: false, manualOrder: 1, poster: "" }
+            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", actor: "Richard Dean Anderson", genre: "Sci-Fi", overview: "A secret military team explores the galaxy using an ancient network of alien portals.", releaseDate: "1997-07-27", dateAdded: "2026-01-01", completionDate: "", access: "Streaming", watchState: "watching", status: "watching", progress: 84, favorite: true, rating: 5, pinned: false, manualOrder: 0, poster: "" }
         ];
 
         let currentCinemaCategory = 'all';
@@ -401,13 +407,12 @@
             document.getElementById('drawerOverlay').classList.remove('active');
         }
 
-        /* --- DECOUPLED ON-TAP HYDRO METADATA RETRIEVAL ENGINE --- */
+        /* --- STABLE METADATA HYDRATION TRIGGER --- */
         function openProfileModal(id) {
             activeProfileModalId = id;
             const item = mediaDatabase.find(m => m.id === id);
             if (!item) return;
 
-            // Trigger real-time background lookup if properties are generic placeholders
             if (!item.overview || item.overview.includes("Loading") || item.overview.includes("Ingested") || (item.type === 'TV' && (!item.seasons || item.seasons.length === 0))) {
                 fetchMediaArtwork(item, true); 
             } else {
@@ -427,7 +432,7 @@
 
             document.getElementById('modalTitle').innerText = item.title;
             document.getElementById('modalHeroImg').src = item.poster || "";
-            document.getElementById('modalDescription').innerText = item.overview || "No extended text description loaded for this asset.";
+            document.getElementById('modalDescription').innerText = item.overview || "No extended profile description found for this entry.";
             document.getElementById('modalCreatorLine').innerHTML = `<b>${item.type === 'Audiobook' ? 'Author' : 'Director'}:</b> ${item.creator || 'Unknown'}`;
             document.getElementById('modalActorLine').innerHTML = `<b>Lead Cast:</b> ${item.actor || 'N/A'}`;
             document.getElementById('modalReleaseLine').innerHTML = `<b>Release Date:</b> ${item.releaseDate || 'Unknown'}`;
@@ -465,18 +470,21 @@
                 season.episodes.forEach(ep => {
                     const row = document.createElement('div');
                     row.className = 'modal-ep-row';
-                    
-                    // Tap row header to show/hide dynamic episode specific summary overlays
                     row.innerHTML = `
-                        <div class="modal-ep-top-line" onclick="document.getElementById('ep-desc-${ep.id}').style.display = (document.getElementById('ep-desc-${ep.id}').style.display === 'none' ? 'block' : 'none')">
-                            <span style="cursor:pointer;">🎬 S${seasonNum}E${ep.episodeNumber}: ${ep.name}</span>
+                        <div class="modal-ep-top-line" style="cursor:pointer;" onclick="toggleEpisodeSummaryPane(${ep.id})">
+                            <span>🎬 S${seasonNum}E${ep.episodeNumber}: ${ep.name}</span>
                             <input type="checkbox" ${ep.watched ? 'checked' : ''} onclick="event.stopPropagation(); toggleEpisodeWatchState(${item.id}, ${seasonNum}, ${ep.id})">
                         </div>
-                        <div id="ep-desc-${ep.id}" class="modal-ep-text-desc" style="display:none;">${ep.overview || 'No transmission logs reported for this individual broadcast node.'}</div>
+                        <div id="ep-desc-${ep.id}" class="modal-ep-text-desc" style="display:none;">${ep.overview || 'No textual summary loaded for this broadcast episode.'}</div>
                     `;
                     container.appendChild(row);
                 });
             }
+        }
+
+        function toggleEpisodeSummaryPane(epId) {
+            const el = document.getElementById(`ep-desc-${epId}`);
+            if(el) el.style.display = (el.style.display === 'none' ? 'block' : 'none');
         }
 
         function toggleEpisodeWatchState(seriesId, seasonNum, epId) {
@@ -490,7 +498,6 @@
             if (eIdx !== -1) {
                 mediaDatabase[idx].seasons[sIdx].episodes[eIdx].watched = !mediaDatabase[idx].seasons[sIdx].episodes[eIdx].watched;
                 
-                // Recalculate whole tracking status array metrics
                 let total = 0, watched = 0;
                 mediaDatabase[idx].seasons.forEach(s => {
                     if (s.episodes) {
@@ -503,54 +510,95 @@
                 mediaDatabase[idx].progress = total > 0 ? Math.round((watched / total) * 100) : 0;
                 mediaDatabase[idx].watchState = mediaDatabase[idx].progress === 100 ? 'completed' : (watched > 0 ? 'watching' : 'unwatched');
                 
+                if(mediaDatabase[idx].progress === 100) {
+                    mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0];
+                }
+
                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                renderMediaGrid();
-                renderSimulatedWidgets();
+                refreshAllViews();
             }
         }
 
-        /* --- STAMP GENERATOR COMPILER --- */
-        function calculateFaceBadgeMarkup(item) {
+        /* --- CORE FACE INLINE DROPDOWN HANDLERS --- */
+        function changeCardAccessField(id, val, context) {
+            const idx = mediaDatabase.findIndex(i => i.id === id);
+            if(idx !== -1) {
+                mediaDatabase[idx].access = val;
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                if(context === 'cinema') renderMediaGrid(); else renderBookGrid();
+            }
+        }
+
+        function changeCardWatchField(id, val, context) {
+            const idx = mediaDatabase.findIndex(i => i.id === id);
+            if(idx !== -1) {
+                mediaDatabase[idx].watchState = val;
+                if(val === 'completed') {
+                    mediaDatabase[idx].progress = 100;
+                    if(!mediaDatabase[idx].completionDate) {
+                        mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0];
+                    }
+                } else if(val === 'unwatched') {
+                    mediaDatabase[idx].progress = 0;
+                }
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                refreshAllViews();
+            }
+        }
+
+        function updateManualCardDate(id, val) {
+            const idx = mediaDatabase.findIndex(i => i.id === id);
+            if(idx !== -1) {
+                mediaDatabase[idx].completionDate = val;
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            }
+        }
+
+        function setCardDateToToday(id, context) {
+            const idx = mediaDatabase.findIndex(i => i.id === id);
+            if(idx !== -1) {
+                const todayStr = new Date().toISOString().split('T')[0];
+                mediaDatabase[idx].completionDate = todayStr;
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                if(context === 'cinema') renderMediaGrid(); else renderBookGrid();
+            }
+        }
+
+        function calculateLiveStringHeader(item) {
             if (item.type === 'TV') {
                 if (item.watchState === 'completed' || item.progress === 100) return 'Completed';
-                
-                // Find current tracked coordinate indexes
-                let currentString = 'Unwatched';
+                let lastWatchedStr = 'Unwatched';
                 if (item.seasons) {
-                    let breaking = false;
+                    let found = false;
                     for (let s of item.seasons) {
                         if (s.episodes) {
                             for (let e of s.episodes) {
                                 if (e.watched) {
-                                    currentString = `Watching: S${s.seasonNumber} E${e.episodeNumber}`;
-                                } else if (currentString !== 'Unwatched') {
-                                    breaking = true; break;
+                                    lastWatchedStr = `Track: S${s.seasonNumber} Ep${e.episodeNumber}`;
+                                    found = true;
                                 }
                             }
                         }
-                        if (breaking) break;
                     }
                 }
-                return currentString;
+                return lastWatchedStr;
             } else {
-                // Return clear asset state mapping profiles
-                let accessTag = item.access || 'Owned';
-                let watchTag = item.watchState || 'unwatched';
-                return `${accessTag} | ${watchTag}`;
+                return item.watchState === 'completed' ? 'Completed' : 'Tracking Node';
             }
         }
 
+        /* --- THE GRID COMPILE LOOP --- */
         function sortAndRenderDeck(data, gridContainer, sortVal, contextTag) {
             data.sort((a, b) => {
                 if (a.pinned !== b.pinned) return b.pinned - a.pinned; 
                 if (a.manualOrder !== b.manualOrder) return a.manualOrder - b.manualOrder;
                 if (sortVal === 'name') return a.title.localeCompare(b.title);
-                if (sortVal === 'releaseDate') return new Date(a.releaseDate) - new Date(b.releaseDate);
+                if (sortVal === 'releaseDate') return new Date(a.releaseDate || '1970-01-01') - new Date(b.releaseDate || '1970-01-01');
                 if (sortVal === 'dateAdded') return new Date(a.dateAdded) - new Date(b.dateAdded);
                 if (sortVal === 'genre') return (a.genre || '').localeCompare(b.genre || '');
                 if (sortVal === 'rating') return b.rating - a.rating;
                 if (sortVal === 'progress') return b.progress - a.progress;
-                if (sortVal === 'director' || sortVal === 'author') return a.creator.localeCompare(b.creator);
+                if (sortVal === 'director' || sortVal === 'author') return (a.creator || '').localeCompare(b.creator || '');
                 if (sortVal === 'actor') return (a.actor || '').localeCompare(b.actor || '');
             });
 
@@ -562,17 +610,35 @@
                 let posterContent = `<span class="poster-placeholder">${item.type === 'Audiobook' ? '📚' : '🎬'}</span>`;
                 if (item.poster) posterContent = `<img src="${item.poster}" class="poster-img" alt="Poster">`;
 
-                let faceBadgeText = calculateFaceBadgeMarkup(item);
+                let currentTvIndicator = item.type === 'TV' ? `<div class="tv-tracker-line">${calculateLiveStringHeader(item)}</div>` : '';
+                let savedDate = item.completionDate || '';
 
                 card.innerHTML = `
-                    <div class="poster-frame" id="poster-${item.id}">
-                        <div class="face-status-badge">${faceBadgeText}</div>
+                    <div class="poster-frame">
+                        <div class="card-dropdown-rack" onclick="event.stopPropagation();">
+                            <select onchange="changeCardAccessField(${item.id}, this.value, '${contextTag}')">
+                                <option value="Owned" ${item.access === 'Owned' ? 'selected' : ''}>I Own It</option>
+                                <option value="Streaming" ${item.access === 'Streaming' ? 'selected' : ''}>Streaming Platform</option>
+                                <option value="Wishlist" ${item.access === 'Wishlist' ? 'selected' : ''}>Wishlist / Discover</option>
+                            </select>
+                            <select onchange="changeCardWatchField(${item.id}, this.value, '${contextTag}')">
+                                <option value="unwatched" ${item.watchState === 'unwatched' ? 'selected' : ''}>Unwatched</option>
+                                <option value="watching" ${item.watchState === 'watching' ? 'selected' : ''}>Currently Tracking</option>
+                                <option value="completed" ${item.watchState === 'completed' ? 'selected' : ''}>Completed Log</option>
+                            </select>
+                        </div>
                         ${posterContent}
                     </div>
                     <div class="card-details-pane">
                         <div>
                             <div class="media-title">${item.title}</div>
                             <div class="media-meta">${item.type === 'Audiobook' ? 'By ' + item.creator : item.genre}</div>
+                            ${currentTvIndicator}
+                            <div class="card-date-row" onclick="event.stopPropagation();">
+                                <label>Date:</label>
+                                <input type="date" value="${savedDate}" onchange="updateManualCardDate(${item.id}, this.value)">
+                                <button class="macro-today-btn" onclick="setCardDateToToday(${item.id}, '${contextTag}')">⚡ Today</button>
+                            </div>
                         </div>
                         <div>
                             <div class="progress-container"><div class="progress-bar" style="width: ${item.progress}%"></div></div>
@@ -651,13 +717,13 @@
             widgetGrid.innerHTML = videoWidgetHtml + bookWidgetHtml;
         }
 
-        /* ================= NETWORK PIPELINE SYNC MATRIX ================= */
+        /* ================= HIGH-PERFORMANCE DATA HARVESTING PIPELINE ================= */
         function fetchMediaArtwork(item, openModalOnComplete = false) {
             const tmdbKey = localStorage.getItem('tmdb_key');
             
             if ((item.type === 'Movie' || item.type === 'TV') && tmdbKey) {
                 const searchType = item.type === 'Movie' ? 'movie' : 'tv';
-                fetch(`https://api.themoviedb.org/3/search/${searchType}?api_key=%7BtmdbKey%7D&query=${encodeURIComponent(item.title)}`)
+                fetch(`https://api.themoviedb.org/3/search/${searchType}?api_key=${tmdbKey}&query=${encodeURIComponent(item.title)}`)
                     .then(res => res.json()).then(data => {
                         if (data.results && data.results.length > 0) {
                             const resObj = data.results[0];
@@ -668,7 +734,6 @@
                             if (resObj.overview) mediaDatabase[idx].overview = resObj.overview;
                             if (resObj.release_date || resObj.first_air_date) mediaDatabase[idx].releaseDate = resObj.release_date || resObj.first_air_date;
 
-                            // Ingest lead actors list matrix entries
                             fetch(`https://api.themoviedb.org/3/${searchType}/${resObj.id}/credits?api_key=${tmdbKey}`)
                                 .then(cr => cr.json()).then(credits => {
                                     if(credits.cast && credits.cast.length > 0) {
@@ -676,7 +741,6 @@
                                     }
                                     
                                     if (item.type === 'TV') {
-                                        // Dynamic multi-season lookup loop integration
                                         fetch(`https://api.themoviedb.org/3/tv/${resObj.id}?api_key=${tmdbKey}`)
                                             .then(r => r.json()).then(fullShow => {
                                                 let seasonPromises = fullShow.seasons.map(s => {
@@ -689,7 +753,7 @@
                                                                 id: e.id,
                                                                 episodeNumber: e.episode_number,
                                                                 name: e.name,
-                                                                overview: e.overview || "No transmission log overview found for this node.",
+                                                                overview: e.overview || "No extended overview reported for this episode.",
                                                                 watched: false
                                                             })) : []
                                                         })).catch(() => null);
@@ -711,7 +775,6 @@
                         }
                     }).catch(() => {});
             } else if (item.type === 'Audiobook') {
-                // Fixed Open Library query parameter string construction matches
                 fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(item.title)}`)
                     .then(res => res.json()).then(data => {
                         if (data.docs && data.docs.length > 0) {
@@ -720,7 +783,7 @@
                             if (idx !== -1) {
                                 if (match.cover_i) mediaDatabase[idx].poster = `https://covers.openlibrary.org/b/id/${match.cover_i}-L.jpg`;
                                 if (match.first_sentence) mediaDatabase[idx].overview = Array.isArray(match.first_sentence) ? match.first_sentence.join(" ") : match.first_sentence;
-                                else mediaDatabase[idx].overview = "Goodreads library audiobook log reference profile.";
+                                else mediaDatabase[idx].overview = "Goodreads archive audiobook tracker log node.";
                                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                                 refreshAllViews();
                                 if(openModalOnComplete) updateProfileModalState(item.id);
@@ -741,14 +804,13 @@
                 const genre = document.getElementById('addGenre').value.trim() || "General";
                 const overview = document.getElementById('addOverview').value.trim();
                 const releaseDate = document.getElementById('addReleaseDate').value || today;
-                const seenDate = document.getElementById('addSeenDate').value;
                 const access = document.getElementById('addAccess').value;
                 const watchState = document.getElementById('addWatchState').value;
                 const status = document.getElementById('addStatus').value;
                 const rating = parseInt(document.getElementById('addRating').value) || 5;
                 if (!title) { alert('Enter title, Sweetie!'); return; }
                 
-                let itemObj = { id: newItemId, title, type, creator, actor, genre, overview, releaseDate, dateAdded: today, completionDate: seenDate, access, watchState, status, progress: (watchState==='completed'?100:0), favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
+                let itemObj = { id: newItemId, title, type, creator, actor, genre, overview, releaseDate, dateAdded: today, completionDate: (watchState==='completed'?today:''), access, watchState, status, progress: (watchState==='completed'?100:0), favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
                 mediaDatabase.push(itemObj);
                 fetchMediaArtwork(itemObj);
             } else {
@@ -758,12 +820,11 @@
                 const overview = document.getElementById('addBookOverview').value.trim();
                 const access = document.getElementById('addBookAccess').value;
                 const watchState = document.getElementById('addBookWatchState').value;
-                const readDate = document.getElementById('addBookReadDate').value;
                 const status = document.getElementById('addBookStatus').value;
                 const progress = parseInt(document.getElementById('addBookProgress').value) || 0;
                 if (!title) { alert('Enter title, Sweetie!'); return; }
                 
-                let itemObj = { id: newItemId, title, type: "Audiobook", creator: author, actor: "N/A", genre, overview, releaseDate: today, dateAdded: today, completionDate: readDate, access, watchState, status, progress: (watchState==='completed'?100:progress), favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
+                let itemObj = { id: newItemId, title, type: "Audiobook", creator: author, actor: "N/A", genre, overview, releaseDate: today, dateAdded: today, completionDate: (watchState==='completed'?today:''), access, watchState, status, progress: (watchState==='completed'?100:progress), favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
                 mediaDatabase.push(itemObj);
                 fetchMediaArtwork(itemObj);
             }
