@@ -5,13 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Entertainment Dashboard</title>
     <style>
-        /* --- THEME DESIGN SYSTEM & BACKGROUND GRIDS --- */
+        /* --- THEME DESIGN SYSTEM & STRUCTURAL GRID OVERLAYS --- */
+        :root { --bg-image: none; }
+        body {
+            background: var(--bg-image) no-repeat center center fixed, var(--bg-pattern);
+            background-size: cover, 100% 6px, 6px 100%;
+            background-color: var(--bg-color); color: var(--text-color); 
+            font-family: sans-serif; padding-bottom: 120px; min-height: 100vh; transition: all 0.3s ease; overflow-x: hidden;
+        }
+        
         [data-theme="cyberpunk"] {
-            --bg-color: #03030d; --panel-bg: rgba(12, 15, 38, 0.95); --text-color: #00ffcc; 
+            --bg-color: #03030d; --panel-bg: rgba(12, 15, 38, 0.93); --text-color: #00ffcc; 
             --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(20, 24, 59, 0.85);
             --text-shadow: 0 0 5px rgba(0,255,204,0.5);
-            --bg-pattern: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            --bg-pattern: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
             background-size: 100% 6px, 6px 100%;
+        }
+        [data-theme="steampunk"] {
+            --bg-color: #2b1d12; --panel-bg: rgba(61, 42, 29, 0.93); --text-color: #f4eae1; 
+            --accent-color: #df9b16; --border-color: #614633; --card-bg: #3d2a1d;
+            --bg-pattern: linear-gradient(rgba(0,0,0,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.15) 1px, transparent 1px);
+            background-size: 20px 20px, 20px 20px; --text-shadow: none;
+        }
+        [data-theme="star-trek"] {
+            --bg-color: #000000; --panel-bg: rgba(15, 23, 42, 0.9); --text-color: #ff9900; 
+            --accent-color: #cc6699; --border-color: #ff9900; --card-bg: rgba(30, 41, 59, 0.85);
+            --text-shadow: 0 0 4px rgba(255,153,0,0.4);
+            --bg-pattern: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08) 1px, transparent 1px), radial-gradient(circle at 75% 60%, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 40px 40px, 60px 60px; border-radius: 0px;
         }
         [data-theme="tvtime-dark"] {
             --bg-color: #141414; --panel-bg: rgba(31, 31, 31, 0.95); --text-color: #ffffff; 
@@ -21,19 +42,9 @@
             --bg-color: #f5f5f7; --panel-bg: rgba(255, 255, 255, 0.95); --text-color: #1d1d1f; 
             --accent-color: #ffcc00; --border-color: #e5e5ea; --card-bg: #ffffff; --bg-pattern: none; --text-shadow: none;
         }
-        [data-theme="steampunk"] {
-            --bg-color: #2b1d12; --panel-bg: rgba(61, 42, 29, 0.95); --text-color: #f4eae1; 
-            --accent-color: #df9b16; --border-color: #614633; --card-bg: #3d2a1d;
-            --bg-pattern: radial-gradient(circle at 50% 50%, #523824 0%, #2b1d12 100%), linear-gradient(rgba(0,0,0,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.15) 1px, transparent 1px);
-            background-size: 100% 100%, 20px 20px, 20px 20px; --text-shadow: none;
-        }
 
         /* --- STRUCTURAL LAYOUT --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background: var(--bg-pattern); background-color: var(--bg-color); color: var(--text-color); 
-            font-family: sans-serif; padding-bottom: 120px; min-height: 100vh; transition: all 0.3s ease; overflow-x: hidden;
-        }
         header {
             background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color);
             padding: 12px 15px; display: flex; justify-content: space-between; align-items: center;
@@ -45,22 +56,19 @@
             padding: 5px 10px; border-radius: 4px; font-size: 0.85rem; outline: none;
         }
         .container { max-width: 950px; margin: 15px auto; padding: 0 12px; }
-        .panel { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .panel { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(4px); }
         h2 { color: var(--accent-color); margin-bottom: 12px; font-size: 1.1rem; text-shadow: var(--text-shadow); border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
         
-        /* Compact Filtering Controls */
         .filter-row { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 8px; margin-bottom: 15px; }
         .filter-row select {
-            background: var(--bg-color); color: var(--text-color);
-            border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 4px; font-size: 0.85rem; outline: none;
+            background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
+            padding: 6px 10px; border-radius: 4px; font-size: 0.85rem; outline: none;
         }
         .reset-btn { background: none; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 6px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
-
-        /* Action Row */
         .action-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .toggle-menu-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
 
-        /* SLIDE-OUT SIDE DRAWERS */
+        /* SLIDE-OUT DECK DRAWERS */
         .side-drawer {
             position: fixed; top: 0; right: -340px; width: 340px; height: 100vh;
             background-color: var(--panel-bg); border-left: 2px solid var(--border-color);
@@ -68,110 +76,76 @@
             transition: right 0.3s ease-in-out; display: flex; flex-direction: column; gap: 12px;
         }
         .side-drawer.open { right: 0; }
-        .drawer-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.5); z-index: 1999; display: none; backdrop-filter: blur(2px);
-        }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1999; display: none; backdrop-filter: blur(2px); }
         .drawer-overlay.active { display: block; }
         .drawer-close-btn { background: none; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
 
-        /* Sub-Navigation Categories */
+        /* Sub-Navigation Buttons */
         .sub-nav { display: flex; overflow-x: auto; gap: 6px; margin-bottom: 15px; padding-bottom: 4px; }
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
 
-        /* --- VERTICAL TILES MEDIA GRID --- */
+        /* --- MEDIA CARD TILES DESIGN --- */
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
-        .media-card {
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
-            padding: 0; display: flex; flex-direction: column; position: relative; overflow: hidden;
-        }
+        .media-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; display: flex; flex-direction: column; position: relative; overflow: hidden; cursor: pointer; }
         .media-card.pinned { border: 2px solid var(--accent-color); box-shadow: 0 0 8px rgba(0,255,204,0.3); }
         
-        .poster-frame {
-            width: 100%; height: 230px; background: rgba(255,255,255,0.03);
-            border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;
-            overflow: hidden; position: relative;
-        }
+        .poster-frame { width: 100%; height: 230px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .poster-img { width: 100%; height: 100%; object-fit: cover; }
         .poster-placeholder { font-size: 2.5rem; color: var(--text-muted); opacity: 0.3; }
 
-        .card-details-pane { flex: 1; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 4px; }
+        .card-details-pane { flex: 1; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }
         .media-title { font-size: 0.9rem; font-weight: bold; color: var(--text-color); line-height: 1.3; word-break: break-word; }
+        .media-meta { font-size: 0.75rem; color: var(--text-muted); line-height: 1.3; }
         
-        .card-controls { display: flex; gap: 6px; align-items: center; }
-        .card-ctrl-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; }
-        .card-ctrl-btn:hover { color: var(--accent-color); }
-        .heart-icon { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 1rem; }
-        .media-meta { font-size: 0.75rem; color: var(--text-muted); line-height: 1.3; margin-top: 2px; }
-        
-        .desc-text { font-size: 0.75rem; color: var(--text-color); opacity: 0.85; margin: 4px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        
-        /* EPISODE CHECKBOX LIST SUB-CHASSIS */
-        .episode-box-deck { background: rgba(0,0,0,0.2); padding: 6px; border-radius: 4px; margin-top: 6px; max-height: 110px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; border: 1px solid rgba(255,255,255,0.05); }
-        .ep-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--text-color); }
-        .ep-row input { cursor: pointer; }
-
         .progress-container { background: rgba(255,255,255,0.1); border-radius: 4px; height: 5px; margin: 4px 0; overflow: hidden; }
         .progress-bar { background: var(--accent-color); height: 100%; width: 0%; }
-        .percentage-text { font-size: 0.75rem; font-weight: bold; color: var(--accent-color); text-align: right; }
-        .badge-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; margin-top: 2px; }
-        .source-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 1px 5px; border-radius: 4px; color: var(--text-muted); }
+        .badge-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; }
         .star-rating { color: var(--accent-color); }
+        .card-controls { display: flex; gap: 6px; align-items: center; }
+        .card-ctrl-btn { background: none; border: none; color: var(--text-color); opacity: 0.6; cursor: pointer; font-size: 0.85rem; }
+        .card-ctrl-btn:hover { opacity: 1; color: var(--accent-color); }
+        .heart-icon { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 1rem; }
 
-        /* Form Controls */
+        /* --- PROFILE DETAIL MODAL OVERLAYS --- */
+        .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 15px; }
+        .modal-canvas.active { display: flex; }
+        .modal-box { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 550px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
+        .modal-hero { width: 100%; height: 200px; position: relative; background: #111; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid var(--border-color); }
+        .modal-hero-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; filter: blur(2px); position: absolute; }
+        .modal-hero-title { position: relative; z-index: 2; font-size: 1.4rem; font-weight: bold; color: var(--text-color); text-align: center; padding: 0 15px; text-shadow: 0 2px 4px #000; }
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .modal-desc { font-size: 0.85rem; line-height: 1.5; color: var(--text-color); opacity: 0.9; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .modal-meta-line { font-size: 0.8rem; color: var(--text-muted); }
+        
+        .modal-episodes-deck { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; }
+        .modal-ep-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px; }
+        .modal-ep-row input { width: 16px; height: 16px; cursor: pointer; }
+
+        /* Form Layouts */
         .form-group { display: flex; flex-direction: column; margin-bottom: 12px; width: 100%; }
         .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
-        .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem; outline: none; width: 100%; font-family: sans-serif; }
-        
-        .maxi-label-picker {
-            display: block; width: 100%; padding: 25px 15px; background: rgba(255,255,255,0.02);
-            border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-color);
-            font-size: 0.9rem; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 12px;
-        }
+        .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem; outline: none; width: 100%; }
+        .maxi-label-picker { display: block; width: 100%; padding: 25px 15px; background: rgba(255,255,255,0.02); border: 2px dashed var(--border-color); border-radius: 8px; color: var(--text-color); font-size: 0.9rem; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 12px; }
         .hidden-file-input { position: absolute; width: 1px; height: 1px; opacity: 0.01; overflow: hidden; z-index: -1; }
-        .file-status-text { display: block; font-size: 0.75rem; color: #707da4; margin-top: 6px; }
         .btn { background-color: var(--accent-color); color: #000; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.95rem; }
+        .password-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
+        .password-wrapper input { padding-right: 65px; }
+        .toggle-btn { position: absolute; right: 6px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); padding: 4px 8px; font-size: 0.75rem; cursor: pointer; border-radius: 4px; color: var(--text-color); }
         
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        /* --- DYNAMIC SIMULATED HOME WIDGET DECK --- */
-        .widget-preview-deck {
-            margin-top: 15px; padding: 15px; background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
-        }
+        .widget-preview-deck { margin-top: 15px; padding: 15px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; }
         .widget-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 10px; }
-        .sim-widget {
-            background: #0c0f26; border: 2px solid #ff007f; border-radius: 16px; padding: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 8px;
-        }
+        .sim-widget { background: #0c0f26; border: 2px solid #ff007f; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
         .widget-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #ff007f; font-weight: bold; }
         .widget-item { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 6px; border-radius: 6px; }
         .widget-thumb { width: 35px; height: 45px; background: #222; object-fit: cover; border-radius: 4px; }
         .widget-info { flex: 1; font-size: 0.8rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
-        /* --- NAVIGATION TABS --- */
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background-color: transparent; border: none;
-            display: flex; justify-content: center; align-items: flex-end;
-            padding: 0 10px; z-index: 1000; height: 65px; gap: 4px;
-        }
-        .nav-item { 
-            background: rgba(12, 15, 38, 0.7); border: 1px solid var(--border-color); border-bottom: none;
-            color: #707da4; cursor: pointer; font-size: 0.85rem; font-weight: bold;
-            display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px;
-            width: 32%; height: 50px; border-top-left-radius: 12px; border-top-right-radius: 12px;
-            transition: all 0.2s ease-out; box-shadow: 0 -2px 5px rgba(0,0,0,0.3); backdrop-filter: blur(8px);
-        }
-        .nav-item.active { 
-            color: var(--accent-color); background: var(--panel-bg); height: 58px;
-            border: 2px solid var(--border-color); border-bottom: 2px solid var(--bg-color);
-            margin-bottom: -2px; z-index: 1010; text-shadow: var(--text-shadow);
-        }
-        .nav-icon { font-size: 1.1rem; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; align-items: flex-end; padding: 0 10px; z-index: 1000; height: 65px; gap: 4px; }
+        .nav-item { background: rgba(12, 15, 38, 0.7); border: 1px solid var(--border-color); border-bottom: none; color: #707da4; cursor: pointer; font-size: 0.85rem; font-weight: bold; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; width: 32%; height: 50px; border-top-left-radius: 12px; border-top-right-radius: 12px; transition: all 0.2s ease-out; box-shadow: 0 -2px 5px rgba(0,0,0,0.3); backdrop-filter: blur(8px); }
+        .nav-item.active { color: var(--accent-color); background: var(--panel-bg); height: 58px; border: 2px solid var(--border-color); border-bottom: 2px solid var(--bg-color); margin-bottom: -2px; z-index: 1010; text-shadow: var(--text-shadow); }
     </style>
 </head>
 <body>
@@ -180,6 +154,7 @@
         <h1>Entertainment Vault</h1>
         <select id="themeSelect" class="theme-dropdown" onchange="changeTheme(this.value)">
             <option value="cyberpunk">Cyberpunk Neon</option>
+            <option value="star-trek">Star Trek Command</option>
             <option value="steampunk">Steampunk Brass</option>
             <option value="tvtime-dark">TV Time Dark</option>
             <option value="tvtime-light">TV Time Light</option>
@@ -188,13 +163,33 @@
 
     <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
 
+    <!-- HOLOGRAPHIC DETAIL PROFILE MODAL CONTAINER -->
+    <div id="mediaDetailModal" class="modal-canvas" onclick="if(event.target === this) closeProfileModal()">
+        <div class="modal-box">
+            <div class="modal-hero">
+                <img id="modalHeroImg" class="modal-hero-img" src="" alt="">
+                <div id="modalTitle" class="modal-hero-title">Media Title</div>
+            </div>
+            <div class="modal-body">
+                <div id="modalDescription" class="modal-desc">Plot summary context details go here...</div>
+                <div id="modalCreatorLine" class="modal-meta-line"><b>Director/Author:</b> -</div>
+                <div id="modalActorLine" class="modal-meta-line"><b>Lead Cast:</b> -</div>
+                <div id="modalReleaseLine" class="modal-meta-line"><b>Release Date:</b> -</div>
+                <div id="modalAccessLine" class="modal-meta-line"><b>Source Format:</b> -</div>
+                <div id="modalEpisodesHeader" style="font-size:0.8rem; font-weight:bold; margin-top:4px; display:none;">📺 Episode Ingestion Checklist:</div>
+                <div id="modalEpisodesContainer" class="modal-episodes-deck" style="display:none;"></div>
+                <button class="btn" style="margin-top:10px;" onclick="closeProfileModal()">Close Profile Node</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         
         <!-- ================= MEDIA TAB (MOVIES & TV ONLY) ================= -->
         <div id="mediaTab" class="tab-content active">
             <div class="action-header-row">
                 <h2 style="border:none; margin:0; padding:0;">Cinema Collection</h2>
-                <button class="toggle-menu-btn" onclick="toggleSideDrawer('cinemaDrawer', true)"> ⚙️ Cinema Console</button>
+                <button class="toggle-menu-btn" onclick="toggleSideDrawer('cinemaDrawer', true)">⚙️ Cinema Console</button>
             </div>
 
             <!-- CINEMA DRAWER DECK -->
@@ -208,69 +203,28 @@
                         <label style="color:var(--accent-color); font-weight:bold;">🔍 Search Screenings</label>
                         <input type="text" id="cinemaSearchBar" placeholder="Search titles, directors, actors..." onkeyup="renderMediaGrid()">
                     </div>
-                    <h4 style="font-size:0.8rem; color:var(--accent-color); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:2px;">Add Video Node</h4>
                     <div class="form-group"><label>Title</label><input type="text" id="addTitle" placeholder="e.g., Dune"></div>
-                    <div class="form-group">
-                        <label>Media Format</label>
-                        <select id="addType">
-                            <option value="Movie">Movie</option>
-                            <option value="TV">Television Series</option>
-                        </select>
-                    </div>
+                    <div class="form-group"><label>Media Format</label><select id="addType"><option value="Movie">Movie</option><option value="TV">Television Series</option></select></div>
                     <div class="form-group"><label>Director / Showrunner</label><input type="text" id="addCreator" placeholder="Director Name"></div>
                     <div class="form-group"><label>Main Actor / Star</label><input type="text" id="addActor" placeholder="Lead Actor Name"></div>
                     <div class="form-group"><label>Genre Tags</label><input type="text" id="addGenre" placeholder="e.g., Sci-Fi, Cyberpunk"></div>
                     <div class="form-group"><label>Description / Overview</label><textarea id="addOverview" rows="2" placeholder="Enter storyline description..."></textarea></div>
                     <div class="form-group"><label>Release Date</label><input type="date" id="addReleaseDate"></div>
                     <div class="form-group"><label>Date Seen / Completed</label><input type="date" id="addSeenDate"></div>
-                    <div class="form-group">
-                        <label>Access Profile</label>
-                        <select id="addAccess">
-                            <option value="Streaming">Streaming Platform</option>
-                            <option value="Owned">I Own It</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Target Container</label>
-                        <select id="addStatus">
-                            <option value="all">Main Collection</option>
-                            <option value="watching">Currently Tracking</option>
-                            <option value="history">History Logs</option>
-                            <option value="find">Discovery List</option>
-                        </select>
-                    </div>
+                    <div class="form-group"><label>Access Profile</label><select id="addAccess"><option value="Streaming">Streaming Platform</option><option value="Owned">I Own It</option></select></div>
+                    <div class="form-group"><label>Target Container</label><select id="addStatus"><option value="all">Main Collection</option><option value="watching">Currently Tracking</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
                     <div class="form-group"><label>Progress Metric % (Ignored if TV Show)</label><input type="number" id="addProgress" min="0" max="100" value="0"></div>
-                    <div class="form-group">
-                        <label>Star Rating</label>
-                        <select id="addRating">
-                            <option value="5">★★★★★</option>
-                            <option value="4">★★★★☆</option>
-                            <option value="3">★★★☆☆</option>
-                            <option value="2">★★☆☆☆</option>
-                            <option value="1">★☆☆☆☆</option>
-                        </select>
-                    </div>
+                    <div class="form-group"><label>Star Rating</label><select id="addRating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></div>
                 </div>
                 <button class="btn" onclick="addNewMediaItem('cinema')">Inject Screening Node</button>
             </div>
 
-            <!-- COMPACT FILTERS ROW -->
+            <!-- FILTERS ROW -->
             <div class="filter-row">
                 <select id="sortEngine" onchange="renderMediaGrid()">
-                    <option value="name">Sort: Name</option>
-                    <option value="releaseDate">Sort: Release Date</option>
-                    <option value="dateAdded">Sort: Date Added</option>
-                    <option value="genre">Sort: Genre</option>
-                    <option value="rating">Sort: Rating</option>
-                    <option value="progress">Sort: Progress %</option>
-                    <option value="director">Sort: Director</option>
-                    <option value="actor">Sort: Actor</option>
+                    <option value="name">Sort: Name</option><option value="releaseDate">Sort: Release Date</option><option value="dateAdded">Sort: Date Added</option><option value="genre">Sort: Genre</option><option value="rating">Sort: Rating</option><option value="progress">Sort: Progress %</option><option value="director">Sort: Director</option><option value="actor">Sort: Actor</option>
                 </select>
-                <select id="typeFilter" onchange="renderMediaGrid()">
-                    <option value="all">All Screening Types</option>
-                    <option value="Movie">Movies Only</option>
-                    <option value="TV">TV Series Only</option>
-                </select>
+                <select id="typeFilter" onchange="renderMediaGrid()"><option value="all">All Screening Types</option><option value="Movie">Movies Only</option><option value="TV">TV Series Only</option></select>
                 <button class="reset-btn" onclick="resetListToDefault('cinema')">🔄 Reset Order</button>
             </div>
 
@@ -303,30 +257,15 @@
                         <label style="color:var(--accent-color); font-weight:bold;">🔍 Search Library</label>
                         <input type="text" id="bookSearchBar" placeholder="Search titles, authors, genres..." onkeyup="renderBookGrid()">
                     </div>
-
-                    <h4 style="font-size:0.8rem; color:var(--accent-color); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:2px;">Library Import Node</h4>
-                    <label for="csvFileInput" class="maxi-label-picker">
-                        📁 Tap to Select Goodreads CSV File
-                        <span id="csvFileStatus" class="file-status-text">No file loaded</span>
-                    </label>
+                    <label for="csvFileInput" class="maxi-label-picker">📁 Tap to Select Goodreads CSV File<span id="csvFileStatus" class="file-status-text">No file loaded</span></label>
                     <input type="file" id="csvFileInput" class="hidden-file-input" onchange="updateFileLabel('csvFileInput', 'csvFileStatus')">
                     <button class="btn" style="margin-bottom:15px;" onclick="processCSV()">Process Library Export</button>
-
-                    <h4 style="font-size:0.8rem; color:var(--accent-color); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:2px;">Manual Book Insertion</h4>
                     <div class="form-group"><label>Book Title</label><input type="text" id="addBookTitle" placeholder="e.g., Neuromancer"></div>
                     <div class="form-group"><label>Author</label><input type="text" id="addBookAuthor" placeholder="William Gibson"></div>
                     <div class="form-group"><label>Genre Tags</label><input type="text" id="addBookGenre" placeholder="e.g., Cyberpunk, Sci-Fi"></div>
                     <div class="form-group"><label>Book Summary / Description</label><textarea id="addBookOverview" rows="2" placeholder="Enter book overview details..."></textarea></div>
                     <div class="form-group"><label>Date Read / Finished</label><input type="date" id="addBookReadDate"></div>
-                    <div class="form-group">
-                        <label>Target Container</label>
-                        <select id="addBookStatus">
-                            <option value="all">Main Collection</option>
-                            <option value="watching">Currently Tracking</option>
-                            <option value="history">History Logs</option>
-                            <option value="find">Discovery List</option>
-                        </select>
-                    </div>
+                    <div class="form-group"><label>Target Container</label><select id="addBookStatus"><option value="all">Main Collection</option><option value="watching">Currently Tracking</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
                     <div class="form-group"><label>Manual Progress Metric %</label><input type="number" id="addBookProgress" min="0" max="100" value="0"></div>
                 </div>
                 <button class="btn" onclick="addNewMediaItem('book')">Inject Audiobook Node</button>
@@ -335,12 +274,7 @@
             <!-- COMPACT FILTERS ROW -->
             <div class="filter-row">
                 <select id="bookSortEngine" onchange="renderBookGrid()">
-                    <option value="name">Sort: Name</option>
-                    <option value="rating">Sort: Rating</option>
-                    <option value="progress">Sort: Progress %</option>
-                    <option value="dateAdded">Sort: Date Added</option>
-                    <option value="genre">Sort: Genre</option>
-                    <option value="author">Sort: Author</option>
+                    <option value="name">Sort: Name</option><option value="rating">Sort: Rating</option><option value="progress">Sort: Progress %</option><option value="dateAdded">Sort: Date Added</option><option value="genre">Sort: Genre</option><option value="author">Sort: Author</option>
                 </select>
                 <button class="reset-btn" onclick="resetListToDefault('book')">🔄 Reset Order</button>
             </div>
@@ -353,18 +287,24 @@
                 <button class="sub-btn" id="book-sub-find" onclick="filterCategory('book', 'find')">🔍 Discovery List</button>
             </div>
 
-            <div class="media-grid" id="audiobookDatabaseGrid"></div>
+            <div class="media-grid" id="bookDatabaseGrid"></div>
         </div>
 
         <!-- ================= SETTINGS TAB ================= -->
         <div id="settingsTab" class="tab-content">
             <div class="panel">
+                <h2>Application Background Theming Deck</h2>
+                <div class="form-group">
+                    <label for="bgPosterUrlInput">Poster Canvas Background Image URL</label>
+                    <input type="text" id="bgPosterUrlInput" placeholder="Paste direct image link (e.g., https://site.com/art.jpg)" onchange="updateApplicationPosterBackground(this.value)">
+                </div>
+                <button class="btn" onclick="localStorage.removeItem('dashboard_bg_url'); document.documentElement.style.setProperty('--bg-image', 'none'); document.getElementById('bgPosterUrlInput').value=''; alert('Custom background poster dropped, Sweetie!')">Clear Poster Canvas</button>
+            </div>
+
+            <div class="panel">
                 <h2>Trakt.tv JSON Archive Ingestion</h2>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Import your backup watchlists or history dumps here via local file upload:</p>
-                <label for="traktJsonInput" class="maxi-label-picker">
-                    📂 Tap to Select Trakt JSON Archive
-                    <span id="traktFileStatus" class="file-status-text">No file loaded</span>
-                </label>
+                <label for="traktJsonInput" class="maxi-label-picker">📂 Tap to Select Trakt JSON Archive<span id="traktFileStatus" class="file-status-text">No file loaded</span></label>
                 <input type="file" id="traktJsonInput" class="hidden-file-input" onchange="updateFileLabel('traktJsonInput', 'traktFileStatus')">
                 <button class="btn" style="background:#ed1c24; color:white;" onclick="processTraktJSON()">Ingest Trakt JSON Archive</button>
             </div>
@@ -378,31 +318,17 @@
                         <button type="button" class="toggle-btn" onclick="toggleVisibility('tmdbApiKeyInput')">SHOW</button>
                     </div>
                 </div>
-                <button class="btn" style="background:#01b4e4;" onclick="localStorage.setItem('tmdb_key', document.getElementById('tmdbApiKeyInput').value); alert('TMDb API configuration saved, Sweetie!')">Initialize TMDb Pipeline</button>
+                <button class="btn" style="background:#01b4e4;" onclick="localStorage.setItem('tmdb_key', document.getElementById('tmdbApiKeyInput').value); alert('TMDb API saved!')">Initialize TMDb Pipeline</button>
             </div>
 
-            <!-- RESTORED CLOUD SYNCHRONIZATION DECKS -->
             <div class="panel">
                 <h2>Cloud Synchronization Settings</h2>
-                <div class="form-group">
-                    <label for="clientIdInput">Google OAuth Client ID</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="clientIdInput" placeholder="Enter Client ID">
-                        <button type="button" class="toggle-btn" onclick="toggleVisibility('clientIdInput')">SHOW</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="apiKeyInput">Google API Key</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="apiKeyInput" placeholder="Enter API Key">
-                        <button type="button" class="toggle-btn" onclick="toggleVisibility('apiKeyInput')">SHOW</button>
-                    </div>
-                </div>
+                <div class="form-group"><label for="clientIdInput">Google OAuth Client ID</label><div class="password-wrapper"><input type="password" id="clientIdInput" placeholder="Enter Client ID"><button type="button" class="toggle-btn" onclick="toggleVisibility('clientIdInput')">SHOW</button></div></div>
+                <div class="form-group"><label for="apiKeyInput">Google API Key</label><div class="password-wrapper"><input type="password" id="apiKeyInput" placeholder="Enter API Key"><button type="button" class="toggle-btn" onclick="toggleVisibility('apiKeyInput')">SHOW</button></div></div>
                 <button class="btn" onclick="saveKeysAndConnect()">Connect Account</button>
                 <div id="driveStatusLog" style="margin-top:10px; font-size:0.8rem; color:var(--text-muted);">Cloud status: Offline</div>
             </div>
 
-            <!-- RELOCATED TABLET WIDGET MODULE -->
             <div class="widget-preview-deck">
                 <div class="widget-title">📌 Live Home Screen Widgets (Currently Tracking)</div>
                 <div class="widget-grid" id="simulatedWidgetGrid"></div>
@@ -410,7 +336,6 @@
         </div>
     </div>
 
-    <!-- NAVIGATION TABS -->
     <nav class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('mediaTab', this)"><span class="nav-icon">🎬</span><span>Media</span></button>
         <button class="nav-item" onclick="switchTab('goodreadsTab', this)"><span class="nav-icon">📚</span><span>Goodreads</span></button>
@@ -418,22 +343,26 @@
     </nav>
 
     <script>
-        // Pre-hydrated with overview descriptions and structural episode lists to showcase backend processing
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [
-            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", actor: "Richard Dean Anderson", genre: "Sci-Fi", overview: "A secret military team explores the galaxy using an ancient network of alien portals.", releaseDate: "1997-07-27", dateAdded: "2026-01-01", completionDate: "", access: "Streaming", status: "watching", progress: 66, favorite: true, rating: 5, pinned: false, manualOrder: 0, poster: "", 
-              episodes: [{id:101, title:"Children of the Gods", watched:true}, {id:102, title:"The Enemy Within", watched:true}, {id:103, title:"Emancipation", watched:false}] },
+            { id: 1, title: "Stargate SG-1", type: "TV", creator: "Brad Wright", actor: "Richard Dean Anderson", genre: "Sci-Fi", overview: "A secret military team explores the galaxy using an ancient network of alien portals.", releaseDate: "1997-07-27", dateAdded: "2026-01-01", completionDate: "", access: "Streaming", status: "watching", progress: 66, favorite: true, rating: 5, pinned: false, manualOrder: 0, poster: "", episodes: [{id:101, title:"Children of the Gods", watched:true}, {id:102, title:"The Enemy Within", watched:true}, {id:103, title:"Emancipation", watched:false}] },
             { id: 2, title: "Neuromancer", type: "Audiobook", creator: "William Gibson", actor: "N/A", genre: "Cyberpunk", overview: "Case, a washed-up computer hacker, is hired by a mysterious benefactor for one final ultimate run.", releaseDate: "1984-07-01", dateAdded: "2026-02-15", completionDate: "", access: "Owned", status: "watching", progress: 45, favorite: false, rating: 4, pinned: false, manualOrder: 1, poster: "" },
             { id: 3, title: "Blade Runner 2049", type: "Movie", creator: "Denis Villeneuve", actor: "Ryan Gosling", genre: "Sci-Fi", overview: "A new blade runner, LAPD Officer K, unearths a long-buried secret that could plunge society into chaos.", releaseDate: "2017-10-06", dateAdded: "2026-03-10", completionDate: "2026-03-11", access: "Owned", status: "history", progress: 100, favorite: true, rating: 5, pinned: false, manualOrder: 2, poster: "" }
         ];
 
         let currentCinemaCategory = 'all';
         let currentBookCategory = 'all';
+        let activeProfileModalId = null;
 
         document.addEventListener("DOMContentLoaded", () => {
             if (localStorage.getItem('gdrive_client_id')) document.getElementById('clientIdInput').value = localStorage.getItem('gdrive_client_id');
             if (localStorage.getItem('gdrive_api_key')) document.getElementById('apiKeyInput').value = localStorage.getItem('gdrive_api_key');
             if (localStorage.getItem('tmdb_key')) document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdb_key');
             
+            if (localStorage.getItem('dashboard_bg_url')) {
+                updateApplicationPosterBackground(localStorage.getItem('dashboard_bg_url'));
+                document.getElementById('bgPosterUrlInput').value = localStorage.getItem('dashboard_bg_url');
+            }
+
             const savedTheme = localStorage.getItem('dashboard_theme') || 'cyberpunk';
             document.getElementById('themeSelect').value = savedTheme;
             changeTheme(savedTheme);
@@ -442,26 +371,18 @@
             handleAuthCallback();
         });
 
+        function updateApplicationPosterBackground(url) {
+            if(url.trim() !== "") {
+                document.documentElement.style.setProperty('--bg-image', `url('${url.trim()}')`);
+                localStorage.setItem('dashboard_bg_url', url.trim());
+            }
+        }
+
         function refreshAllViews() {
             renderMediaGrid();
             renderBookGrid();
             renderSimulatedWidgets();
-        }
-
-        function updateFileLabel(inputId, statusId) {
-            const input = document.getElementById(inputId);
-            const status = document.getElementById(statusId);
-            if(input.files.length > 0) {
-                status.innerText = `📄 Selected: ${input.files[0].name}`;
-                status.style.color = "var(--accent-color)";
-            }
-        }
-
-        function toggleVisibility(inputId) {
-            const field = document.getElementById(inputId);
-            const btn = field.nextElementSibling;
-            field.type = field.type === "password" ? "text" : "password";
-            btn.innerText = field.type === "password" ? "SHOW" : "HIDE";
+            if(activeProfileModalId) updateProfileModalState(activeProfileModalId);
         }
 
         function toggleSideDrawer(drawerId, open) {
@@ -477,60 +398,68 @@
             document.getElementById('drawerOverlay').classList.remove('active');
         }
 
-        /* ================= CINEMA REGION RENDERING ENGINE ================= */
-        function renderMediaGrid() {
-            const grid = document.getElementById('cinemaDatabaseGrid');
-            const searchQuery = document.getElementById('cinemaSearchBar').value.toLowerCase();
-            const sortVal = document.getElementById('sortEngine').value;
-            const typeFilter = document.getElementById('typeFilter').value;
-
-            grid.innerHTML = '';
-
-            let filteredData = mediaDatabase.filter(item => {
-                if (item.type === 'Audiobook') return false;
-                const searchStr = `${item.title} ${item.creator} ${item.actor} ${item.genre}`.toLowerCase();
-                const matchesSearch = searchStr.includes(searchQuery);
-                const matchesType = (typeFilter === 'all' || item.type === typeFilter);
-                
-                let matchesCategory = true;
-                if (currentCinemaCategory === 'favorites') matchesCategory = item.favorite;
-                else if (currentCinemaCategory !== 'all') matchesCategory = (item.status === currentCinemaCategory);
-
-                return matchesSearch && matchesType && matchesCategory;
-            });
-
-            sortAndRenderDeck(filteredData, grid, sortVal, 'cinema');
+        function openProfileModal(id) {
+            activeProfileModalId = id;
+            updateProfileModalState(id);
+            document.getElementById('mediaDetailModal').classList.add('active');
         }
 
-        /* ================= AUDIOBOOK REGION RENDERING ENGINE ================= */
-        function renderBookGrid() {
-            const grid = document.getElementById('audiobookDatabaseGrid');
-            const searchQuery = document.getElementById('bookSearchBar').value.toLowerCase();
-            const sortVal = document.getElementById('bookSortEngine').value;
-
-            grid.innerHTML = '';
-
-            let filteredData = mediaDatabase.filter(item => {
-                if (item.type !== 'Audiobook') return false;
-                const searchStr = `${item.title} ${item.creator} ${item.genre}`.toLowerCase();
-                const matchesSearch = searchStr.includes(searchQuery);
-                
-                let matchesCategory = true;
-                if (currentBookCategory === 'favorites') matchesCategory = item.favorite;
-                else if (currentBookCategory !== 'all') matchesCategory = (item.status === currentBookCategory);
-
-                return matchesSearch && matchesCategory;
-            });
-
-            sortAndRenderDeck(filteredData, grid, sortVal, 'book');
+        function closeProfileModal() {
+            document.getElementById('mediaDetailModal').classList.remove('active');
+            activeProfileModalId = null;
         }
 
-        /* ================= DECK CORE CONTROLLER ================= */
+        function updateProfileModalState(id) {
+            const item = mediaDatabase.find(m => m.id === id);
+            if (!item) return;
+
+            document.getElementById('modalTitle').innerText = item.title;
+            document.getElementById('modalHeroImg').src = item.poster || "";
+            document.getElementById('modalDescription').innerText = item.overview || "No structural log description profile recorded.";
+            document.getElementById('modalCreatorLine').innerHTML = `<b>${item.type === 'Audiobook' ? 'Author' : 'Director'}:</b> ${item.creator || 'Unknown'}`;
+            document.getElementById('modalActorLine').innerHTML = `<b>Lead Cast:</b> ${item.actor || 'N/A'}`;
+            document.getElementById('modalReleaseLine').innerHTML = `<b>Release Date:</b> ${item.releaseDate || 'Unknown'}`;
+            document.getElementById('modalAccessLine').innerHTML = `<b>Source Format:</b> ${item.access} (${item.type})`;
+
+            const epHeader = document.getElementById('modalEpisodesHeader');
+            const epContainer = document.getElementById('modalEpisodesContainer');
+
+            if (item.type === 'TV' && item.episodes) {
+                epHeader.style.display = 'block';
+                epContainer.style.display = 'flex';
+                epContainer.innerHTML = '';
+                item.episodes.forEach(ep => {
+                    const row = document.createElement('div');
+                    row.className = 'modal-ep-row';
+                    row.innerHTML = `<span>${ep.title}</span><input type="checkbox" ${ep.watched ? 'checked' : ''} onclick="toggleEpisodeWatch(${item.id}, ${ep.id}); event.stopPropagation();">`;
+                    epContainer.appendChild(row);
+                });
+            } else {
+                epHeader.style.display = 'none';
+                epContainer.style.display = 'none';
+            }
+        }
+
+        function toggleEpisodeWatch(seriesId, epId) {
+            const idx = mediaDatabase.findIndex(m => m.id === seriesId);
+            if (idx !== -1 && mediaDatabase[idx].episodes) {
+                const epIdx = mediaDatabase[idx].episodes.findIndex(e => e.id === epId);
+                if (epIdx !== -1) {
+                    mediaDatabase[idx].episodes[epIdx].watched = !mediaDatabase[idx].episodes[epIdx].watched;
+                    const total = mediaDatabase[idx].episodes.length;
+                    const watchedCount = mediaDatabase[idx].episodes.filter(e => e.watched).length;
+                    mediaDatabase[idx].progress = Math.round((watchedCount / total) * 100);
+                    
+                    localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                    refreshAllViews();
+                }
+            }
+        }
+
         function sortAndRenderDeck(data, gridContainer, sortVal, contextTag) {
             data.sort((a, b) => {
                 if (a.pinned !== b.pinned) return b.pinned - a.pinned; 
                 if (a.manualOrder !== b.manualOrder) return a.manualOrder - b.manualOrder;
-
                 if (sortVal === 'name') return a.title.localeCompare(b.title);
                 if (sortVal === 'releaseDate') return new Date(a.releaseDate) - new Date(b.releaseDate);
                 if (sortVal === 'dateAdded') return new Date(a.dateAdded) - new Date(b.dateAdded);
@@ -544,56 +473,31 @@
             data.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = `media-card ${item.pinned ? 'pinned' : ''}`;
+                card.setAttribute('onclick', `openProfileModal(${item.id})`);
                 
                 let posterContent = `<span class="poster-placeholder">${item.type === 'Audiobook' ? '📚' : '🎬'}</span>`;
-                if (item.poster) {
-                    posterContent = `<img src="${item.poster}" class="poster-img" alt="Poster">`;
-                } else {
-                    fetchMediaArtwork(item);
-                }
+                if (item.poster) posterContent = `<img src="${item.poster}" class="poster-img" alt="Poster">`;
 
                 let completionBadge = '';
                 if (item.completionDate) {
-                    completionBadge = `<div class="media-meta" style="color:var(--accent-color); font-weight:bold;">🏁 ${item.type === 'Audiobook' ? 'Read' : 'Seen'}: ${item.completionDate}</div>`;
-                }
-
-                // Inject checkable episode rows if item is a TV Show
-                let episodeChassisHtml = '';
-                if (item.type === 'TV' && item.episodes) {
-                    episodeChassisHtml = `<div class="episode-box-deck">`;
-                    item.episodes.forEach(ep => {
-                        episodeChassisHtml += `
-                            <div class="ep-row">
-                                <span style="max-width:80%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${ep.title}</span>
-                                <input type="checkbox" ${ep.watched ? 'checked' : ''} onclick="toggleEpisodeWatch(${item.id}, ${ep.id})">
-                            </div>`;
-                    });
-                    episodeChassisHtml += `</div>`;
+                    completionBadge = `<div class="media-meta" style="color:var(--accent-color); font-weight:bold; font-size:0.7rem;">🏁 Finished: ${item.completionDate}</div>`;
                 }
 
                 card.innerHTML = `
-                    <div class="poster-frame" id="poster-${item.id}">
-                        ${posterContent}
-                    </div>
+                    <div class="poster-frame" id="poster-${item.id}">${posterContent}</div>
                     <div class="card-details-pane">
                         <div>
-                            <div class="card-header">
-                                <div class="media-title">${item.title}</div>
-                            </div>
+                            <div class="media-title">${item.title}</div>
                             <div class="media-meta">${item.type === 'Audiobook' ? 'By ' + item.creator : item.genre}</div>
-                            <div class="desc-text">${item.overview || 'No structural log overview injected yet.'}</div>
                             ${completionBadge}
-                            ${episodeChassisHtml}
                         </div>
                         <div>
-                            <div class="progress-container">
-                                <div class="progress-bar" style="width: ${item.progress}%"></div>
-                            </div>
+                            <div class="progress-container"><div class="progress-bar" style="width: ${item.progress}%"></div></div>
                             <div class="badge-row">
                                 <span class="star-rating">${'★'.repeat(item.rating)}${'☆'.repeat(5-item.rating)}</span>
-                                <span class="percentage-text">${item.progress}%</span>
+                                <span style="font-weight:bold; color:var(--accent-color);">${item.progress}%</span>
                             </div>
-                            <div class="badge-row" style="margin-top:6px; border-top:1px dashed rgba(255,255,255,0.08); padding-top:6px;">
+                            <div class="badge-row" style="margin-top:6px; border-top:1px solid rgba(255,255,255,0.08); padding-top:4px;" onclick="event.stopPropagation();">
                                 <div class="card-controls">
                                     <button class="card-ctrl-btn" onclick="pinItem(${item.id}, '${contextTag}')">${item.pinned ? '📌' : '📎'}</button>
                                     <button class="heart-icon" onclick="toggleHeartItem(${item.id}, '${contextTag}')">${item.favorite ? '❤️' : '🖤'}</button>
@@ -610,101 +514,92 @@
             });
         }
 
-        /* ================= DYNAMIC WIDGET PREVIEW CONTROLLER ================= */
+        function renderMediaGrid() {
+            const grid = document.getElementById('cinemaDatabaseGrid');
+            const searchQuery = document.getElementById('cinemaSearchBar').value.toLowerCase();
+            const sortVal = document.getElementById('sortEngine').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            grid.innerHTML = '';
+            let filteredData = mediaDatabase.filter(item => {
+                if (item.type === 'Audiobook') return false;
+                const searchStr = `${item.title} ${item.creator} ${item.actor} ${item.genre}`.toLowerCase();
+                const matchesSearch = searchStr.includes(searchQuery);
+                const matchesType = (typeFilter === 'all' || item.type === typeFilter);
+                let matchesCategory = true;
+                if (currentCinemaCategory === 'favorites') matchesCategory = item.favorite;
+                else if (currentCinemaCategory !== 'all') matchesCategory = (item.status === currentCinemaCategory);
+                return matchesSearch && matchesType && matchesCategory;
+            });
+            sortAndRenderDeck(filteredData, grid, sortVal, 'cinema');
+        }
+
+        function renderBookGrid() {
+            const grid = document.getElementById('bookDatabaseGrid');
+            const searchQuery = document.getElementById('bookSearchBar').value.toLowerCase();
+            const sortVal = document.getElementById('bookSortEngine').value;
+            grid.innerHTML = '';
+            let filteredData = mediaDatabase.filter(item => {
+                if (item.type !== 'Audiobook') return false;
+                const searchStr = `${item.title} ${item.creator} ${item.genre}`.toLowerCase();
+                const matchesSearch = searchStr.includes(searchQuery);
+                let matchesCategory = true;
+                if (currentBookCategory === 'favorites') matchesCategory = item.favorite;
+                else if (currentBookCategory !== 'all') matchesCategory = (item.status === currentBookCategory);
+                return matchesSearch && matchesCategory;
+            });
+            sortAndRenderDeck(filteredData, grid, sortVal, 'book');
+        }
+
         function renderSimulatedWidgets() {
             const widgetGrid = document.getElementById('simulatedWidgetGrid');
             if (!widgetGrid) return;
             widgetGrid.innerHTML = '';
-
             const trackingMedia = mediaDatabase.filter(item => item.status === 'watching');
-            
             const videoItems = trackingMedia.filter(i => i.type !== 'Audiobook').slice(0, 2);
             let videoWidgetHtml = `<div class="sim-widget"><div class="widget-title">📺 Cinema Widget</div>`;
-            if(videoItems.length === 0) videoWidgetHtml += `<div class="widget-info">No shows tracking</div>`;
-            videoItems.forEach(item => {
-                videoWidgetHtml += `
-                    <div class="widget-item">
-                        ${item.poster ? `<img class="widget-thumb" src="${item.poster}">` : `<div class="widget-thumb" style="display:flex;align-items:center;justify-content:center;">🎬</div>`}
-                        <div class="widget-info"><b>${item.title}</b><br><span style="color:#ff007f">${item.progress}% done</span></div>
-                    </div>`;
-            });
+            videoItems.forEach(item => { videoWidgetHtml += `<div class="widget-item">${item.poster ? `<img class="widget-thumb" src="${item.poster}">` : `<div class="widget-thumb" style="display:flex;align-items:center;justify-content:center;">🎬</div>`}<div class="widget-info"><b>${item.title}</b><br><span style="color:#ff007f">${item.progress}% tracked</span></div></div>`; });
             videoWidgetHtml += `</div>`;
-
             const bookItems = trackingMedia.filter(i => i.type === 'Audiobook').slice(0, 2);
             let bookWidgetHtml = `<div class="sim-widget"><div class="widget-title">📚 Audiobook Widget</div>`;
-            if(bookItems.length === 0) bookWidgetHtml += `<div class="widget-info">No books tracking</div>`;
-            bookItems.forEach(item => {
-                bookWidgetHtml += `
-                    <div class="widget-item">
-                        ${item.poster ? `<img class="widget-thumb" src="${item.poster}">` : `<div class="widget-thumb" style="display:flex;align-items:center;justify-content:center;">📚</div>`}
-                        <div class="widget-info"><b>${item.title}</b><br><span style="color:#00ffcc">${item.progress}% read</span></div>
-                    </div>`;
-            });
+            bookItems.forEach(item => { bookWidgetHtml += `<div class="widget-item">${item.poster ? `<img class="widget-thumb" src="${item.poster}">` : `<div class="widget-thumb" style="display:flex;align-items:center;justify-content:center;">📚</div>`}<div class="widget-info"><b>${item.title}</b><br><span style="color:#00ffcc">${item.progress}% read</span></div></div>`; });
             bookWidgetHtml += `</div>`;
-
             widgetGrid.innerHTML = videoWidgetHtml + bookWidgetHtml;
-        }
-
-        function toggleEpisodeWatch(seriesId, epId) {
-            const idx = mediaDatabase.findIndex(m => m.id === seriesId);
-            if (idx !== -1 && mediaDatabase[idx].episodes) {
-                const epIdx = mediaDatabase[idx].episodes.findIndex(e => e.id === epId);
-                if (epIdx !== -1) {
-                    mediaDatabase[idx].episodes[epIdx].watched = !mediaDatabase[idx].episodes[epIdx].watched;
-                    
-                    // Recalculate percentage of completion
-                    const total = mediaDatabase[idx].episodes.length;
-                    const watchedCount = mediaDatabase[idx].episodes.filter(e => e.watched).length;
-                    mediaDatabase[idx].progress = Math.round((watchedCount / total) * 100);
-                    
-                    saveAndRefreshBoth('cinema');
-                }
-            }
         }
 
         function fetchMediaArtwork(item) {
             const tmdbKey = localStorage.getItem('tmdb_key');
-            
             if ((item.type === 'Movie' || item.type === 'TV') && tmdbKey) {
                 const searchType = item.type === 'Movie' ? 'movie' : 'tv';
-                const url = `https://api.themoviedb.org/3/search/${searchType}?api_key=${tmdbKey}&query=${encodeURIComponent(item.title)}`;
-                
-                fetch(url)
-                    .then(res => res.json())
-                    .then(data => {
+                fetch(`https://api.themoviedb.org/3/search/${searchType}?api_key=${tmdbKey}&query=${encodeURIComponent(item.title)}`)
+                    .then(res => res.json()).then(data => {
                         if (data.results && data.results.length > 0) {
                             const resObj = data.results[0];
-                            const imgUrl = resObj.poster_path ? `https://image.tmdb.org/t/p/w342${resObj.poster_path}` : "";
-                            
-                            const index = mediaDatabase.findIndex(i => i.id === item.id);
-                            if (index !== -1) {
-                                mediaDatabase[index].poster = imgUrl;
-                                if (resObj.overview) mediaDatabase[index].overview = resObj.overview;
-                                
-                                // Dynamic episode stub generation for mock pipeline backend testing
-                                if (item.type === 'TV' && !mediaDatabase[index].episodes) {
-                                    mediaDatabase[index].episodes = [
-                                        {id: Date.now()+1, title: "Pilot Episode Overview", watched: false},
-                                        {id: Date.now()+2, title: "Secondary Chapter Run", watched: false},
-                                        {id: Date.now()+3, title: "Midseason Finale Deck", watched: false}
+                            const idx = mediaDatabase.findIndex(i => i.id === item.id);
+                            if (idx !== -1) {
+                                mediaDatabase[idx].poster = resObj.poster_path ? `https://image.tmdb.org/t/p/w342${resObj.poster_path}` : "";
+                                if (resObj.overview) mediaDatabase[idx].overview = resObj.overview;
+                                if (item.type === 'TV' && !mediaDatabase[idx].episodes) {
+                                    mediaDatabase[idx].episodes = [
+                                        {id: Date.now()+1, title: "Episode 1: Ingestion Vector", watched: false},
+                                        {id: Date.now()+2, title: "Episode 2: Core Transmission", watched: false},
+                                        {id: Date.now()+3, title: "Episode 3: Terminal Node", watched: false}
                                     ];
                                 }
-                                saveAndRefreshBoth('cinema');
+                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                                refreshAllViews();
                             }
                         }
                     }).catch(() => {});
             } else if (item.type === 'Audiobook') {
-                const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(item.title)}&limit=1`;
-                fetch(url)
-                    .then(res => res.json())
-                    .then(data => {
+                fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(item.title)}&limit=1`)
+                    .then(res => res.json()).then(data => {
                         if (data.docs && data.docs.length > 0) {
                             const doc = data.docs[0];
-                            const imgUrl = doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : "";
-                            const index = mediaDatabase.findIndex(i => i.id === item.id);
-                            if (index !== -1) {
-                                mediaDatabase[index].poster = imgUrl;
-                                saveAndRefreshBoth('book');
+                            const idx = mediaDatabase.findIndex(i => i.id === item.id);
+                            if (idx !== -1) {
+                                mediaDatabase[idx].poster = doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : "";
+                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                                refreshAllViews();
                             }
                         }
                     }).catch(() => {});
@@ -713,7 +608,6 @@
 
         function addNewMediaItem(context) {
             const today = new Date().toISOString().split('T')[0];
-
             if (context === 'cinema') {
                 const title = document.getElementById('addTitle').value.trim();
                 const type = document.getElementById('addType').value;
@@ -727,13 +621,8 @@
                 const status = document.getElementById('addStatus').value;
                 const progress = parseInt(document.getElementById('addProgress').value) || 0;
                 const rating = parseInt(document.getElementById('addRating').value) || 5;
-
-                if (!title) { alert('Enter a cinema title, Sweetie!'); return; }
-
-                mediaDatabase.push({ 
-                    id: Date.now(), title, type, creator, actor, genre, overview, releaseDate, dateAdded: today, 
-                    completionDate: seenDate, access, status, progress, favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length, poster: "" 
-                });
+                if (!title) { alert('Enter title, Sweetie!'); return; }
+                mediaDatabase.push({ id: Date.now(), title, type, creator, actor, genre, overview, releaseDate, dateAdded: today, completionDate: seenDate, access, status, progress, favorite: false, rating, pinned: false, manualOrder: mediaDatabase.length, poster: "" });
             } else {
                 const title = document.getElementById('addBookTitle').value.trim();
                 const author = document.getElementById('addBookAuthor').value.trim() || "Unknown Author";
@@ -742,15 +631,9 @@
                 const readDate = document.getElementById('addBookReadDate').value;
                 const status = document.getElementById('addBookStatus').value;
                 const progress = parseInt(document.getElementById('addBookProgress').value) || 0;
-
-                if (!title) { alert('Enter a book title, Sweetie!'); return; }
-
-                mediaDatabase.push({ 
-                    id: Date.now(), title, type: "Audiobook", creator: author, actor: "N/A", genre, overview, releaseDate: today, dateAdded: today, 
-                    completionDate: readDate, access: "Owned", status: status, progress, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" 
-                });
+                if (!title) { alert('Enter title, Sweetie!'); return; }
+                mediaDatabase.push({ id: Date.now(), title, type: "Audiobook", creator: author, actor: "N/A", genre, overview, releaseDate: today, dateAdded: today, completionDate: readDate, access: "Owned", status: status, progress, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" });
             }
-
             localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
             closeAllDrawers();
             refreshAllViews();
@@ -758,11 +641,8 @@
 
         function processCSV() {
             const fileInput = document.getElementById('csvFileInput');
-            if (!fileInput.files.length) { alert('Select your file first, Sweetie!'); return; }
-            
-            const file = fileInput.files[0];
+            if (!fileInput.files.length) return;
             const reader = new FileReader();
-            
             reader.onload = function(e) {
                 try {
                     const text = e.target.result;
@@ -770,108 +650,59 @@
                     const headerRow = lines[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(h => h.replace(/"/g, '').trim().toLowerCase());
                     let titleIdx = headerRow.findIndex(h => h.includes('title'));
                     let authorIdx = headerRow.findIndex(h => h.includes('author'));
-
-                    if (titleIdx === -1 || authorIdx === -1) { alert('Invalid layout logic.'); return; }
-
-                    let count = 0;
-                    const today = new Date().toISOString().split('T')[0];
-
+                    let count = 0; const today = new Date().toISOString().split('T')[0];
                     for (let i = 1; i < lines.length; i++) {
                         const columns = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/"/g, '').trim());
                         if (columns.length > Math.max(titleIdx, authorIdx)) {
-                            const title = columns[titleIdx];
-                            const author = columns[authorIdx];
-
+                            const title = columns[titleIdx]; const author = columns[authorIdx];
                             if (title) {
-                                mediaDatabase.push({
-                                    id: Date.now() + Math.random(), title: title, type: "Audiobook", creator: author || "Unknown Author",
-                                    actor: "N/A", genre: "Goodreads Log", overview: "Ingested via Goodreads backup CSV profile.", releaseDate: today, dateAdded: today, completionDate: today, access: "Owned",
-                                    status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: ""
-                                });
+                                mediaDatabase.push({ id: Date.now() + Math.random(), title, type: "Audiobook", creator: author || "Unknown Author", actor: "N/A", genre: "Goodreads Log", overview: "Ingested via Goodreads backup CSV profile.", releaseDate: today, dateAdded: today, completionDate: today, access: "Owned", status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" });
                                 count++;
                             }
                         }
                     }
-
                     localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                    closeAllDrawers();
-                    refreshAllViews();
-                    alert(`Imported ${count} books, Sweetie!`);
-                } catch (err) { alert('Error compilation text string.'); }
+                    closeAllDrawers(); refreshAllViews();
+                    alert(`Imported ${count} audiobooks, Sweetie!`);
+                } catch (err) {}
             };
-            reader.readAsText(file);
+            reader.readAsText(fileInput.files[0]);
         }
 
         function processTraktJSON() {
             const fileInput = document.getElementById('traktJsonInput');
-            if (!fileInput.files.length) { alert('Select file, Sweetie!'); return; }
+            if (!fileInput.files.length) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    let count = 0;
-                    const today = new Date().toISOString().split('T')[0];
+                    let count = 0; const today = new Date().toISOString().split('T')[0];
                     const items = Array.isArray(data) ? data : (data.movies || data.shows || data.watched || []);
-
                     items.forEach(entry => {
                         let title = ""; let type = "Movie"; let creator = "Unknown";
                         if (entry.movie) { title = entry.movie.title; type = "Movie"; creator = entry.movie.year ? `Year ${entry.movie.year}` : "Cinema"; }
                         else if (entry.show) { title = entry.show.title; type = "TV"; creator = "TV Series"; }
-
                         if (title) {
-                            mediaDatabase.push({
-                                id: Date.now() + Math.random(), title, type, creator, actor: "N/A", genre: "Imported", overview: "Trakt Sync Log Entry.",
-                                releaseDate: today, dateAdded: today, completionDate: today, access: "Streaming",
-                                status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: ""
-                            });
+                            mediaDatabase.push({ id: Date.now() + Math.random(), title, type, creator, actor: "N/A", genre: "Imported", overview: "Trakt Sync Log Entry.", releaseDate: today, dateAdded: today, completionDate: today, access: "Streaming", status: "history", progress: 100, favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" });
                             count++;
                         }
                     });
                     localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                    closeAllDrawers();
-                    refreshAllViews();
-                    alert(`Ingested ${count} records from Trakt, Sweetie!`);
-                } catch(err) { alert('Error file matrix.'); }
+                    closeAllDrawers(); refreshAllViews();
+                    alert(`Ingested ${count} records, Sweetie!`);
+                } catch(err) {}
             };
             reader.readAsText(fileInput.files[0]);
         }
 
         function toggleHeartItem(id, context) {
             const index = mediaDatabase.findIndex(i => i.id === id);
-            if(index !== -1) { 
-                mediaDatabase[index].favorite = !mediaDatabase[index].favorite; 
-                saveAndRefreshBoth(context); 
-            }
+            if(index !== -1) { mediaDatabase[index].favorite = !mediaDatabase[index].favorite; saveAndRefreshBoth(context); }
         }
-
-        /* --- CLOUD ACCESS TOKEN HANDLING VECTORS --- */
-        function saveKeysAndConnect() {
-            const client = document.getElementById('clientIdInput').value.trim();
-            const key = document.getElementById('apiKeyInput').value.trim();
-            localStorage.setItem('gdrive_client_id', client);
-            localStorage.setItem('gdrive_api_key', key);
-            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(client)}&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=${encodeURIComponent("https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file")}&prompt=consent`;
-        }
-
-        function handleAuthCallback() {
-            const hash = window.location.hash;
-            if (hash) {
-                const params = new URLSearchParams(hash.substring(1));
-                if (params.get('access_token')) {
-                    document.getElementById('driveStatusLog').innerText = "✅ Cloud Authorization Successful! Connected.";
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-            }
-        }
-
         function pinItem(id, context) {
             const index = mediaDatabase.findIndex(i => i.id === id);
-            if(index !== -1) { 
-                mediaDatabase[index].pinned = !mediaDatabase[index].pinned; 
-                saveAndRefreshBoth(context); 
-            }
+            if(index !== -1) { mediaDatabase[index].pinned = !mediaDatabase[index].pinned; saveAndRefreshBoth(context); }
         }
-
         function moveItemPosition(currentIndex, direction, context) {
             const targetIndex = currentIndex + direction;
             if (targetIndex >= 0 && targetIndex < mediaDatabase.length) {
@@ -881,19 +712,16 @@
                 saveAndRefreshBoth(context);
             }
         }
-
         function resetListToDefault(context) {
             mediaDatabase.forEach((item, index) => { item.manualOrder = index; item.pinned = false; });
             saveAndRefreshBoth(context);
         }
-
         function saveAndRefreshBoth(context) {
             localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-            if (context === 'cinema') renderMediaGrid();
-            else renderBookGrid();
+            if (context === 'cinema') renderMediaGrid(); else renderBookGrid();
             renderSimulatedWidgets();
+            if(activeProfileModalId) updateProfileModalState(activeProfileModalId);
         }
-
         function filterCategory(deck, catId) {
             if (deck === 'cinema') {
                 currentCinemaCategory = catId;
@@ -907,18 +735,36 @@
                 renderBookGrid();
             }
         }
-
         function switchTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
-            closeAllDrawers();
+            btn.classList.add('active'); closeAllDrawers();
         }
-
         function changeTheme(themeName) {
             document.documentElement.setAttribute('data-theme', themeName);
             localStorage.setItem('dashboard_theme', themeName);
+        }
+        function updateFileLabel(inputId, statusId) {
+            const input = document.getElementById(inputId);
+            const status = document.getElementById(statusId);
+            if(input.files.length > 0) status.innerText = `📄 Selected: ${input.files[0].name}`;
+        }
+        function toggleVisibility(inputId) {
+            const field = document.getElementById(inputId);
+            field.type = field.type === "password" ? "text" : "password";
+        }
+        function saveKeysAndConnect() {
+            const client = document.getElementById('clientIdInput').value.trim();
+            localStorage.setItem('gdrive_client_id', client);
+            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(client)}&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=${encodeURIComponent("https://www.googleapis.com/auth/drive.file")}&prompt=consent`;
+        }
+        function handleAuthCallback() {
+            const hash = window.location.hash;
+            if (hash && hash.includes('access_token')) {
+                document.getElementById('driveStatusLog').innerText = "✅ Connected to Google Drive.";
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
         }
     </script>
 </body>
