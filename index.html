@@ -80,16 +80,22 @@
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
         .overflow-trigger-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: bold; display: none; z-index: 10; }
-            </nav>
-    <!-- ==========================================================
-         END OF SECTION 2: APPLICATION INTERFACE CONTAINERS
-         ========================================================== -->
-    <!-- ==========================================================
-         START OF SECTION 3: JAVASCRIPT CORE DATA ENGINE
-         ========================================================== -->
-    <script>
-        let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [];
-
+        
+        .overflow-dropdown-panel { 
+            position: absolute; 
+            top: 38px; 
+            right: 0; 
+            background: var(--panel-bg); 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            padding: 8px; 
+            display: none; 
+            flex-direction: column; 
+            gap: 6px; 
+            box-shadow: 0 6px 16px rgba(0,0,0,0.85); 
+            z-index: 9999 !important; 
+            width: 190px; 
+        }
 
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 16px; }
         .media-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; display: flex; flex-direction: column; position: relative; overflow: hidden; }
@@ -205,7 +211,6 @@
             <div class="modal-hero">
                 <img id="modalHeroImg" class="modal-hero-img" src="" alt="">
                 <div id="modalTitle" class="modal-hero-title">Media Title</div>
-                <!-- Clean Production Badge Target Anchor -->
                 <div id="modalHeroStatusBadge" class="modal-hero-status-badge" style="display:none;"></div>
             </div>
             <div class="modal-body">
@@ -235,9 +240,9 @@
         </div>
     </div>
 <!-- ==========================================================
-     END OF SECTION 1: DESIGN SYSTEMS COMPLETE
+     END OF SECTION 1: LAYOUT STRUCTURE COMPLETE
      ========================================================== -->
-        <!-- ==========================================================
+    <!-- ==========================================================
          START OF SECTION 2: HTML APPLICATION DRAWERS & CONTAINERS
          ========================================================== -->
     <div class="container">
@@ -447,14 +452,13 @@
         <button id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab', this)"><span class="nav-icon">⚙️</span><span>Settings</span></button>
     </nav>
     <!-- ==========================================================
-         END OF SECTION 2: APPLICATION INTERFACE CONTAINERS
+         END OF SECTION 2: INTERFACE DRAWERS COMPLETE
          ========================================================== -->
     <!-- ==========================================================
          START OF SECTION 3: JAVASCRIPT CORE DATA ENGINE
          ========================================================== -->
     <script>
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [];
-
 
         let currentCinemaCategory = 'all';
         let currentBookCategory = 'all';
@@ -532,7 +536,7 @@
             });
         }
 
-                function toggleOverflowDropdownMenu(mode, event) {
+        function toggleOverflowDropdownMenu(mode, event) {
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -540,7 +544,6 @@
             const panel = document.getElementById(`${mode}OverflowPanel`);
             if (panel) {
                 if (panel.style.display === 'none' || panel.style.display === '') {
-                    // Close any other open panels first
                     document.querySelectorAll('.overflow-dropdown-panel').forEach(p => p.style.display = 'none');
                     panel.style.display = 'flex';
                 } else {
@@ -727,10 +730,9 @@
     // ==========================================================
     // END OF SECTION 3: CORE DATA ENGINE MOUNTED
     // ==========================================================
-
-    //==========================================================
-   //START OF SECTION 4: MODAL PROFILES & DRIVE MATRIX HANDLERS
-  // ==========================================================
+    // ==========================================================
+    // START OF SECTION 4: MODAL PROFILES & DRIVE MATRIX HANDLERS
+    // ==========================================================
         function pushDatabaseToCloud() {
             const token = localStorage.getItem('gdrive_access_token');
             const apiKey = localStorage.getItem('gdrive_api_key');
@@ -909,9 +911,8 @@
             refreshAllViews(); 
         }
     // ==========================================================
-    // END OF SECTION 4: NAVIGATION & MODAL HANDLERS COMPLETE
+    // END OF SECTION 4: controllers BASE SYSTEM COMPLETE
     // ==========================================================
-
     // ==========================================================
     // START OF SECTION 5: PROFILE MANAGEMENT & SORTING ENGINES
     // ==========================================================
@@ -926,7 +927,6 @@
             document.getElementById('modalActorLine').innerHTML = `<b>Lead Cast:</b> ${item.actor || 'N/A'}`;
             document.getElementById('modalReleaseLine').innerHTML = `<b>Release Date:</b> ${item.releaseDate || 'Unknown'}`;
             
-            // Render the clean Production status badge at the bottom edge of the poster banner
             const badgeField = document.getElementById('modalHeroStatusBadge');
             if (item.type === 'TV' && item.airStatus) {
                 badgeField.style.display = 'block';
@@ -1133,7 +1133,6 @@
                 if (a.pinned !== b.pinned) return b.pinned - a.pinned; 
                 if (a.manualOrder !== b.manualOrder) return a.manualOrder - b.manualOrder;
                 
-                // Patched data alignment variables for stabilized sorting rules
                 let t1 = a.title || ""; let t2 = b.title || "";
                 if (sortVal === 'name') return t1.localeCompare(t2);
                 
@@ -1156,9 +1155,8 @@
                 return 0;
             });
     // ==========================================================
-    // END OF SECTION 5: MECHANICS OVERHEAD LOCKED
+    // END OF SECTION 5: SORTING ENGINES OVERHEAD LOCKED
     // ==========================================================
-          
     // ==========================================================
     // START OF SECTION 6: VISUAL CARD RENDERERS & API SWEEPS
     // ==========================================================
@@ -1445,5 +1443,5 @@
 </body>
 </html>
 <!-- ==========================================================
-     END OF SECTION 6: VAULT CORE LOGIC ECOSYSTEM COMPLETE
+     END OF SECTION 6: CODE SYSTEM HIGH ARCHITECTURE FINALIZED
      ========================================================== -->
