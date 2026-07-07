@@ -660,17 +660,14 @@
                 } else {
                     pushDatabaseToCloud();
                 }
-            });
+             });
         }
-    <!-- ==========================================================
-         END OF SECTION 3: CORE DATA ENGINE MOUNTED
-         ========================================================== -->
-         
-    <!-- ==========================================================
-         START OF SECTION 4: CARD RENDERERS & MEDIA API HANDLERS
-         ========================================================== -->
-    <script>
+    // ==========================================================
+    // END OF SECTION 3 & START OF SECTION 4 BOUNDARY LINE
+    // ==========================================================
+
         function pushDatabaseToCloud() {
+
             const token = localStorage.getItem('gdrive_access_token');
             const apiKey = localStorage.getItem('gdrive_api_key');
             if (!token || !apiKey) return;
