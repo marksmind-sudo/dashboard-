@@ -80,7 +80,16 @@
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
         .overflow-trigger-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: bold; display: none; z-index: 10; }
-        .overflow-dropdown-panel { position: absolute; top: 38px; right: 0; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; display: none; flex-direction: column; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1200; width: 180px; }
+            </nav>
+    <!-- ==========================================================
+         END OF SECTION 2: APPLICATION INTERFACE CONTAINERS
+         ========================================================== -->
+    <!-- ==========================================================
+         START OF SECTION 3: JAVASCRIPT CORE DATA ENGINE
+         ========================================================== -->
+    <script>
+        let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [];
+
 
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 16px; }
         .media-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; display: flex; flex-direction: column; position: relative; overflow: hidden; }
@@ -523,11 +532,20 @@
             });
         }
 
-        function toggleOverflowDropdownMenu(mode, event) {
-            if (event) event.stopPropagation();
+                function toggleOverflowDropdownMenu(mode, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
             const panel = document.getElementById(`${mode}OverflowPanel`);
-            if(panel) {
-                panel.style.display = (panel.style.display === 'flex' || panel.style.display === 'block') ? 'none' : 'block';
+            if (panel) {
+                if (panel.style.display === 'none' || panel.style.display === '') {
+                    // Close any other open panels first
+                    document.querySelectorAll('.overflow-dropdown-panel').forEach(p => p.style.display = 'none');
+                    panel.style.display = 'flex';
+                } else {
+                    panel.style.display = 'none';
+                }
             }
         }
 
