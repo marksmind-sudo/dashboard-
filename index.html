@@ -1,7 +1,6 @@
 <!-- ==========================================================
      START OF SECTION 1: LAYOUT STRUCTURE & DESIGN SYSTEMS
      ========================================================== -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,9 +72,14 @@
         .drawer-overlay.active { display: block; }
         .drawer-close-btn { background: none; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
 
-        .sub-nav { display: flex; overflow-x: auto; gap: 6px; margin-bottom: 15px; padding-bottom: 4px; }
+        /* Smart Responsive Sub-Nav Architecture */
+        .sub-nav-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
+        .sub-nav { display: flex; align-items: center; gap: 6px; overflow: hidden; width: 100%; position: relative; padding-bottom: 2px; }
+        .sub-nav-visible-container { display: flex; gap: 6px; overflow: hidden; flex: 1; transition: all 0.2s ease; }
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
+        .overflow-trigger-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: bold; display: none; z-index: 10; }
+        .overflow-dropdown-panel { position: absolute; top: 38px; right: 0; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; display: none; flex-direction: column; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1200; width: 180px; }
 
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 16px; }
         .media-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; display: flex; flex-direction: column; position: relative; overflow: hidden; }
@@ -97,10 +101,6 @@
 
         .media-meta { font-size: 0.75rem; color: var(--text-muted); line-height: 1.3; }
         .tv-tracker-inline-label { font-size: 0.76rem; font-weight: bold; color: var(--accent-color); margin-left: 4px; text-shadow: var(--text-shadow); }
-        
-        .interactive-star-deck { display: inline-flex; gap: 3px; color: rgba(255,255,255,0.22); font-size: 1.1rem; cursor: pointer; position: relative; z-index: 999; }
-        .interactive-star-deck span { cursor: pointer; padding: 0 2px; }
-        .interactive-star-deck span.active { color: var(--accent-color); text-shadow: var(--text-shadow); }
 
         .card-mini-selector-rack { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 5px; position: relative; z-index: 70; }
         .card-mini-selector-rack select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); font-size: 0.72rem; padding: 3px 5px; border-radius: 4px; outline: none; cursor: pointer; width: 100%; font-weight: bold; }
@@ -121,10 +121,16 @@
         .card-controls { display: flex; gap: 6px; align-items: center; position: relative; z-index: 70; }
         .card-ctrl-btn { background: none; border: none; color: var(--text-color); opacity: 0.6; cursor: pointer; font-size: 0.85rem; }
 
-        .tmdb-search-results-box { background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); margin-top: 5px; max-height: 180px; overflow-y: auto; border-radius: 4px; display: flex; flex-direction: column; }
-        .tmdb-search-row { display: flex; align-items: center; justify-content: space-between; padding: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
-        .tmdb-search-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
-        .import-mini-btn { background: var(--accent-color); color: #000; border: none; padding: 2px 6px; font-weight: bold; border-radius: 3px; cursor: pointer; font-size: 0.7rem; }
+        /* Extended Search Result Display Layout */
+        .tmdb-search-results-box { background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); margin-top: 5px; max-height: 240px; overflow-y: auto; border-radius: 4px; display: flex; flex-direction: column; }
+        .tmdb-search-row { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.8rem; }
+        .tmdb-search-topline { display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: var(--text-color); }
+        .tmdb-search-overview { font-size: 0.72rem; color: #aaa; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
+
+        /* Modal Star Component */
+        .modal-interactive-stars { display: flex; gap: 6px; color: rgba(255,255,255,0.15); font-size: 1.8rem; cursor: pointer; margin: 5px 0; }
+        .modal-interactive-stars span { transition: transform 0.1s ease; }
+        .modal-interactive-stars span.active { color: var(--accent-color); text-shadow: var(--text-shadow); }
 
         .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-canvas.active { display: flex; }
@@ -147,6 +153,7 @@
         .modal-ep-text-desc { font-size: 0.82rem; color: var(--text-color); opacity: 0.85; line-height: 1.5; padding: 6px 8px; background: rgba(0,0,0,0.2); border-left: 2px solid var(--accent-color); margin-top: 4px; border-radius: 2px; }
         .modal-ep-top-line input { width: 18px; height: 18px; cursor: pointer; }
 
+        /* Forms Layout */
         .form-group { display: flex; flex-direction: column; margin-bottom: 12px; width: 100%; }
         .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
         .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-size: 0.9rem; outline: none; width: 100%; }
@@ -186,6 +193,10 @@
                 <div id="modalTitle" class="modal-hero-title">Media Title</div>
             </div>
             <div class="modal-body">
+                <!-- Moved Star Deck to Profile Body Panel -->
+                <div style="font-size:0.85rem; font-weight:bold; color:var(--accent-color);">⭐ User Matrix Rating:</div>
+                <div id="modalInteractiveStarsDeck" class="modal-interactive-stars"></div>
+
                 <div id="modalDescription" class="modal-desc">Loading matrix streams...</div>
                 <div id="modalCreatorLine" class="modal-meta-line"><b>Director/Author:</b> -</div>
                 <div id="modalActorLine" class="modal-meta-line"><b>Lead Cast:</b> -</div>
@@ -208,7 +219,6 @@
             </div>
         </div>
     </div>
-    
 <!-- ==========================================================
      END OF SECTION 1: DESIGN SYSTEMS COMPLETE
      ========================================================== -->
@@ -265,14 +275,21 @@
                 <button class="reset-btn" onclick="resetListToDefault('cinema')">🔄 Reset Order</button>
             </div>
 
-            <div class="sub-nav">
-                <button class="sub-btn active" id="cinema-sub-all" onclick="filterCategory('cinema', 'all')">Main Collection</button>
-                <button class="sub-btn" id="cinema-sub-favorites" onclick="filterCategory('cinema', 'favorites')">❤️ Favorites</button>
-                <button class="sub-btn" id="cinema-sub-watching" onclick="filterCategory('cinema', 'watching')">🎬 Currently Watching</button>
-                <button class="sub-btn" id="cinema-sub-waiting" onclick="filterCategory('cinema', 'waiting')">⏳ Waiting for Season</button>
-                <button class="sub-btn" id="cinema-sub-justwatched" onclick="filterCategory('cinema', 'justwatched')">⚡ Just Watched</button>
-                <button class="sub-btn" id="cinema-sub-history" onclick="filterCategory('cinema', 'history')">📜 History Logs</button>
-                <button class="sub-btn" id="cinema-sub-find" onclick="filterCategory('cinema', 'find')">🔍 Discovery List</button>
+            <!-- Enhanced Responsive Sub-Nav Wrapper Chassis -->
+            <div class="sub-nav-wrapper">
+                <div class="sub-nav" id="cinemaSubNavDeck">
+                    <div class="sub-nav-visible-container" id="cinemaVisibleContainer">
+                        <button class="sub-btn active" id="cinema-sub-all" onclick="filterCategory('cinema', 'all')">Main Collection</button>
+                        <button class="sub-btn" id="cinema-sub-favorites" onclick="filterCategory('cinema', 'favorites')">❤️ Favorites</button>
+                        <button class="sub-btn" id="cinema-sub-watching" onclick="filterCategory('cinema', 'watching')">🎬 Currently Watching</button>
+                        <button class="sub-btn" id="cinema-sub-waiting" onclick="filterCategory('cinema', 'waiting')">⏳ Waiting for Season</button>
+                        <button class="sub-btn" id="cinema-sub-justwatched" onclick="filterCategory('cinema', 'justwatched')">⚡ Just Watched</button>
+                        <button class="sub-btn" id="cinema-sub-history" onclick="filterCategory('cinema', 'history')">📜 History Logs</button>
+                        <button class="sub-btn" id="cinema-sub-find" onclick="filterCategory('cinema', 'find')">🔍 Discovery List</button>
+                    </div>
+                    <button class="overflow-trigger-btn" id="cinemaOverflowTrigger" onclick="toggleOverflowDropdownMenu('cinema')">⋯</button>
+                    <div class="overflow-dropdown-panel" id="cinemaOverflowPanel"></div>
+                </div>
             </div>
 
             <div class="media-grid" id="cinemaDatabaseGrid"></div>
@@ -313,13 +330,20 @@
                 <button class="reset-btn" onclick="resetListToDefault('book')">🔄 Reset Order</button>
             </div>
 
-            <div class="sub-nav">
-                <button class="sub-btn active" id="book-sub-all" onclick="filterCategory('book', 'all')">Main Collection</button>
-                <button class="sub-btn" id="book-sub-favorites" onclick="filterCategory('book', 'favorites')">❤️ Favorites</button>
-                <button class="sub-btn" id="book-sub-watching" onclick="filterCategory('book', 'watching')">🎧 Currently Reading</button>
-                <button class="sub-btn" id="book-sub-justread" onclick="filterCategory('book', 'justread')">⚡ Just Read</button>
-                <button class="sub-btn" id="book-sub-history" onclick="filterCategory('book', 'history')">📜 History Logs</button>
-                <button class="sub-btn" id="book-sub-find" onclick="filterCategory('book', 'find')">🔍 Discovery List</button>
+            <!-- Goodreads Responsive Overflows Chassis -->
+            <div class="sub-nav-wrapper">
+                <div class="sub-nav" id="bookSubNavDeck">
+                    <div class="sub-nav-visible-container" id="bookVisibleContainer">
+                        <button class="sub-btn active" id="book-sub-all" onclick="filterCategory('book', 'all')">Main Collection</button>
+                        <button class="sub-btn" id="book-sub-favorites" onclick="filterCategory('book', 'favorites')">❤️ Favorites</button>
+                        <button class="sub-btn" id="book-sub-watching" onclick="filterCategory('book', 'watching')">🎧 Currently Reading</button>
+                        <button class="sub-btn" id="book-sub-justread" onclick="filterCategory('book', 'justread')">⚡ Just Read</button>
+                        <button class="sub-btn" id="book-sub-history" onclick="filterCategory('book', 'history')">📜 History Logs</button>
+                        <button class="sub-btn" id="book-sub-find" onclick="filterCategory('book', 'find')">🔍 Discovery List</button>
+                    </div>
+                    <button class="overflow-trigger-btn" id="bookOverflowTrigger" onclick="toggleOverflowDropdownMenu('book')">⋯</button>
+                    <div class="overflow-dropdown-panel" id="bookOverflowPanel"></div>
+                </div>
             </div>
 
             <div class="media-grid" id="bookDatabaseGrid"></div>
@@ -376,773 +400,3 @@
     <!-- ==========================================================
          END OF SECTION 2: APPLICATION INTERFACE CONTAINERS
          ========================================================== -->
-        <!-- ==========================================================
-         START OF SECTION 3: JAVASCRIPT LOGIC ENGINE & API MATRIX
-         ========================================================== -->
-    <script>
-        let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [];
-
-        let currentCinemaCategory = 'all';
-        let currentBookCategory = 'all';
-        let activeProfileModalId = null;
-
-        let touchStartX = 0;
-        let touchEndX = 0;
-        const tabSequence = ['mediaTab', 'goodreadsTab', 'settingsTab'];
-
-        document.addEventListener("DOMContentLoaded", () => {
-            if (localStorage.getItem('gdrive_client_id')) document.getElementById('clientIdInput').value = localStorage.getItem('gdrive_client_id');
-            if (localStorage.getItem('gdrive_api_key')) document.getElementById('apiKeyInput').value = localStorage.getItem('gdrive_api_key');
-            if (localStorage.getItem('tmdb_key')) document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdb_key');
-            
-            if (localStorage.getItem('dashboard_bg_url')) {
-                updateApplicationPosterBackground(localStorage.getItem('dashboard_bg_url'));
-            }
-
-            const savedTheme = localStorage.getItem('dashboard_theme') || 'cyberpunk';
-            document.getElementById('themeSelect').value = savedTheme;
-            changeTheme(savedTheme);
-
-            setupSwipeGestureListeners();
-            refreshAllViews();
-            
-            handleAuthCallback();
-            executeAutoBackgroundReconnectLoop();
-            
-            // Fires the automatic background audiobook hydration sweep on startup
-            triggerAutomaticBackgroundMetadataSweep();
-        });
-
-        function executeLiveTmdbDatabaseLookup() {
-            const tmdbKey = localStorage.getItem('tmdb_key');
-            const query = document.getElementById('tmdbGlobalSearchQuery').value.trim();
-            const container = document.getElementById('tmdbGlobalResultsArea');
-            
-            if(!tmdbKey) { alert("Please input your TMDb API Key inside the settings tab first, Sweetie!"); return; }
-            if(!query) return;
-
-            container.innerHTML = "<div style='padding:10px; font-size:0.8rem; color:#aaa;'>Querying interstellar records...</div>";
-            container.style.display = "flex";
-
-            Promise.all([
-                fetch(`https://api.themoviedb.org/3/search/movie?api_key=${tmdbKey}&query=${encodeURIComponent(query)}`).then(r => r.json()),
-                fetch(`https://api.themoviedb.org/3/search/tv?api_key=${tmdbKey}&query=${encodeURIComponent(query)}`).then(r => r.json())
-            ])
-            .then(([movieData, tvData]) => {
-                container.innerHTML = "";
-                let results = [];
-                if (movieData.results) results = results.concat(movieData.results.slice(0, 5).map(m => ({ ...m, media_type: 'Movie' })));
-                if (tvData.results) results = results.concat(tvData.results.slice(0, 5).map(t => ({ ...t, media_type: 'TV', title: t.name, release_date: t.first_air_date })));
-
-                if(results.length === 0) {
-                    container.innerHTML = "<div style='padding:10px; font-size:0.8rem; color:#ed1c24;'>No screening logs found in cloud channels.</div>";
-                    return;
-                }
-
-                results.forEach(item => {
-                    const year = item.release_date ? item.release_date.split("-")[0] : "N/A";
-                    const row = document.createElement('div');
-                    row.className = 'tmdb-search-row';
-                    row.innerHTML = `
-                        <span><b>[${item.media_type}]</b> ${item.title} (${year})</span>
-                        <button class="import-mini-btn" onclick="importTmdbItemToForm('${item.media_type}', ${item.id})">Import</button>
-                    `;
-                    container.appendChild(row);
-                });
-            })
-            .catch(() => { container.innerHTML = "<div style='padding:10px; font-size:0.8rem; color:#ed1c24;'>Pipeline transmission dropped.</div>"; });
-        }
-
-        function importTmdbItemToForm(type, id) {
-            const tmdbKey = localStorage.getItem('tmdb_key');
-            const searchType = type === 'Movie' ? 'movie' : 'tv';
-
-            fetch(`https://api.themoviedb.org/3/${searchType}/${id}?api_key=${tmdbKey}`)
-                .then(r => r.json())
-                .then(details => {
-                    document.getElementById('addTitle').value = details.title || details.name || "";
-                    document.getElementById('addType').value = type;
-                    document.getElementById('addOverview').value = details.overview || "";
-                    document.getElementById('addReleaseDate').value = details.release_date || details.first_air_date || "";
-                    document.getElementById('addGenre').value = details.genres ? details.genres.map(g => g.name).join(", ") : "General";
-                    
-                    document.getElementById('tmdbGlobalResultsArea').style.display = "none";
-                    document.getElementById('tmdbGlobalSearchQuery').value = "";
-                    alert(`Loaded "${details.title || details.name}" directly into manual fields! Tap "Inject Screening Node" below to lock it in, Sweetie!`);
-                });
-        }
-
-        function saveSyncCredentialsToStorage() {
-            const client = document.getElementById('clientIdInput').value.trim();
-            const api = document.getElementById('apiKeyInput').value.trim();
-            localStorage.setItem('gdrive_client_id', client);
-            localStorage.setItem('gdrive_api_key', api);
-            alert("Credentials secured in permanent storage layer, Sweetie!");
-        }
-
-        function saveKeysAndConnect() {
-            const client = document.getElementById('clientIdInput').value.trim();
-            const api = document.getElementById('apiKeyInput').value.trim();
-            localStorage.setItem('gdrive_client_id', client);
-            localStorage.setItem('gdrive_api_key', api);
-            
-            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(client)}&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=${encodeURIComponent("https://www.googleapis.com/auth/drive.file")}&prompt=consent`;
-        }
-
-        function handleAuthCallback() {
-            const hash = window.location.hash;
-            if (hash && hash.includes('access_token')) {
-                const params = new URLSearchParams(hash.replace('#', '?'));
-                const token = params.get('access_token');
-                localStorage.setItem('gdrive_access_token', token);
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        }
-
-        function executeAutoBackgroundReconnectLoop() {
-            const token = localStorage.getItem('gdrive_access_token');
-            const apiKey = localStorage.getItem('gdrive_api_key');
-            const logField = document.getElementById('driveStatusLog');
-
-            if (token && apiKey) {
-                logField.innerText = "🔄 Syncing with Google Drive Matrix...";
-                fetch(`https://www.googleapis.com/drive/v3/files?maxResults=1&key=${apiKey}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                })
-                .then(res => {
-                    if (res.status === 401) {
-                        logField.innerText = "❌ Session Expired. Tap Connect to re-sync.";
-                    } else {
-                        logField.innerText = "✅ Connected to Google Drive.";
-                        checkAndPullDatabaseFromCloud();
-                    }
-                })
-                .catch(() => { logField.innerText = "Cloud status: Offline"; });
-            }
-        }
-
-        function checkAndPullDatabaseFromCloud() {
-            const token = localStorage.getItem('gdrive_access_token');
-            const apiKey = localStorage.getItem('gdrive_api_key');
-            if (!token || !apiKey) return;
-
-            fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'vault_media_db.json'&key=${apiKey}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.files && data.files.length > 0) {
-                    const fileId = data.files[0].id;
-                    fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    })
-                    .then(res => res.json())
-                    .then(cloudDb => {
-                        if (cloudDb && Array.isArray(cloudDb) && cloudDb.length > 0) {
-                            // Completely silent data synchronization layer swaps
-                            if (mediaDatabase.length === 0) {
-                                mediaDatabase = cloudDb;
-                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                                refreshAllViews();
-                                triggerAutomaticBackgroundMetadataSweep();
-                            } else if (cloudDb.length > mediaDatabase.length) {
-                                mediaDatabase = cloudDb;
-                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                                refreshAllViews();
-                            }
-                        }
-                    }).catch(() => {});
-                } else {
-                    pushDatabaseToCloud();
-                }
-            });
-        }
-
-        function pushDatabaseToCloud() {
-            const token = localStorage.getItem('gdrive_access_token');
-            const apiKey = localStorage.getItem('gdrive_api_key');
-            if (!token || !apiKey) return;
-
-            fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'vault_media_db.json'&key=${apiKey}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            .then(res => res.json())
-            .then(data => {
-                const blob = new Blob([JSON.stringify(mediaDatabase)], { type: 'application/json' });
-                if (data.files && data.files.length > 0) {
-                    const fileId = data.files[0].id;
-                    fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media&key=${apiKey}`, {
-                        method: 'PATCH',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: blob
-                    });
-                } else {
-                    const metadata = { name: 'vault_media_db.json', mimeType: 'application/json' };
-                    const form = new FormData();
-                    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-                    form.append('media', blob);
-                    fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: form
-                    });
-                }
-            });
-        }
-
-        function triggerAutomaticBackgroundMetadataSweep() {
-            if (!mediaDatabase || mediaDatabase.length === 0) return;
-            mediaDatabase.forEach(item => {
-                if (!item.poster || item.poster === "" || !item.overview || item.overview.includes("Ingested")) {
-                    setTimeout(() => { fetchMediaArtwork(item); }, 350);
-                }
-            });
-        }
-
-        function setupSwipeGestureListeners() {
-            window.addEventListener('touchstart', e => {
-                if (e.target.closest('.side-drawer') || e.target.closest('.modal-box') || e.target.closest('select') || e.target.closest('input')) return;
-                touchStartX = e.changedTouches[0].screenX;
-            }, false);
-            window.addEventListener('touchend', e => {
-                if (e.target.closest('.side-drawer') || e.target.closest('.modal-box') || e.target.closest('select') || e.target.closest('input')) return;
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipeGestureEvaluation();
-            }, false);
-        }
-
-        function handleSwipeGestureEvaluation() {
-            const threshold = 100;
-            const currentTabActive = document.querySelector('.tab-content.active').id;
-            let currentIdx = tabSequence.indexOf(currentTabActive);
-            if (touchStartX - touchEndX > threshold && currentIdx < tabSequence.length - 1) {
-                let targetTab = tabSequence[currentIdx + 1];
-                switchTab(targetTab, document.getElementById(`navBtn-${targetTab}`));
-            } else if (touchEndX - touchStartX > threshold && currentIdx > 0) {
-                let targetTab = tabSequence[currentIdx - 1];
-                switchTab(targetTab, document.getElementById(`navBtn-${targetTab}`));
-            }
-        }
-
-        function updateApplicationPosterBackground(url) {
-            if(url.trim() !== "") {
-                document.documentElement.style.setProperty('--bg-image', `url('${url.trim()}')`);
-                localStorage.setItem('dashboard_bg_url', url.trim());
-            }
-        }
-
-        function refreshAllViews() {
-            renderMediaGrid();
-            renderBookGrid();
-        }
-
-        function toggleSideDrawer(drawerId, open) {
-            closeAllDrawers();
-            if(open) {
-                document.getElementById(drawerId).classList.add('open');
-                document.getElementById('drawerOverlay').classList.add('active');
-            }
-        }
-
-        function closeAllDrawers() {
-            document.querySelectorAll('.side-drawer').forEach(d => d.classList.remove('open'));
-            document.getElementById('drawerOverlay').classList.remove('active');
-        }
-
-        function openProfileModal(id) {
-            activeProfileModalId = id;
-            const item = mediaDatabase.find(m => m.id === id);
-            if (!item) return;
-
-            document.getElementById('modalTitle').innerText = "Syncing Node Matrix...";
-            document.getElementById('modalHeroImg').src = "";
-            document.getElementById('modalDescription').innerText = "Connecting to array channels...";
-            document.getElementById('modalCreatorLine').innerHTML = "<b>Creator:</b> -";
-            document.getElementById('modalActorLine').innerHTML = "<b>Lead Cast:</b> -";
-            document.getElementById('modalReleaseLine').innerHTML = "<b>Release Date:</b> -";
-            document.getElementById('modalNextAirLine').style.display = 'none';
-            document.getElementById('modalAccessLine').innerHTML = "<b>Source Profile:</b> -";
-            document.getElementById('modalTvSection').style.display = 'none';
-            document.getElementById('modalEpisodesContainer').innerHTML = '';
-
-            if (!item.overview || item.overview.includes("Loading") || item.overview.includes("Ingested") || (item.type === 'TV' && (!item.seasons || item.seasons.length === 0))) {
-                fetchMediaArtwork(item, true); 
-            } else {
-                updateProfileModalState(id);
-            }
-            document.getElementById('mediaDetailModal').classList.add('active');
-        }
-
-        function closeProfileModal() {
-            document.getElementById('mediaDetailModal').classList.remove('active');
-            activeProfileModalId = null;
-            refreshAllViews(); 
-        }
-
-        function updateProfileModalState(id) {
-            const item = mediaDatabase.find(m => m.id === id);
-            if (!item) return;
-
-            let displayAirStatus = '';
-            if(item.type === 'TV' && item.airStatus) {
-                if(item.airStatus === 'canceled') displayAirStatus = ' [🔴 CANCELED]';
-                else if(item.airStatus === 'returning') displayAirStatus = ' [🟢 NEW SEASON COMING]';
-                else if(item.airStatus === 'ended') displayAirStatus = ' [⚪ ENDED]';
-            }
-
-            document.getElementById('modalTitle').innerText = item.title + displayAirStatus;
-            document.getElementById('modalHeroImg').src = item.poster || "";
-            document.getElementById('modalDescription').innerText = item.overview || "No extended profile description found.";
-            document.getElementById('modalCreatorLine').innerHTML = `<b>${item.type === 'Audiobook' ? 'Author' : 'Director'}:</b> ${item.creator || 'Unknown'}`;
-            document.getElementById('modalActorLine').innerHTML = `<b>Lead Cast:</b> ${item.actor || 'N/A'}`;
-            document.getElementById('modalReleaseLine').innerHTML = `<b>Release Date:</b> ${item.releaseDate || 'Unknown'}`;
-            
-            const nextAirField = document.getElementById('modalNextAirLine');
-            if (item.type === 'TV' && item.nextAirDate) {
-                nextAirField.style.display = 'block';
-                nextAirField.innerHTML = `<b>⚡ Next Season Premiere Air Date:</b> ${item.nextAirDate}`;
-            } else {
-                nextAirField.style.display = 'none';
-            }
-
-            let term = item.type === 'Audiobook' ? (item.watchState === 'completed' ? 'READ' : (item.watchState === 'watching' ? 'READING' : 'UNREAD')) : (item.watchState || 'unwatched');
-            document.getElementById('modalAccessLine').innerHTML = `<b>Source Profile:</b> ${item.access} (${item.type}) — <span style="text-transform:uppercase; color:var(--accent-color); font-weight:bold;">${term}</span>`;
-
-            const tvSection = document.getElementById('modalTvSection');
-            if (item.type === 'TV' && item.seasons && item.seasons.length > 0) {
-                tvSection.style.display = 'block';
-                const selector = document.getElementById('modalSeasonSelector');
-                selector.innerHTML = '';
-                item.seasons.forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.seasonNumber;
-                    opt.innerText = s.name || `Season ${s.seasonNumber}`;
-                    selector.appendChild(opt);
-                });
-                if (item.lastViewedSeason && item.seasons.some(s => s.seasonNumber === item.lastViewedSeason)) {
-                    selector.value = item.lastViewedSeason;
-                }
-                loadSelectedSeasonDeck();
-            } else {
-                tvSection.style.display = 'none';
-            }
-        }
-
-        function handleSeasonChangeDropdown() {
-            const item = mediaDatabase.find(m => m.id === activeProfileModalId);
-            if (item && item.type === 'TV') {
-                const newSeason = parseInt(document.getElementById('modalSeasonSelector').value);
-                item.lastViewedSeason = newSeason;
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-            }
-            loadSelectedSeasonDeck();
-        }
-
-        function loadSelectedSeasonDeck() {
-            const item = mediaDatabase.find(m => m.id === activeProfileModalId);
-            if (!item || !item.seasons || item.type !== 'TV') return;
-
-            const seasonNum = parseInt(document.getElementById('modalSeasonSelector').value);
-            const season = item.seasons.find(s => s.seasonNumber === seasonNum);
-            const container = document.getElementById('modalEpisodesContainer');
-            container.innerHTML = '';
-
-            if (season && season.episodes) {
-                season.episodes.forEach(ep => {
-                    const row = document.createElement('div');
-                    row.className = 'modal-ep-row';
-                    row.innerHTML = `
-                        <div class="modal-ep-top-line" style="cursor:pointer;" onclick="toggleEpisodeSummaryPane(${ep.id})">
-                            <span>🎬 S${seasonNum}E${ep.episodeNumber}: ${ep.name}</span>
-                            <input type="checkbox" ${ep.watched ? 'checked' : ''} onclick="event.stopPropagation(); toggleEpisodeWatchStateInline(${item.id}, ${seasonNum}, ${ep.id}, this)">
-                        </div>
-                        <div id="ep-desc-${ep.id}" class="modal-ep-text-desc" style="display:none;">${ep.overview || 'No overview summary generated.'}</div>
-                    `;
-                    container.appendChild(row);
-                });
-            }
-        }
-
-        function toggleEpisodeSummaryPane(epId) {
-            const el = document.getElementById(`ep-desc-${epId}`);
-            if(el) el.style.display = (el.style.display === 'none' ? 'block' : 'none');
-        }
-
-        function toggleEpisodeWatchStateInline(seriesId, seasonNum, epId, checkboxEl) {
-            const idx = mediaDatabase.findIndex(m => m.id === seriesId);
-            if (idx === -1 || !mediaDatabase[idx].seasons) return;
-
-            const sIdx = mediaDatabase[idx].seasons.findIndex(s => s.seasonNumber === seasonNum);
-            if (sIdx === -1 || !mediaDatabase[idx].seasons[sIdx].episodes) return;
-
-            const eIdx = mediaDatabase[idx].seasons[sIdx].episodes.findIndex(e => e.id === epId);
-            if (eIdx !== -1) {
-                mediaDatabase[idx].seasons[sIdx].episodes[eIdx].watched = checkboxEl.checked;
-                recalculateSeriesProgressState(idx);
-            }
-        }
-
-        function completeActiveSeasonBatch() {
-            const itemIdx = mediaDatabase.findIndex(m => m.id === activeProfileModalId);
-            if (itemIdx === -1 || !mediaDatabase[itemIdx].seasons || mediaDatabase[itemIdx].type !== 'TV') return;
-
-            const seasonNum = parseInt(document.getElementById('modalSeasonSelector').value);
-            const sIdx = mediaDatabase[itemIdx].seasons.findIndex(s => s.seasonNumber === seasonNum);
-            if (sIdx !== -1 && mediaDatabase[itemIdx].seasons[sIdx].episodes) {
-                mediaDatabase[itemIdx].seasons[sIdx].episodes.forEach(e => { e.watched = true; });
-                recalculateSeriesProgressState(itemIdx);
-                loadSelectedSeasonDeck();
-            }
-        }
-
-        function clearActiveSeasonBatch() {
-            const itemIdx = mediaDatabase.findIndex(m => m.id === activeProfileModalId);
-            if (itemIdx === -1 || !mediaDatabase[itemIdx].seasons || mediaDatabase[itemIdx].type !== 'TV') return;
-
-            const seasonNum = parseInt(document.getElementById('modalSeasonSelector').value);
-            const sIdx = mediaDatabase[itemIdx].seasons.findIndex(s => s.seasonNumber === seasonNum);
-            if (sIdx !== -1 && mediaDatabase[itemIdx].seasons[sIdx].episodes) {
-                mediaDatabase[itemIdx].seasons[sIdx].episodes.forEach(e => { e.watched = false; });
-                recalculateSeriesProgressState(itemIdx);
-                loadSelectedSeasonDeck();
-            }
-        }
-
-        function recalculateSeriesProgressState(idx) {
-            let total = 0, watched = 0;
-            mediaDatabase[idx].seasons.forEach(s => {
-                if (s.episodes) { s.episodes.forEach(e => { total++; if (e.watched) watched++; }); }
-            });
-            mediaDatabase[idx].progress = total > 0 ? Math.round((watched / total) * 100) : 0;
-            
-            if (mediaDatabase[idx].progress === 100) {
-                mediaDatabase[idx].watchState = 'completed'; mediaDatabase[idx].status = 'history';
-                mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0];
-            } else if (watched > 0) {
-                mediaDatabase[idx].watchState = 'watching'; mediaDatabase[idx].status = 'watching';
-            } else {
-                mediaDatabase[idx].watchState = 'unwatched'; mediaDatabase[idx].status = 'all';
-            }
-            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-            pushDatabaseToCloud(); 
-        }
-
-        function changeCardAccessField(id, val, context) {
-            const idx = mediaDatabase.findIndex(i => i.id === id);
-            if(idx !== -1) {
-                mediaDatabase[idx].access = val;
-                if (val === 'Wishlist') mediaDatabase[idx].status = 'find';
-                else if (mediaDatabase[idx].watchState === 'unwatched') mediaDatabase[idx].status = 'all';
-                else if (mediaDatabase[idx].watchState === 'watching') mediaDatabase[idx].status = 'watching';
-                else if (mediaDatabase[idx].watchState === 'waiting') mediaDatabase[idx].status = 'waiting';
-                else if (mediaDatabase[idx].watchState === 'completed') mediaDatabase[idx].status = 'history';
-                saveAndRefreshBoth(context);
-            }
-        }
-
-        function changeCardWatchField(id, val, context) {
-            const idx = mediaDatabase.findIndex(i => i.id === id);
-            if(idx !== -1) {
-                mediaDatabase[idx].watchState = val;
-                if(val === 'completed') {
-                    mediaDatabase[idx].progress = 100; mediaDatabase[idx].status = 'history';
-                    if(!mediaDatabase[idx].completionDate || mediaDatabase[idx].completionDate === "Unknown Date") {
-                        mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0];
-                    }
-                } else if(val === 'watching') {
-                    mediaDatabase[idx].status = 'watching';
-                    if (mediaDatabase[idx].progress === 100 || mediaDatabase[idx].progress === 0) mediaDatabase[idx].progress = 15;
-                } else if(val === 'waiting') {
-                    mediaDatabase[idx].status = 'waiting';
-                } else if(val === 'unwatched') {
-                    mediaDatabase[idx].progress = 0; mediaDatabase[idx].status = (mediaDatabase[idx].access === 'Wishlist') ? 'find' : 'all';
-                }
-                saveAndRefreshBoth(context);
-            }
-        }
-
-        function updateManualCardDate(id, val, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].completionDate = val; saveAndRefreshBoth(context); } }
-        function setCardDateToToday(id, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0]; saveAndRefreshBoth(context); } }
-        function setCardDateToForgot(id, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].completionDate = "Unknown Date"; saveAndRefreshBoth(context); } }
-        
-        function setManualStarRating(id, ratingVal, context) { 
-            const idx = mediaDatabase.findIndex(i => i.id === id); 
-            if(idx !== -1) { 
-                mediaDatabase[idx].rating = parseInt(ratingVal); 
-                saveAndRefreshBoth(context); 
-            } 
-        }
-        
-        function updateManualLibraryReturnDate(id, val, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].libraryReturnDate = val; localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); pushDatabaseToCloud(); } }
-
-        function calculateLiveStringHeader(item) {
-            if (item.type === 'TV') {
-                if (item.watchState === 'completed' || item.progress === 100) return 'Completed';
-                let lastWatchedStr = 'Unwatched';
-                if (item.seasons) {
-                    for (let s of item.seasons) {
-                        if (s.episodes) { for (let e of s.episodes) { if (e.watched) lastWatchedStr = `S${s.seasonNumber} Ep${e.episodeNumber}`; } }
-                    }
-                }
-                return lastWatchedStr;
-            }
-            return item.watchState === 'completed' ? 'Completed' : '';
-        }
-
-        function sortAndRenderDeck(data, gridContainer, sortVal, contextTag) {
-            data.sort((a, b) => {
-                if (a.pinned !== b.pinned) return b.pinned - a.pinned; 
-                if (a.manualOrder !== b.manualOrder) return a.manualOrder - b.manualOrder;
-                if (sortVal === 'name') return a.title.localeCompare(b.title);
-                if (sortVal === 'releaseDate') return new Date(a.releaseDate || '1970-01-01') - new Date(b.releaseDate || '1970-01-01');
-                if (sortVal === 'dateAdded') return new Date(a.dateAdded) - new Date(b.dateAdded);
-                if (sortVal === 'genre') return (a.genre || '').localeCompare(b.genre || '');
-                if (sortVal === 'rating') return b.rating - a.rating;
-                if (sortVal === 'progress') return b.progress - a.progress;
-            });
-
-            gridContainer.innerHTML = '';
-            data.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = `media-card ${item.pinned ? 'pinned' : ''}`;
-                
-                let posterContent = `<span class="poster-placeholder">${item.type === 'Audiobook' ? '📚' : '🎬'}</span>`;
-                if (item.poster) posterContent = `<img src="${item.poster}" class="poster-img" alt="Poster">`;
-
-                let statusBadgeMarkup = '';
-                if (item.type === 'TV' && item.airStatus) {
-                    if (item.airStatus === 'canceled') statusBadgeMarkup = `<div class="live-production-badge badge-canceled">🔴 Canceled</div>`;
-                    else if (item.airStatus === 'returning') statusBadgeMarkup = `<div class="live-production-badge badge-returning">🟢 Returning</div>`;
-                    else if (item.airStatus === 'ended') statusBadgeMarkup = `<div class="live-production-badge badge-ended">⚪ Ended</div>`;
-                }
-
-                let currentTvIndicator = item.type === 'TV' ? `<span class="tv-tracker-inline-label">(${calculateLiveStringHeader(item)})</span>` : '';
-                let isForgot = (item.completionDate === "Unknown Date");
-
-                let dateInputInterfaceMarkup = isForgot ? `
-                    <div class="static-unknown-date-text" onclick="setCardDateToToday(${item.id}, '${contextTag}')">Unknown Date (Tap Reset)</div>
-                ` : `
-                    <input type="date" value="${item.completionDate || ''}" onchange="updateManualCardDate(${item.id}, this.value, '${contextTag}')">
-                `;
-
-                let activeStarsMarkup = `<div class="interactive-star-deck" onclick="event.stopPropagation();">`;
-                for(let star = 1; star <= 5; star++) {
-                    activeStarsMarkup += `<span class="${star <= item.rating ? 'active' : ''}" onclick="setManualStarRating(${item.id}, ${star}, '${contextTag}')">★</span>`;
-                }
-                activeStarsMarkup += `</div>`;
-
-                let activeWatchSelectionOption = item.type === 'Audiobook' ? `
-                    <option value="unwatched" ${item.watchState === 'unwatched' ? 'selected' : ''}>Unread</option>
-                    <option value="watching" ${item.watchState === 'watching' ? 'selected' : ''}>Currently Reading</option>
-                    <option value="completed" ${item.watchState === 'completed' ? 'selected' : ''}>Completed Log</option>
-                ` : `
-                    <option value="unwatched" ${item.watchState === 'unwatched' ? 'selected' : ''}>Unwatched</option>
-                    <option value="watching" ${item.watchState === 'watching' ? 'selected' : ''}>Currently Watching</option>
-                    <option value="waiting" ${item.watchState === 'waiting' ? 'selected' : ''}>Waiting for New Season</option>
-                    <option value="completed" ${item.watchState === 'completed' ? 'selected' : ''}>Completed Log</option>
-                `;
-
-                let accessDropdownOptions = item.type === 'Audiobook' ? `
-                    <option value="Owned" ${item.access === 'Owned' ? 'selected' : ''}>I Own It</option>
-                    <option value="Library Book" ${item.access === 'Library Book' ? 'selected' : ''}>Library Book</option>
-                    <option value="Wishlist" ${item.access === 'Wishlist' ? 'selected' : ''}>Wishlist</option>
-                ` : `
-                    <option value="Owned" ${item.access === 'Owned' ? 'selected' : ''}>I Own It</option>
-                    <option value="Streaming" ${item.access === 'Streaming' ? 'selected' : ''}>Streaming Platform</option>
-                    <option value="Wishlist" ${item.access === 'Wishlist' ? 'selected' : ''}>Wishlist / Discover</option>
-                `;
-
-                let libraryReturnMarkup = '';
-                if (item.type === 'Audiobook' && item.access === 'Library Book') {
-                    let retDate = item.libraryReturnDate || '';
-                    libraryReturnMarkup = `
-                        <div class="card-date-row" style="background:rgba(226,156,29,0.15); border:1px solid var(--border-color);" onclick="event.stopPropagation();">
-                            <label style="color:var(--accent-color);">Return:</label>
-                            <input type="date" value="${retDate}" onchange="updateManualLibraryReturnDate(${item.id}, this.value, '${contextTag}')">
-                        </div>
-                    `;
-                }
-
-                card.innerHTML = `
-                    <div class="poster-frame" onclick="openProfileModal(${item.id})">
-                        ${statusBadgeMarkup}
-                        ${posterContent}
-                    </div>
-                    <div class="card-details-pane">
-                        <div>
-                            <div class="card-title-line" onclick="openProfileModal(${item.id})">
-                                <div class="media-title">${item.title} ${currentTvIndicator}</div>
-                                <button class="heart-icon-top" onclick="event.stopPropagation(); toggleHeartItem(${item.id}, '${contextTag}')">${item.favorite ? '❤️' : '🖤'}</button>
-                            </div>
-                            <div class="media-meta">${item.type === 'Audiobook' ? 'By ' + item.creator : item.genre}</div>
-                            <div class="card-date-row" onclick="event.stopPropagation();">
-                                <label>Date:</label>
-                                ${dateInputInterfaceMarkup}
-                                <button class="macro-action-btn" onclick="setCardDateToToday(${item.id}, '${contextTag}')">⚡ Today</button>
-                                <button class="macro-forgot-btn ${isForgot ? 'active-forgot' : ''}" onclick="setCardDateToForgot(${item.id}, '${contextTag}')">❓ Forgot</button>
-                            </div>
-                            ${libraryReturnMarkup}
-                            <div class="card-mini-selector-rack" onclick="event.stopPropagation();">
-                                <select onchange="changeCardAccessField(${item.id}, this.value, '${contextTag}')">${accessDropdownOptions}</select>
-                                <select onchange="changeCardWatchField(${item.id}, this.value, '${contextTag}')">${activeWatchSelectionOption}</select>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="progress-container"><div class="progress-bar" style="width: ${item.progress}%"></div></div>
-                            <div class="badge-row">
-                                ${activeStarsMarkup}
-                                <span style="font-weight:bold; color:var(--accent-color); font-size:0.75rem;">${item.progress}%</span>
-                            </div>
-                            <div class="badge-row" style="margin-top:6px; border-top:1px solid rgba(255,255,255,0.08); padding-top:4px;" onclick="event.stopPropagation();">
-                                <button class="card-ctrl-btn" onclick="pinItem(${item.id}, '${contextTag}')">${item.pinned ? '📌' : '📎'}</button>
-                                <div class="card-controls">
-                                    <button class="card-ctrl-btn" onclick="moveItemPosition(${index}, -1, '${contextTag}')">◀</button>
-                                    <button class="card-ctrl-btn" onclick="moveItemPosition(${index}, 1, '${contextTag}')">▶</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                gridContainer.appendChild(card);
-            });
-        }
-
-        function renderMediaGrid() {
-            const grid = document.getElementById('cinemaDatabaseGrid'); if(!grid) return;
-            const searchQuery = document.getElementById('cinemaSearchBar').value.toLowerCase();
-            const sortVal = document.getElementById('sortEngine').value;
-            const typeFilter = document.getElementById('typeFilter').value;
-            
-            let filteredData = mediaDatabase.filter(item => {
-                if (item.type === 'Audiobook') return false;
-                const searchStr = `${item.title} ${item.creator} ${item.actor} ${item.genre}`.toLowerCase();
-                const matchesSearch = searchStr.includes(searchQuery);
-                const matchesType = (typeFilter === 'all' || item.type === typeFilter);
-                let matchesCategory = true;
-                if (currentCinemaCategory === 'favorites') matchesCategory = item.favorite;
-                else if (currentCinemaCategory === 'justwatched') matchesCategory = (item.completionDate && item.completionDate.trim() !== "" && item.watchState !== 'watching');
-                else if (currentCinemaCategory !== 'all') matchesCategory = (item.status === currentCinemaCategory);
-                return matchesSearch && matchesType && matchesCategory;
-            });
-            if (currentCinemaCategory === 'justwatched') {
-                filteredData.sort((a,b) => new Date(b.completionDate || '1970-01-01') - new Date(a.completionDate || '1970-01-01'));
-                filteredData = filteredData.slice(0, 6);
-            }
-            sortAndRenderDeck(filteredData, grid, sortVal, 'cinema');
-        }
-
-        function renderBookGrid() {
-            const grid = document.getElementById('bookDatabaseGrid'); if(!grid) return;
-            const searchQuery = document.getElementById('bookSearchBar').value.toLowerCase();
-            const sortVal = document.getElementById('bookSortEngine').value;
-            let filteredData = mediaDatabase.filter(item => {
-                if (item.type !== 'Audiobook') return false;
-                const searchStr = `${item.title} ${item.creator} ${item.genre}`.toLowerCase();
-                const matchesSearch = searchStr.includes(searchQuery);
-                let matchesCategory = true;
-                if (currentBookCategory === 'favorites') matchesCategory = item.favorite;
-                else if (currentBookCategory === 'justread') matchesCategory = (item.completionDate && item.completionDate.trim() !== "" && item.watchState !== 'watching');
-                else if (currentBookCategory !== 'all') matchesCategory = (item.status === currentBookCategory);
-                return matchesSearch && matchesCategory;
-            });
-            if (currentBookCategory === 'justread') {
-                filteredData.sort((a,b) => new Date(b.completionDate || '1970-01-01') - new Date(a.completionDate || '1970-01-01'));
-                filteredData = filteredData.slice(0, 6);
-            }
-            sortAndRenderDeck(filteredData, grid, sortVal, 'book');
-        }
-
-        function fetchMediaArtwork(item, openModalOnComplete = false) {
-            const tmdbKey = localStorage.getItem('tmdb_key');
-            if ((item.type === 'Movie' || item.type === 'TV') && tmdbKey) {
-                const searchType = item.type === 'Movie' ? 'movie' : 'tv';
-                fetch(`https://api.themoviedb.org/3/search/${searchType}?api_key=${tmdbKey}&query=${encodeURIComponent(item.title)}`)
-                    .then(res => res.json()).then(data => {
-                        if (data.results && data.results.length > 0) {
-                            const resObj = data.results[0];
-                            const idx = mediaDatabase.findIndex(i => i.id === item.id); if (idx === -1) return;
-                            mediaDatabase[idx].poster = resObj.poster_path ? `https://image.tmdb.org/t/p/w342${resObj.poster_path}` : "";
-                            if (resObj.overview) mediaDatabase[idx].overview = resObj.overview;
-                            if (resObj.release_date || resObj.first_air_date) mediaDatabase[idx].releaseDate = resObj.release_date || resObj.first_air_date;
-
-                            fetch(`https://api.themoviedb.org/3/${searchType}/${resObj.id}?api_key=${tmdbKey}`)
-                                .then(r => r.json()).then(fullMetadata => {
-                                    if(fullMetadata.status) {
-                                        let statusStr = fullMetadata.status.toLowerCase();
-                                        if(statusStr.includes('cancel')) mediaDatabase[idx].airStatus = 'canceled';
-                                        else if(statusStr.includes('return') || statusStr.includes('pilot')) mediaDatabase[idx].airStatus = 'returning';
-                                        else mediaDatabase[idx].airStatus = 'ended';
-                                    }
-                                    if(fullMetadata.next_episode_to_air && fullMetadata.next_episode_to_air.air_date) {
-                                        mediaDatabase[idx].nextAirDate = fullMetadata.next_episode_to_air.air_date;
-                                    }
-                                    localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                                    if(openModalOnComplete && activeProfileModalId === item.id) updateProfileModalState(item.id); else refreshAllViews();
-                                });
-                        }
-                    });
-            } else if (item.type === 'Audiobook') {
-                let sanitizedTitle = item.title.replace(/\s*\(.*?\)\s*/g, '').trim();
-                fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(sanitizedTitle)}`)
-                    .then(res => res.json()).then(data => {
-                        if (data.docs && data.docs.length > 0) {
-                            const match = data.docs.find(d => d.cover_i || d.cover_edition_key) || data.docs[0];
-                            const idx = mediaDatabase.findIndex(i => i.id === item.id);
-                            if (idx !== -1) {
-                                if (match.cover_i) mediaDatabase[idx].poster = `https://covers.openlibrary.org/b/id/${match.cover_i}-L.jpg`;
-                                else if (match.cover_edition_key) mediaDatabase[idx].poster = `https://covers.openlibrary.org/b/olid/${match.cover_edition_key}-L.jpg`;
-                                mediaDatabase[idx].overview = match.first_sentence || (match.subject ? `Subjects: ${match.subject.slice(0,3).join(", ")}` : "Audiobook record log.");
-                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                                if(openModalOnComplete && activeProfileModalId === item.id) updateProfileModalState(item.id); else refreshAllViews();
-                            }
-                        }
-                    });
-            }
-        }
-
-        function addNewMediaItem(context) {
-            const today = new Date().toISOString().split('T')[0]; let newItemId = Date.now();
-            if (context === 'cinema') {
-                const title = document.getElementById('addTitle').value.trim(); const type = document.getElementById('addType').value;
-                const creator = document.getElementById('addCreator').value.trim(); const actor = document.getElementById('addActor').value.trim() || "N/A";
-                const genre = document.getElementById('addGenre').value.trim() || "General"; const overview = document.getElementById('addOverview').value.trim();
-                const releaseDate = document.getElementById('addReleaseDate').value || today; const access = document.getElementById('addAccess').value;
-                const watchState = document.getElementById('addWatchState').value; const status = document.getElementById('addStatus').value;
-                if (!title) return;
-                let itemObj = { id: newItemId, title, type, creator, actor, genre, overview, releaseDate, dateAdded: today, completionDate: (watchState==='completed'?today:''), access, watchState, status, progress: (watchState==='completed'?100:0), favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "", lastViewedSeason: 1, airStatus: "returning", nextAirDate: "" };
-                mediaDatabase.push(itemObj); fetchMediaArtwork(itemObj);
-            } else {
-                const title = document.getElementById('addBookTitle').value.trim(); const author = document.getElementById('addBookAuthor').value.trim() || "Unknown Author";
-                const genre = document.getElementById('addBookGenre').value.trim() || "Audiobook"; const overview = document.getElementById('addBookOverview').value.trim();
-                const access = document.getElementById('addBookAccess').value; const watchState = document.getElementById('addBookWatchState').value;
-                const status = document.getElementById('addBookStatus').value; if (!title) return;
-                let itemObj = { id: newItemId, title, type: "Audiobook", creator: author, actor: "N/A", genre, overview, releaseDate: today, dateAdded: today, completionDate: (watchState==='completed'?today:''), access, watchState, status, progress: (watchState==='completed'?100:0), favorite: false, rating: 5, pinned: false, manualOrder: mediaDatabase.length, poster: "" };
-                mediaDatabase.push(itemObj); fetchMediaArtwork(itemObj);
-            }
-            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); closeAllDrawers(); refreshAllViews(); pushDatabaseToCloud();
-        }
-
-        function toggleHeartItem(id, context) { const index = mediaDatabase.findIndex(i => i.id === id); if(index !== -1) { mediaDatabase[index].favorite = !mediaDatabase[index].favorite; saveAndRefreshBoth(context); } }
-        function pinItem(id, context) { const index = mediaDatabase.findIndex(i => i.id === id); if(index !== -1) { mediaDatabase[index].pinned = !mediaDatabase[index].pinned; saveAndRefreshBoth(context); } }
-        function moveItemPosition(currentIndex, direction, context) { const targetIndex = currentIndex + direction; if (targetIndex >= 0 && targetIndex < mediaDatabase.length) { let temp = mediaDatabase[currentIndex].manualOrder; mediaDatabase[currentIndex].manualOrder = mediaDatabase[targetIndex].manualOrder; mediaDatabase[targetIndex].manualOrder = temp; saveAndRefreshBoth(context); } }
-        function resetListToDefault(context) { mediaDatabase.forEach((item, index) => { item.manualOrder = index; item.pinned = false; }); saveAndRefreshBoth(context); }
-        
-        function saveAndRefreshBoth(context) {
-            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); refreshAllViews();
-            if(activeProfileModalId) updateProfileModalState(activeProfileModalId);
-            pushDatabaseToCloud(); 
-        }
-        
-        function filterCategory(deck, catId) {
-            if (deck === 'cinema') { currentCinemaCategory = catId; document.querySelectorAll('#mediaTab .sub-btn').forEach(b => b.classList.remove('active')); document.getElementById(`cinema-sub-${catId}`).classList.add('active'); renderMediaGrid(); }
-            else { currentBookCategory = catId; document.querySelectorAll('#goodreadsTab .sub-btn').forEach(b => b.classList.remove('active')); document.getElementById(`book-sub-${catId}`).classList.add('active'); renderBookGrid(); }
-        }
-        function switchTab(tabId, btn) { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); document.getElementById(tabId).classList.add('active'); if(btn) btn.classList.add('active'); closeAllDrawers(); refreshAllViews(); }
-        function changeTheme(themeName) { document.documentElement.setAttribute('data-theme', themeName); localStorage.setItem('dashboard_theme', themeName); }
-        function toggleVisibility(inputId) { const field = document.getElementById(inputId); field.type = field.type === "password" ? "text" : "password"; }
-    </script>
-</body>
-</html>
-<!-- ==========================================================
-     END OF SECTION 3: CORE LOGIC MATRIX COMPLETE
-     ========================================================== -->
