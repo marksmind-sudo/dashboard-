@@ -85,7 +85,7 @@
         .sub-nav { display: flex; align-items: center; gap: 6px; width: max-content; max-width: 100%; position: relative; padding-bottom: 2px; }
         .sub-nav-visible-container { display: flex; gap: 6px; overflow: hidden; width: max-content; transition: all 0.2s ease; }
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
-        .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
+        .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; border-color: var(--accent-color); }
         .overflow-trigger-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: bold; display: none; z-index: 10; margin-left: 2px; }
         
         .overflow-dropdown-panel { 
@@ -144,6 +144,10 @@
         .card-ctrl-btn:hover { opacity: 1; }
         .card-controls { display: flex; gap: 2px; }
 
+        /* --- SLIDE OUT SIDE DRAWER FRAMEWORK SYSTEM --- */
+        .side-drawer { position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: var(--panel-bg); border-left: 2px solid var(--border-color); z-index: 9999; transition: right 0.3s ease; padding: 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: -4px 0 20px rgba(0,0,0,0.85); overflow-y: auto; }
+        .side-drawer.open { right: 0 !important; }
+
         /* --- IMMERSIVE PROFILE MODAL SCREEN SYSTEM --- */
         .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 15px; }
         .modal-canvas.active { display: flex; }
@@ -186,6 +190,7 @@
         .form-group label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; font-weight: bold; }
         .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; background: rgba(0,0,0,0.4); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; }
         .card-select { background: rgba(0,0,0,0.3); color: var(--text-color); border: 1px solid var(--border-color); padding: 6px; border-radius: 4px; font-size: 0.82rem; cursor: pointer; }
+        .btn { background-color: var(--accent-color); color: #000; font-weight: bold; border: none; width: 100%; padding: 10px; border-radius: 4px; cursor: pointer; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -219,7 +224,8 @@
 <!-- ==========================================
      END OF SECTION 1: LAYOUT STRUCTURE & DESIGN SYSTEMS
      ========================================== -->
-<!-- ==========================================
+
+       <!-- ==========================================
      START OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
 <body>
@@ -241,7 +247,7 @@
     <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
 
     <!-- Slide-Out Ingestion & Add Entry Drawer Deck Panels -->
-    <div id="addMediaDrawer" class="side-drawer" style="position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: var(--panel-bg); border-left: 2px solid var(--border-color); z-index: 999; transition: right 0.3s ease; padding: 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: -4px 0 20px rgba(0,0,0,0.85); overflow-y: auto;">
+    <div id="addMediaDrawer" class="side-drawer">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
             <h3 style="color: var(--text-color);">Add New Catalog Entry</h3>
             <button class="card-ctrl-btn" onclick="toggleSideDrawer('addMediaDrawer', false)" style="font-size: 1.2rem;">✕</button>
@@ -267,13 +273,13 @@
             <div class="form-group"><label>Title Name</label><input type="text" id="addTitle" placeholder="e.g., Stargate SG-1"></div>
             <div class="form-group"><label>Media Category Type</label><select id="addType" class="card-select"><option value="Movie">Movie</option><option value="TV">TV Series</option></select></div>
             <div class="form-group"><label>Director / Creator</label><input type="text" id="addCreator" placeholder="e.g., Brad Wright"></div>
-            <div class="form-group"><label>Lead Cast Members</label><input type="text" id="addActor" placeholder="e.g., Amanda Tapping, Richard Dean Anderson"></div>
+            <div class="form-group"><label>Lead Cast Members</label><input type="text" id="addActor" placeholder="e.g., Amanda Tapping"></div>
             <div class="form-group"><label>Genres</label><input type="text" id="addGenre" placeholder="e.g., Sci-Fi, Adventure"></div>
             <div class="form-group"><label>Release Date</label><input type="date" id="addReleaseDate"></div>
             <div class="form-group"><label>Source Access Profile</label><select id="addAccess" class="card-select"><option value="Streaming">Streaming Platform</option><option value="Owned">I Own It</option><option value="Wishlist">Wishlist / Discover</option></select></div>
             <div class="form-group"><label>Watch State</label><select id="addWatchState" class="card-select"><option value="unwatched">Unwatched</option><option value="watching">Currently Watching</option><option value="waiting">Waiting for Season</option><option value="completed">Completed Log</option></select></div>
             <div class="form-group"><label>Assigned Tracking Folder</label><select id="addStatus" class="card-select"><option value="all">Main Collection</option><option value="watching">Currently Watching</option><option value="waiting">Waiting for Season</option><option value="history">Completed Log</option><option value="find">Wishlist / Discover</option></select></div>
-            <div class="form-group"><label>Overview Summary Notes</label><textarea id="addOverview" placeholder="Log personal notes or descriptive overview parameters..." style="height: 60px; resize: none;"></textarea></div>
+            <div class="form-group"><label>Overview Summary Notes</label><textarea id="addOverview" placeholder="Log personal notes..." style="height: 60px; resize: none;"></textarea></div>
             <button class="btn" onclick="addNewMediaItem('cinema')" style="margin-top: 4px;">Ingest to Media Matrix</button>
         </div>
 
@@ -315,13 +321,7 @@
 
                 <div class="form-group" style="margin-top: 4px;">
                     <label>Assigned Tracking Folder</label>
-                    <select id="modalFolderSelect" class="card-select" onchange="const item = mediaDatabase.find(m => m.id === activeProfileModalId); if(item){ item.status = this.value; localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); pushDatabaseToCloud(); }">
-                        <option value="all">Main Collection</option>
-                        <option value="watching">Currently Watching</option>
-                        <option value="waiting">Waiting for Season</option>
-                        <option value="history">Completed Log</option>
-                        <option value="find">Wishlist / Discover</option>
-                    </select>
+                    <select id="modalFolderSelect" class="card-select"></select>
                 </div>
                 
                 <!-- Dynamic Television Interactive Deck Panels -->
@@ -329,7 +329,7 @@
                     <label class="modal-meta-line" style="font-weight: bold; display: block; margin-bottom: 6px;">Television Season Logrun</label>
                     <div id="modalTvDeck" class="modal-tv-action-deck">
                         <div class="modal-sub-selector">
-                            <select id="modalSeasonSelector" class="card-select" onchange="handleSeasonChangeDropdown()"></select>
+                            <select id="modalSeasonSelector" class="card-select"></select>
                         </div>
                         <button class="macro-season-btn" onclick="completeActiveSeasonBatch()">Complete Season</button>
                         <button class="macro-season-clear-btn" onclick="clearActiveSeasonBatch()">Reset</button>
@@ -362,8 +362,8 @@
 
             <!-- Smart Sub-Nav Architecture Folders Row Layout -->
             <div class="sub-nav-wrapper">
-                <div id="cinemaSubNav" class="sub-nav">
-                    <div id="cinemaVisibleBtnContainer" class="sub-nav-visible-container">
+                <div id="cinemaSubNavDeck" class="sub-nav">
+                    <div id="cinemaVisibleContainer" class="sub-nav-visible-container">
                         <button id="cinema-sub-all" class="sub-btn active" onclick="filterCategory('cinema', 'all')">Main Collection</button>
                         <button id="cinema-sub-favorites" class="sub-btn" onclick="filterCategory('cinema', 'favorites')">❤️ Favorites</button>
                         <button id="cinema-sub-watching" class="sub-btn" onclick="filterCategory('cinema', 'watching')">🎬 Currently Watching</button>
@@ -389,7 +389,7 @@
                 <input type="text" id="bookSearchBar" class="card-select" placeholder="🔍 Search book logs..." oninput="renderBookGrid()" style="flex-grow: 1; background: rgba(0,0,0,0.3);">
             </div>
             <div class="sub-nav-wrapper">
-                <div id="bookSubNav" class="sub-nav">
+                <div id="bookSubNavDeck" class="sub-nav">
                     <div id="bookVisibleContainer" class="sub-nav-visible-container">
                         <button id="book-sub-all" class="sub-btn active" onclick="filterCategory('book', 'all')">All Audiobooks</button>
                         <button id="book-sub-favorites" class="sub-btn" onclick="filterCategory('book', 'favorites')">❤️ Favorites</button>
@@ -440,6 +440,7 @@
 <!-- ==========================================
      END OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
+
 
   <!-- ==========================================================
          START OF SECTION 3: JAVASCRIPT CORE DATA ENGINE
