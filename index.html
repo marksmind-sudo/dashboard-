@@ -206,6 +206,27 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; align-items: flex-end; padding: 0 10px; z-index: 1000; height: 65px; gap: 4px; }
         .nav-item { background: rgba(12, 15, 38, 0.7); border: 1px solid var(--border-color); border-bottom: none; color: #707da4; cursor: pointer; font-size: 0.85rem; font-weight: bold; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; width: 32%; height: 50px; border-top-left-radius: 12px; border-top-right-radius: 12px; transition: all 0.2s ease-out; box-shadow: 0 -2px 5px rgba(0,0,0,0.3); backdrop-filter: blur(8px); }
         .nav-item.active { color: var(--accent-color); background: var(--panel-bg); height: 58px; border: 2px solid var(--border-color); border-bottom: 2px solid var(--bg-color); margin-bottom: -2px; z-index: 1010; text-shadow: var(--text-shadow); }
+                 /* Tablet & Mobile Grid Optimization Override */
+        @media (min-width: 600px) {
+            /* For tablets: dynamically enforce a beautiful two-column grid layout */
+            .cinema-grid, 
+            main, 
+            .grid-container { 
+                display: grid !important; 
+                grid-template-columns: repeat(2, 1fr) !important; 
+                gap: 16px !important; 
+            }
+        }
+
+        @media (min-width: 1024px) {
+            /* For wider tablet screens or landscape orientation: allow three columns */
+            .cinema-grid, 
+            main, 
+            .grid-container { 
+                grid-template-columns: repeat(3, 1fr) !important; 
+            }
+        }
+
     </style>
 </head>
 <body>
