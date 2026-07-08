@@ -88,13 +88,13 @@
         .drawer-close-btn { background: none; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
         .drawer-action-btn-mini { background: var(--accent-color); color: #000; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: bold; cursor: pointer; }
 
-        /* Smart Responsive Sub-Nav Architecture */
-        .sub-nav-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
-        .sub-nav { display: flex; align-items: center; gap: 6px; overflow: hidden; width: 100%; position: relative; padding-bottom: 2px; }
-        .sub-nav-visible-container { display: flex; gap: 6px; overflow: hidden; flex: 1; transition: all 0.2s ease; }
+                /* Smart Responsive Sub-Nav Architecture - Repositioned & Fixed */
+        .sub-nav-wrapper { position: relative; width: max-content; max-width: 100%; margin-bottom: 15px; }
+        .sub-nav { display: flex; align-items: center; gap: 6px; width: max-content; max-width: 100%; position: relative; padding-bottom: 2px; }
+        .sub-nav-visible-container { display: flex; gap: 6px; overflow: hidden; width: max-content; transition: all 0.2s ease; }
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .sub-btn.active { background: var(--accent-color); color: #000; font-weight: bold; }
-        .overflow-trigger-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: bold; display: none; z-index: 10; }
+        .overflow-trigger-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: bold; display: none; z-index: 10; margin-left: 2px; }
         
         .overflow-dropdown-panel { 
             position: absolute; 
@@ -104,12 +104,14 @@
             border: 2px solid var(--border-color); 
             border-radius: 8px; 
             padding: 8px; 
-            display: none; 
+            display: none; /* Controlled explicitly by JS engine now */
             flex-direction: column; 
             gap: 6px; 
             box-shadow: 0 6px 16px rgba(0,0,0,0.85); 
             z-index: 9999 !important; 
             width: 190px; 
+        }
+
         }
 
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 16px; }
@@ -551,14 +553,16 @@
             });
         }
 
-        function toggleOverflowDropdownMenu(mode, event) {
+                function toggleOverflowDropdownMenu(mode, event) {
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
             }
             const panel = document.getElementById(`${mode}OverflowPanel`);
             if (panel) {
+                // Force a strict layout switch
                 if (panel.style.display === 'none' || panel.style.display === '') {
+                    // Close any other open dropdowns first
                     document.querySelectorAll('.overflow-dropdown-panel').forEach(p => p.style.display = 'none');
                     panel.style.display = 'flex';
                 } else {
@@ -566,6 +570,7 @@
                 }
             }
         }
+
 
         function executeLiveTmdbDatabaseLookup() {
             const tmdbKey = localStorage.getItem('tmdb_key');
