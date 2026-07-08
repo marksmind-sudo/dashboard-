@@ -40,6 +40,50 @@
         }
         
         [data-theme="cyberpunk"] {
+            --bg-color: #020208; --panel-bg: rgba(10, 12, 32, 0.96); --text-color: #00ffcc
+
+<!-- ==========================================================
+     START OF SECTION 1: LAYOUT STRUCTURE & DESIGN SYSTEMS
+     ========================================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Force App to Launch in Full-Screen (No Browser Tabs/Controls) -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>My Entertainment Dashboard</title>
+
+    <!-- Custom Home Screen Icon Blueprint Hooks -->
+    <link rel="icon" type="image/png" sizes="192x192" href="https://img.icons8.com/nolan/192/movies-folder.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="https://img.icons8.com/nolan/192/movies-folder.png">
+    
+    <!-- Link to the Mobile Manifest App Map -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <style>
+
+
+        /* --- THEME DESIGN SYSTEM --- */
+        :root { --bg-image: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg-color); color: var(--text-color); 
+            font-family: sans-serif; padding-bottom: 120px; min-height: 100vh; position: relative; overflow-x: hidden;
+        }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-image) no-repeat center center fixed, var(--bg-pattern);
+            background-size: cover, var(--pattern-size, auto);
+            opacity: 1; z-index: -2; pointer-events: none; transition: all 0.3s ease;
+        }
+        
+        [data-theme="cyberpunk"] {
             --bg-color: #020208; --panel-bg: rgba(10, 12, 32, 0.96); --text-color: #00ffcc; 
             --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(16, 20, 48, 0.92);
             --text-shadow: 0 0 5px rgba(0,255,204,0.6);
@@ -280,218 +324,104 @@
 <!-- ==========================================================
      END OF SECTION 1: LAYOUT STRUCTURE COMPLETE
      ========================================================== -->
-    <!-- ==========================================================
-         START OF SECTION 2: HTML APPLICATION DRAWERS & CONTAINERS
-         ========================================================== -->
-    <div class="container">
-        <!-- ================= MEDIA TAB ================= -->
-        <div id="mediaTab" class="tab-content active">
-            <div class="action-header-row">
-                <h2>Cinema Collection</h2>
-                <button class="toggle-menu-btn" onclick="toggleSideDrawer('cinemaDrawer', true)">⚙️ Cinema Console</button>
+    <!-- ==========================================
+     START OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
+     ========================================== -->
+<body>
+
+    <header>
+        <h1>Entertainment Vault</h1>
+        <select id="themeSelect" class="theme-dropdown" onchange="changeTheme(this.value)">
+            <option value="cyberpunk">Cyberpunk Neon</option>
+            <option value="star-trek">Star Trek Command</option>
+            <option value="steampunk">Steampunk Brass</option>
+            <option value="tvtime-dark">TV Time Dark</option>
+            <option value="tvtime-light">TV Time Light</option>
+        </select>
+    </header>
+
+    <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
+
+    <!-- Media Detail Profiles Dynamic Canvas -->
+    <div id="mediaDetailModal" class="modal-canvas" onclick="if(event.target === this) closeProfileModal()">
+        <div class="modal-box">
+            <div class="modal-hero">
+                <img id="modalHeroImg" class="modal-hero-img" src="" alt="">
+                <div id="modalTitle" class="modal-title">Media Title</div>
             </div>
-
-            <!-- MAIN CINEMA CONSOLE DRAWER -->
-            <div id="cinemaDrawer" class="side-drawer">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border-color); padding-bottom:6px;">
-                    <h3 style="color:var(--accent-color); font-size:1rem;">Cinema Console</h3>
-                    <button class="drawer-close-btn" onclick="closeAllDrawers()">✕</button>
-                </div>
-                <div style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:12px; padding-top:4px;">
-                    <div class="form-group">
-                        <label>🔍 Local Filter Search</label>
-                        <div style="display:flex; gap:5px;">
-                            <input type="text" id="cinemaSearchBar" placeholder="Search saved titles..." onkeyup="renderMediaGrid()">
-                            <button class="macro-forgot-btn" style="padding:0 10px; font-size:0.75rem;" onclick="document.getElementById('cinemaSearchBar').value=''; renderMediaGrid();">Clear</button>
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="background:rgba(255,255,255,0.02); padding:10px; border-radius:6px; border:1px solid rgba(0,255,204,0.2);">
-                        <label style="color:var(--accent-color); font-weight:bold;">🛰️ Global Cloud Database Search</label>
-                        <div style="display:flex; gap:5px; margin-top:4px; margin-bottom:5px;">
-                            <input type="text" id="tmdbGlobalSearchQuery" placeholder="Type title to ingest...">
-                            <button class="macro-forgot-btn" style="padding:0 6px; font-size:0.75rem;" onclick="document.getElementById('tmdbGlobalSearchQuery').value=''; document.getElementById('tmdbGlobalResultsArea').style.display='none';">Clear</button>
-                            <button class="macro-action-btn" style="font-size:0.75rem; padding:0 10px;" onclick="executeLiveTmdbDatabaseLookup()">Search</button>
-                        </div>
-                        <div id="tmdbGlobalResultsArea" class="tmdb-search-results-box" style="display:none;"></div>
-                    </div>
-
-                    <button class="btn" style="background:#333; color:var(--text-color); border:1px solid var(--border-color); font-size:0.8rem; padding:10px;" onclick="toggleSideDrawer('cinemaManualSubDrawer', true)">📝 Open Manual Data Entry</button>
-                </div>
-            </div>
-
-            <!-- NESTED CINEMA MANUAL INPUT SUB-DRAWER -->
-            <div id="cinemaManualSubDrawer" class="side-drawer" style="z-index:2050; width:340px; right:-340px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border-color); padding-bottom:6px;">
-                    <h3 style="color:var(--accent-color); font-size:0.95rem;">Manual Data Entry</h3>
-                    <div style="display:flex; gap:6px; align-items:center;">
-                        <button class="drawer-action-btn-mini" onclick="addNewMediaItem('cinema')">Save</button>
-                        <button class="drawer-close-btn" onclick="toggleSideDrawer('cinemaManualSubDrawer', false)">✕</button>
-                    </div>
-                </div>
-                <div style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; padding-top:6px;">
-                    <div class="form-group"><label>Title</label><input type="text" id="addTitle" placeholder="e.g., Dune"></div>
-                    <div class="form-group"><label>Format</label><select id="addType"><option value="Movie">Movie</option><option value="TV">Television Series</option></select></div>
-                    <div class="form-group"><label>Director</label><input type="text" id="addCreator" placeholder="Director Name"></div>
-                    <div class="form-group"><label>Cast</label><input type="text" id="addActor" placeholder="Lead Actor Name"></div>
-                    <div class="form-group"><label>Genre</label><input type="text" id="addGenre" placeholder="Sci-Fi"></div>
-                    <div class="form-group"><label>Overview</label><textarea id="addOverview" rows="2"></textarea></div>
-                    <div class="form-group"><label>Release Date</label><input type="date" id="addReleaseDate"></div>
-                    <div class="form-group"><label>Access</label><select id="addAccess"><option value="Streaming">Streaming Platform</option><option value="Owned">I Own It</option><option value="Wishlist">Wishlist / Discover</option></select></div>
-                    <div class="form-group"><label>Watch Status</label><select id="addWatchState"><option value="unwatched">Unwatched</option><option value="watching">Currently Watching</option><option value="waiting">Waiting for New Season</option><option value="completed">Completed Logs</option></select></div>
-                    <div class="form-group"><label>Container</label><select id="addStatus"><option value="all">Main Collection</option><option value="watching">Currently Watching</option><option value="waiting">Waiting for New Season</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
-                </div>
-            </div>
-
-            <div class="filter-row">
-                <select id="sortEngine" onchange="renderMediaGrid()">
-                    <option value="name">Sort: Name</option><option value="releaseDate">Sort: Release Date</option><option value="dateAdded">Sort: Date Added</option><option value="genre">Sort: Genre</option><option value="rating">Sort: Rating</option><option value="progress">Sort: Progress %</option>
-                </select>
-                <select id="typeFilter" onchange="renderMediaGrid()"><option value="all">All Screenings</option><option value="Movie">Movies Only</option><option value="TV">TV Series Only</option></select>
-                <button class="reset-btn" onclick="resetListToDefault('cinema')">🔄 Reset Order</button>
-            </div>
-
-            <div class="sub-nav-wrapper">
-                <div class="sub-nav" id="cinemaSubNavDeck">
-                    <div class="sub-nav-visible-container" id="cinemaVisibleContainer">
-                        <button class="sub-btn active" id="cinema-sub-all" onclick="filterCategory('cinema', 'all')">Main Collection</button>
-                        <button class="sub-btn" id="cinema-sub-favorites" onclick="filterCategory('cinema', 'favorites')">❤️ Favorites</button>
-                        <button class="sub-btn" id="cinema-sub-watching" onclick="filterCategory('cinema', 'watching')">🎬 Currently Watching</button>
-                        <button class="sub-btn" id="cinema-sub-waiting" onclick="filterCategory('cinema', 'waiting')">⏳ Waiting for Season</button>
-                        <button class="sub-btn" id="cinema-sub-justwatched" onclick="filterCategory('cinema', 'justwatched')">⚡ Just Watched</button>
-                        <button class="sub-btn" id="cinema-sub-history" onclick="filterCategory('cinema', 'history')">📜 History Logs</button>
-                        <button class="sub-btn" id="cinema-sub-find" onclick="filterCategory('cinema', 'find')">🔍 Discovery List</button>
-                    </div>
-                    <button class="overflow-trigger-btn" id="cinemaOverflowTrigger" onclick="toggleOverflowDropdownMenu('cinema', event)">⋯</button>
-                    <div class="overflow-dropdown-panel" id="cinemaOverflowPanel"></div>
-                </div>
-            </div>
-
-            <div class="media-grid" id="cinemaDatabaseGrid"></div>
-        </div>
-
-        <!-- ================= GOODREADS TAB ================= -->
-        <div id="goodreadsTab" class="tab-content">
-            <div class="action-header-row">
-                <h2>Audiobook Library</h2>
-                <button class="toggle-menu-btn" onclick="toggleSideDrawer('bookDrawer', true)">⚙️ Goodreads Console</button>
-            </div>
-
-            <!-- MAIN GOODREADS CONSOLE DRAWER -->
-            <div id="bookDrawer" class="side-drawer">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border-color); padding-bottom:6px;">
-                    <h3 style="color:var(--accent-color); font-size:1rem;">Goodreads Console</h3>
-                    <button class="drawer-close-btn" onclick="closeAllDrawers()">✕</button>
-                </div>
-                <div style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:12px; padding-top:4px;">
-                    <div class="form-group">
-                        <label>🔍 Search Library</label>
-                        <div style="display:flex; gap:5px;">
-                            <input type="text" id="bookSearchBar" placeholder="Search titles..." onkeyup="renderBookGrid()">
-                            <button class="macro-forgot-btn" style="padding:0 10px; font-size:0.75rem;" onclick="document.getElementById('bookSearchBar').value=''; renderBookGrid();">Clear</button>
-                        </div>
-                    </div>
-
-                    <button class="btn" style="background:#333; color:var(--text-color); border:1px solid var(--border-color); font-size:0.8rem; padding:10px; margin-top:5px;" onclick="toggleSideDrawer('bookManualSubDrawer', true)">📝 Open Manual Data Entry</button>
-                </div>
-            </div>
-
-            <!-- NESTED GOODREADS MANUAL INPUT SUB-DRAWER -->
-            <div id="bookManualSubDrawer" class="side-drawer" style="z-index:2050; width:340px; right:-340px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border-color); padding-bottom:6px;">
-                    <h3 style="color:var(--accent-color); font-size:0.95rem;">Manual Data Entry</h3>
-                    <div style="display:flex; gap:6px; align-items:center;">
-                        <button class="drawer-action-btn-mini" onclick="addNewMediaItem('book')">Save</button>
-                        <button class="drawer-close-btn" onclick="toggleSideDrawer('bookManualSubDrawer', false)">✕</button>
-                    </div>
-                </div>
-                <div style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; padding-top:6px;">
-                    <div class="form-group"><label>Book Title</label><input type="text" id="addBookTitle" placeholder="e.g., Neuromancer"></div>
-                    <div class="form-group"><label>Author</label><input type="text" id="addBookAuthor" placeholder="William Gibson"></div>
-                    <div class="form-group"><label>Genre</label><input type="text" id="addBookGenre" placeholder="Cyberpunk"></div>
-                    <div class="form-group"><label>Summary</label><textarea id="addBookOverview" rows="2"></textarea></div>
-                    <div class="form-group"><label>Access</label><select id="addBookAccess"><option value="Owned">I Own It</option><option value="Library Book">Library Book</option><option value="Wishlist">Wishlist</option></select></div>
-                    <div class="form-group"><label>Reading Status</label><select id="addBookWatchState"><option value="unwatched">Unread</option><option value="watching">Currently Reading</option><option value="completed">Completed Logs</option></select></div>
-                    <div class="form-group"><label>Container</label><select id="addBookStatus"><option value="all">Main Collection</option><option value="watching">Currently Reading</option><option value="history">History Logs</option><option value="find">Discovery List</option></select></div>
-                </div>
-            </div>
-
-            <div class="filter-row">
-                <select id="bookSortEngine" onchange="renderBookGrid()">
-                    <option value="name">Sort: Name</option><option value="rating">Sort: Rating</option><option value="progress">Sort: Progress %</option>
-                </select>
-                <button class="reset-btn" onclick="resetListToDefault('book')">🔄 Reset Order</button>
-            </div>
-
-            <div class="sub-nav-wrapper">
-                <div class="sub-nav" id="bookSubNavDeck">
-                    <div class="sub-nav-visible-container" id="bookVisibleContainer">
-                        <button class="sub-btn active" id="book-sub-all" onclick="filterCategory('book', 'all')">Main Collection</button>
-                        <button class="sub-btn" id="book-sub-favorites" onclick="filterCategory('book', 'favorites')">❤️ Favorites</button>
-                        <button class="sub-btn" id="book-sub-watching" onclick="filterCategory('book', 'watching')">🎧 Currently Reading</button>
-                        <button class="sub-btn" id="book-sub-justread" onclick="filterCategory('book', 'justread')">⚡ Just Read</button>
-                        <button class="sub-btn" id="book-sub-history" onclick="filterCategory('book', 'history')">📜 History Logs</button>
-                        <button class="sub-btn" id="book-sub-find" onclick="filterCategory('book', 'find')">🔍 Discovery List</button>
-                    </div>
-                    <button class="overflow-trigger-btn" id="bookOverflowTrigger" onclick="toggleOverflowDropdownMenu('book', event)">⋯</button>
-                    <div class="overflow-dropdown-panel" id="bookOverflowPanel"></div>
-                </div>
-            </div>
-
-            <div class="media-grid" id="bookDatabaseGrid"></div>
-        </div>
-
-        <!-- ================= SETTINGS TAB ================= -->
-        <div id="settingsTab" class="tab-content">
-            <div class="panel">
-                <h2>Application Background Theming Deck</h2>
+            
+            <div class="modal-body-scroll">
                 <div class="form-group">
-                    <label>Poster Canvas Background Image URL</label>
-                    <input type="text" id="bgPosterUrlInput" placeholder="Paste image link..." onchange="updateApplicationPosterBackground(this.value)">
-                </div>
-            </div>
-
-            <div class="panel">
-                <h2>The Movie Database (TMDb) Core Connection</h2>
-                <div class="form-group">
-                    <label for="tmdbApiKeyInput">TMDb API Key / Bearer Token</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="tmdbApiKeyInput" placeholder="Enter Token ID">
-                        <button type="button" class="toggle-btn" onclick="toggleVisibility('tmdbApiKeyInput')">SHOW</button>
-                    </div>
-                </div>
-                <button class="btn" style="background:#01b4e4;" onclick="localStorage.setItem('tmdb_key', document.getElementById('tmdbApiKeyInput').value); alert('TMDb API saved!')">Initialize TMDb Pipeline</button>
-            </div>
-
-            <div class="panel">
-                <h2>Cloud Synchronization Settings</h2>
-                <p style="font-size:0.8rem; color:#aaa; margin-bottom:10px;">⚡ Credentials are permanently locked. Press connect to re-authenticate session loops.</p>
-                <div class="form-group">
-                    <label>Google OAuth Client ID</label>
-                    <div class="password-wrapper"><input type="password" id="clientIdInput" placeholder="Enter Client ID"><button type="button" class="toggle-btn" onclick="toggleVisibility('clientIdInput')">SHOW</button></div>
+                    <label>Assigned Tracking Folder</label>
+                    <select id="modalFolderSelect" class="card-select"></select>
                 </div>
                 <div class="form-group">
-                    <label>Google API Key</label>
-                    <div class="password-wrapper"><input type="password" id="apiKeyInput" placeholder="Enter API Key"><button type="button" class="toggle-btn" onclick="toggleVisibility('apiKeyInput')">SHOW</button></div>
+                    <label>Current Status</label>
+                    <select id="modalStatusSelect" class="card-select"></select>
                 </div>
                 
-                <div style="display:flex; gap:10px; margin-top:5px;">
-                    <button class="btn" style="background:#333; color:var(--accent-color); border:1px solid var(--border-color); width:50%;" onclick="saveSyncCredentialsToStorage()">💾 Save Setup Matrix</button>
-                    <button class="btn" style="width:50%;" onclick="saveKeysAndConnect()">Connect Account</button>
+                <!-- Dynamic Television Interactive Deck Panels -->
+                <div id="modalTvDeck" class="modal-tv-action-deck">
+                    <div class="modal-sub-selector">
+                        <label>Season</label>
+                        <select id="modalSeasonSelect" class="card-select" onchange="loadSeasonEpisodeGrid()"></select>
+                    </div>
+                    <button class="macro-season-btn" onclick="markCurrentSeasonComplete()">Complete Season</button>
+                    <button class="macro-season-clear-btn" onclick="clearCurrentSeasonProgress()">Reset</button>
                 </div>
-                <div id="driveStatusLog" style="margin-top:12px; font-size:0.85rem; color:var(--text-color); font-weight:bold;">Cloud status: Offline</div>
+                
+                <div id="modalEpisodesDeck" class="modal-episodes-deck"></div>
             </div>
         </div>
     </div>
 
+    <!-- Main Workspace Application Engine Viewports -->
+    <main id="mainAppViewport">
+        <!-- Cinema Deck Active Viewport -->
+        <div id="cinemaTabPanel" class="tab-content active">
+            <div class="control-filter-deck">
+                <select id="cinemaSortSelect" class="card-select" onchange="triggerCatalogSort()">
+                    <option value="name">Sort: Name</option>
+                    <option value="date">Sort: Recent Update</option>
+                    <option value="rating">Sort: Personal Rating</option>
+                </select>
+                <select id="cinemaTypeFilter" class="card-select" onchange="triggerCatalogSort()">
+                    <option value="all">All Screenings</option>
+                    <option value="movies">Movies Only</option>
+                    <option value="shows">TV Series Only</option>
+                </select>
+                <button class="sub-btn" onclick="resetSortingDefaults()">Reset Order</button>
+            </div>
+
+            <!-- Smart Sub-Nav Architecture Folders Row Layout -->
+            <div class="sub-nav-wrapper">
+                <div id="cinemaSubNav" class="sub-nav">
+                    <div id="cinemaVisibleBtnContainer" class="sub-nav-visible-container"></div>
+                    <button id="cinemaOverflowTrigger" class="overflow-trigger-btn" onclick="toggleOverflowDropdownMenu('cinema', event)">...</button>
+                    <div id="cinemaOverflowPanel" class="overflow-dropdown-panel"></div>
+                </div>
+            </div>
+
+            <!-- Main Dynamic Content Grid Output -->
+            <div id="cinemaGridContainer" class="cinema-grid"></div>
+        </div>
+
+        <!-- Secondary Sub-Tab Viewports (Ready for Expansion Hooks) -->
+        <div id="goodreadsTabPanel" class="tab-content"></div>
+        <div id="settingsTabPanel" class="tab-content"></div>
+    </main>
+
+    <!-- Navigation Command Bar Frame Deck -->
     <nav class="bottom-nav">
-        <button id="navBtn-mediaTab" class="nav-item active" onclick="switchTab('mediaTab', this)"><span class="nav-icon">🎬</span><span>Media</span></button>
-        <button id="navBtn-goodreadsTab" class="nav-item" onclick="switchTab('goodreadsTab', this)"><span class="nav-icon">📚</span><span>Goodreads</span></button>
-        <button id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab', this)"><span class="nav-icon">⚙️</span><span>Settings</span></button>
+        <div class="nav-item active" onclick="switchActiveNavigationTab('cinema', this)">🎬 Media</div>
+        <div class="nav-item" onclick="switchActiveNavigationTab('goodreads', this)">📚 Goodreads</div>
+        <div class="nav-item" onclick="switchActiveNavigationTab('settings', this)">⚙️ Settings</div>
     </nav>
-    <!-- ==========================================================
-         END OF SECTION 2: INTERFACE DRAWERS COMPLETE
-         ========================================================== -->
+
+<!-- ==========================================
+     END OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
+     ========================================== -->
+
     <!-- ==========================================================
          START OF SECTION 3: JAVASCRIPT CORE DATA ENGINE
          ========================================================== -->
