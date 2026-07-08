@@ -219,21 +219,23 @@
 <!-- ==========================================
      END OF SECTION 1: LAYOUT STRUCTURE & DESIGN SYSTEMS
      ========================================== -->
-
-<!-- ==========================================
+     <!-- ==========================================
      START OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
 <body>
 
     <header>
         <h1>Entertainment Vault</h1>
-        <select id="themeSelect" class="theme-dropdown" onchange="changeTheme(this.value)">
-            <option value="cyberpunk">Cyberpunk Neon</option>
-            <option value="star-trek">Star Trek Command</option>
-            <option value="steampunk">Steampunk Brass</option>
-            <option value="tvtime-dark">TV Time Dark</option>
-            <option value="tvtime-light">TV Time Light</option>
-        </select>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="sub-btn" style="background: var(--accent-color); color: #000; font-weight: bold;" onclick="toggleSideDrawer('addMediaDrawer', true)">+ Add Title</button>
+            <select id="themeSelect" class="theme-dropdown" onchange="changeTheme(this.value)">
+                <option value="cyberpunk">Cyberpunk Neon</option>
+                <option value="star-trek">Star Trek Command</option>
+                <option value="steampunk">Steampunk Brass</option>
+                <option value="tvtime-dark">TV Time Dark</option>
+                <option value="tvtime-light">TV Time Light</option>
+            </select>
+        </div>
     </header>
 
     <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
@@ -305,7 +307,7 @@
                     <option value="TV">TV Series Only</option>
                 </select>
                 <button class="sub-btn" onclick="resetListToDefault('cinema')">Reset Order</button>
-                <input type="text" id="cinemaSearchBar" class="card-select" placeholder="Search grid stream..." oninput="renderMediaGrid()" style="flex-grow: 1; background: rgba(0,0,0,0.3); display: none;">
+                <input type="text" id="cinemaSearchBar" class="card-select" placeholder="🔍 Search grid stream..." oninput="renderMediaGrid()" style="flex-grow: 1; background: rgba(0,0,0,0.3);">
             </div>
 
             <!-- Smart Sub-Nav Architecture Folders Row Layout -->
@@ -327,14 +329,14 @@
             <div id="cinemaDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- Secondary Sub-Tab Viewports (Ready for Expansion Hooks) -->
-        <div id="goodreadsTabPanel" class="tab-content" style="padding: 15px;">
+        <!-- Secondary Sub-Tab Viewports -->
+        <div id="goodreadsTabPanel" class="tab-content" style="padding: 0;">
             <div class="control-filter-deck">
                 <select id="bookSortEngine" class="card-select" onchange="renderBookGrid()">
                     <option value="name">Sort: Name</option>
                     <option value="rating">Sort: Personal Rating</option>
                 </select>
-                <input type="text" id="bookSearchBar" class="card-select" placeholder="Search book logs..." oninput="renderBookGrid()" style="flex-grow: 1; background: rgba(0,0,0,0.3); display: none;">
+                <input type="text" id="bookSearchBar" class="card-select" placeholder="🔍 Search book logs..." oninput="renderBookGrid()" style="flex-grow: 1; background: rgba(0,0,0,0.3);">
             </div>
             <div class="sub-nav-wrapper">
                 <div id="bookSubNav" class="sub-nav">
@@ -352,7 +354,7 @@
         </div>
         
         <!-- Core Settings Management Framework Panel -->
-        <div id="settingsTabPanel" class="tab-content" style="padding: 20px; display: none;">
+        <div id="settingsTabPanel" class="tab-content" style="padding: 20px;">
             <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 16px; max-width: 500px; margin: 0 auto;">
                 <h3 style="color: var(--text-color); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">System Matrix Settings</h3>
                 <div class="form-group">
@@ -388,8 +390,9 @@
 <!-- ==========================================
      END OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
+     
 
-    <!-- ==========================================================
+  <!-- ==========================================================
          START OF SECTION 3: JAVASCRIPT CORE DATA ENGINE
          ========================================================== -->
     <script>
