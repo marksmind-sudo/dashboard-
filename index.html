@@ -219,7 +219,7 @@
 <!-- ==========================================
      END OF SECTION 1: LAYOUT STRUCTURE & DESIGN SYSTEMS
      ========================================== -->
-     <!-- ==========================================
+<!-- ==========================================
      START OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
 <body>
@@ -239,6 +239,56 @@
     </header>
 
     <div id="drawerOverlay" class="drawer-overlay" onclick="closeAllDrawers()"></div>
+
+    <!-- Slide-Out Ingestion & Add Entry Drawer Deck Panels -->
+    <div id="addMediaDrawer" class="side-drawer" style="position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: var(--panel-bg); border-left: 2px solid var(--border-color); z-index: 999; transition: right 0.3s ease; padding: 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: -4px 0 20px rgba(0,0,0,0.85); overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+            <h3 style="color: var(--text-color);">Add New Catalog Entry</h3>
+            <button class="card-ctrl-btn" onclick="toggleSideDrawer('addMediaDrawer', false)" style="font-size: 1.2rem;">✕</button>
+        </div>
+
+        <!-- Global Unified TMDb Database Search Interface -->
+        <div class="form-group" style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.1); margin-bottom: 4px;">
+            <label style="color: var(--accent-color);">⚡ Global TMDb Cloud Import</label>
+            <div style="display: flex; gap: 6px; margin-top: 4px;">
+                <input type="text" id="tmdbGlobalSearchQuery" placeholder="Search movie or show title..." style="flex-grow: 1; font-size: 0.8rem; padding: 6px;">
+                <button class="macro-action-btn" onclick="executeLiveTmdbDatabaseLookup()">Search</button>
+            </div>
+            <div id="tmdbGlobalResultsArea" style="display: none; flex-direction: column; gap: 6px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); margin-top: 6px; max-height: 180px; overflow-y: auto; border-radius: 4px; padding: 4px;"></div>
+        </div>
+
+        <div style="display: flex; border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; margin-bottom: 4px;">
+            <button id="addCinemaToggleBtn" style="flex: 1; background: var(--accent-color); color: #000; border: none; padding: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer;" onclick="document.getElementById('manualCinemaForm').style.display='flex'; document.getElementById('manualBookForm').style.display='none'; this.style.background='var(--accent-color)'; this.style.color='#000'; document.getElementById('addBookToggleBtn').style.background='transparent'; document.getElementById('addBookToggleBtn').style.color='var(--text-color)';">Media</button>
+            <button id="addBookToggleBtn" style="flex: 1; background: transparent; color: var(--text-color); border: none; padding: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer;" onclick="document.getElementById('manualCinemaForm').style.display='none'; document.getElementById('manualBookForm').style.display='flex'; this.style.background='var(--accent-color)'; this.style.color='#000'; document.getElementById('addCinemaToggleBtn').style.background='transparent'; document.getElementById('addCinemaToggleBtn').style.color='var(--text-color)';">Audiobook</button>
+        </div>
+
+        <!-- Manual Cinema Data Entry Sub-Form -->
+        <div id="manualCinemaForm" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-group"><label>Title Name</label><input type="text" id="addTitle" placeholder="e.g., Stargate SG-1"></div>
+            <div class="form-group"><label>Media Category Type</label><select id="addType" class="card-select"><option value="Movie">Movie</option><option value="TV">TV Series</option></select></div>
+            <div class="form-group"><label>Director / Creator</label><input type="text" id="addCreator" placeholder="e.g., Brad Wright"></div>
+            <div class="form-group"><label>Lead Cast Members</label><input type="text" id="addActor" placeholder="e.g., Amanda Tapping, Richard Dean Anderson"></div>
+            <div class="form-group"><label>Genres</label><input type="text" id="addGenre" placeholder="e.g., Sci-Fi, Adventure"></div>
+            <div class="form-group"><label>Release Date</label><input type="date" id="addReleaseDate"></div>
+            <div class="form-group"><label>Source Access Profile</label><select id="addAccess" class="card-select"><option value="Streaming">Streaming Platform</option><option value="Owned">I Own It</option><option value="Wishlist">Wishlist / Discover</option></select></div>
+            <div class="form-group"><label>Watch State</label><select id="addWatchState" class="card-select"><option value="unwatched">Unwatched</option><option value="watching">Currently Watching</option><option value="waiting">Waiting for Season</option><option value="completed">Completed Log</option></select></div>
+            <div class="form-group"><label>Assigned Tracking Folder</label><select id="addStatus" class="card-select"><option value="all">Main Collection</option><option value="watching">Currently Watching</option><option value="waiting">Waiting for Season</option><option value="history">Completed Log</option><option value="find">Wishlist / Discover</option></select></div>
+            <div class="form-group"><label>Overview Summary Notes</label><textarea id="addOverview" placeholder="Log personal notes or descriptive overview parameters..." style="height: 60px; resize: none;"></textarea></div>
+            <button class="btn" onclick="addNewMediaItem('cinema')" style="margin-top: 4px;">Ingest to Media Matrix</button>
+        </div>
+
+        <!-- Manual Audiobook Data Entry Sub-Form -->
+        <div id="manualBookForm" style="display: none; flex-direction: column; gap: 10px;">
+            <div class="form-group"><label>Audiobook Title</label><input type="text" id="addBookTitle" placeholder="e.g., Neuromancer"></div>
+            <div class="form-group"><label>Author Name</label><input type="text" id="addBookAuthor" placeholder="e.g., William Gibson"></div>
+            <div class="form-group"><label>Genres / Tags</label><input type="text" id="addBookGenre" placeholder="e.g., Cyberpunk, Sci-Fi"></div>
+            <div class="form-group"><label>Source Access Profile</label><select id="addBookAccess" class="card-select"><option value="Owned">I Own It</option><option value="Library Book">Library Book</option><option value="Wishlist">Wishlist</option></select></div>
+            <div class="form-group"><label>Reading State</label><select id="addBookWatchState" class="card-select"><option value="unwatched">Unread</option><option value="watching">Currently Reading</option><option value="completed">Completed Log</option></select></div>
+            <div class="form-group"><label>Assigned Tracking Folder</label><select id="addBookStatus" class="card-select"><option value="all">All Audiobooks</option><option value="watching">Currently Reading</option><option value="history">Library History</option><option value="find">Wishlist</option></select></div>
+            <div class="form-group"><label>Overview Notes</label><textarea id="addBookOverview" placeholder="Log book overview parameters..." style="height: 60px; resize: none;"></textarea></div>
+            <button class="btn" onclick="addNewMediaItem('book')" style="margin-top: 4px;">Ingest to Library Matrix</button>
+        </div>
+    </div>
 
     <!-- Media Detail Profiles Dynamic Canvas Pop-Up Panel -->
     <div id="mediaDetailModal" class="modal-canvas" onclick="if(event.target === this) closeProfileModal()">
@@ -390,7 +440,6 @@
 <!-- ==========================================
      END OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
-     
 
   <!-- ==========================================================
          START OF SECTION 3: JAVASCRIPT CORE DATA ENGINE
