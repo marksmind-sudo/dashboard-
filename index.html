@@ -74,7 +74,7 @@
         
         .cinema-grid {
             display: grid;
-            grid-template-columns: 1fr; /* Smartphone view */
+            grid-template-columns: 1fr; /* Smartphone default fallback layout */
             gap: 16px;
             padding: 15px;
             width: 100%;
@@ -225,7 +225,7 @@
      END OF SECTION 1: LAYOUT STRUCTURE & DESIGN SYSTEMS
      ========================================== -->
 
-       <!-- ==========================================
+            <!-- ==========================================
      START OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
 <body>
@@ -321,7 +321,13 @@
 
                 <div class="form-group" style="margin-top: 4px;">
                     <label>Assigned Tracking Folder</label>
-                    <select id="modalFolderSelect" class="card-select"></select>
+                    <select id="modalFolderSelect" class="card-select" onchange="const item = mediaDatabase.find(m => m.id === activeProfileModalId); if(item){ item.status = this.value; localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); pushDatabaseToCloud(); }">
+                        <option value="all">Main Collection</option>
+                        <option value="watching">Currently Watching</option>
+                        <option value="waiting">Waiting for Season</option>
+                        <option value="history">Completed Log</option>
+                        <option value="find">Wishlist / Discover</option>
+                    </select>
                 </div>
                 
                 <!-- Dynamic Television Interactive Deck Panels -->
@@ -329,7 +335,7 @@
                     <label class="modal-meta-line" style="font-weight: bold; display: block; margin-bottom: 6px;">Television Season Logrun</label>
                     <div id="modalTvDeck" class="modal-tv-action-deck">
                         <div class="modal-sub-selector">
-                            <select id="modalSeasonSelector" class="card-select"></select>
+                            <select id="modalSeasonSelector" class="card-select" onchange="handleSeasonChangeDropdown()"></select>
                         </div>
                         <button class="macro-season-btn" onclick="completeActiveSeasonBatch()">Complete Season</button>
                         <button class="macro-season-clear-btn" onclick="clearActiveSeasonBatch()">Reset</button>
@@ -440,7 +446,7 @@
 <!-- ==========================================
      END OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
-
+ 
 
   <!-- ==========================================================
          START OF SECTION 3: JAVASCRIPT CORE DATA ENGINE
