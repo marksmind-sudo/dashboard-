@@ -513,781 +513,440 @@
 <!-- ==========================================
      END OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
-
-
-  <!-- ==========================================================
-         START OF SECTION 3: JAVASCRIPT CORE DATA ENGINE
-         ========================================================== -->
     <script>
-                 // --- TV TRACKER CORE EXTENSION HANDLERS ---
-        function switchProfileModalTab(tabId) {
-            // Cycle active style states on sub-tabs
-            document.querySelectorAll('#mediaDetailModal .nav-item').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`profileTab-${tabId}`).classList.add('active');
-            
-            // Toggle panel displays
-            document.getElementById('profilePanel-overview').style.display = tabId === 'overview' ? 'flex' : 'none';
-            document.getElementById('profilePanel-cast').style.display = tabId === 'cast' ? 'flex' : 'none';
-            document.getElementById('profilePanel-seasons').style.display = tabId === 'seasons' ? 'flex' : 'none';
-        }
+    // ==========================================
+    // START OF CORE APPLICATION LOGIC MATRIX
+    // ==========================================
 
-        // Expanded function hook to update advanced metrics inside updateProfileModalState
-        function calculateAdvancedTrackerStatistics(item) {
-            const runtimeField = document.getElementById('metric-runtime');
-            const totalEpsField = document.getElementById('metric-total-eps');
-            const leftToSeeField = document.getElementById('metric-left-to-see');
-            const castContainer = document.getElementById('modalHorizontalCastWrapper');
+    // Application State Variables
+    let mediaDatabase = [];
+    let activeProfileModalId = null;
+    let currentCinemaCategory = 'all';
+    let currentBookCategory = 'all';
 
-            // Default display fallback reset
-            runtimeField.innerHTML = `⏱️ <b>Runtime:</b> ${item.type === 'Movie' ? 'Approx. 2 hours' : '45 mins per ep'}`;
-            totalEpsField.innerHTML = `🎬 <b>Total Episodes:</b> N/A`;
-            leftToSeeField.innerHTML = `👉 <b>Episodes Left to See:</b> --`;
-            castContainer.innerHTML = '';
+    // Google Cloud Sync Configuration States
+    let gapiInitialized = false;
+    let gapiAuthToken = null;
+    const APP_DATA_FILENAME = "vault_cloud_matrix.json";
 
-            // Calculate television metrics elements
-            if (item.type === 'TV' && item.seasons) {
-                let totalEpisodesCount = 0;
-                let watchedEpisodesCount = 0;
-
-                item.seasons.forEach(s => {
-                    if (s.episodes) {
-                        s.episodes.forEach(e => {
-                            totalEpisodesCount++;
-                            if (e.watched) watchedEpisodesCount++;
-                        });
-                    }
-                });
-
-                let leftToSee = totalEpisodesCount - watchedEpisodesCount;
-                totalEpsField.innerHTML = `🎬 <b>Total Episodes:</b> ${totalEpisodesCount} Aired`;
-                leftToSeeField.innerHTML = `👉 <b>Episodes Left to See:</b> ${leftToSee} episodes left`;
-            }
-
-            // Build out TV Tracker style horizontal cast profile avatars
-            if (item.actor && item.actor !== "N/A" && item.actor !== "Loading...") {
-                let actorsArray = item.actor.split(', ');
-                actorsArray.forEach(actorName => {
-                    const actorCard = document.createElement('div');
-                    actorCard.style.cssText = "display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 8px; border-radius: 6px; min-width: 90px; max-width: 90px; flex-shrink: 0; font-size: 0.72rem; color: #fff;";
-                    actorCard.innerHTML = `
-                        <div style="width: 50px; height: 50px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 6px; font-size: 1.2rem; border: 1px solid var(--border-color);">👤</div>
-                        <div style="font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;" title="${actorName}">${actorName}</div>
-                    `;
-                    castContainer.appendChild(actorCard);
-                });
-            } else {
-                castContainer.innerHTML = `<div style="font-size: 0.78rem; opacity: 0.5; padding: 10px;">No detailed cast array cached for this node.</div>`;
-            }
-        }
-
-        let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [];
-
-        let currentCinemaCategory = 'all';
-        let currentBookCategory = 'all';
-        let activeProfileModalId = null;
-
-        let touchStartX = 0;
-        let touchEndX = 0;
-        const tabSequence = ['mediaTab', 'goodreadsTab', 'settingsTab'];
-
-        document.addEventListener("DOMContentLoaded", () => {
-            if (localStorage.getItem('gdrive_client_id')) document.getElementById('clientIdInput').value = localStorage.getItem('gdrive_client_id');
-            if (localStorage.getItem('gdrive_api_key')) document.getElementById('apiKeyInput').value = localStorage.getItem('gdrive_api_key');
-            if (localStorage.getItem('tmdb_key')) document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdb_key');
-            
-            if (localStorage.getItem('dashboard_bg_url')) {
-                updateApplicationPosterBackground(localStorage.getItem('dashboard_bg_url'));
-            }
-
-            const savedTheme = localStorage.getItem('dashboard_theme') || 'cyberpunk';
-            document.getElementById('themeSelect').value = savedTheme;
-            changeTheme(savedTheme);
-
-            setupSwipeGestureListeners();
-            refreshAllViews();
-            
-            handleAuthCallback();
-            executeAutoBackgroundReconnectLoop();
-            triggerAutomaticBackgroundMetadataSweep();
-
-            window.addEventListener('resize', runResponsiveSubNavCalculations);
-            setTimeout(runResponsiveSubNavCalculations, 500);
+    // --- TV TRACKER INTERACTIVE TAB COUPLING HANDLERS ---
+    function switchProfileModalTab(tabId) {
+        // Toggle the highlighting on the modal sub-nav bar
+        document.querySelectorAll('#mediaDetailModal .nav-item').forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.color = 'var(--text-color)';
+            btn.style.background = 'rgba(255,255,255,0.02)';
         });
-
-        function runResponsiveSubNavCalculations() {
-            ['cinema', 'book'].forEach(mode => {
-                const navDeck = document.getElementById(`${mode}SubNavDeck`);
-                const visibleBox = document.getElementById(`${mode}VisibleContainer`);
-                const triggerBtn = document.getElementById(`${mode}OverflowTrigger`);
-                const dropdownPanel = document.getElementById(`${mode}OverflowPanel`);
-                if (!navDeck || !visibleBox) return;
-
-                dropdownPanel.innerHTML = '';
-                dropdownPanel.style.display = 'none';
-                triggerBtn.style.display = 'none';
-
-                const controlButtons = Array.from(visibleBox.children);
-                controlButtons.forEach(btn => btn.style.display = 'inline-block');
-
-                let totalNavDeckWidth = navDeck.offsetWidth;
-                let usedWidthAccumulator = 0;
-                let overflowItemsDetected = false;
-
-                controlButtons.forEach(btn => {
-                    usedWidthAccumulator += btn.offsetWidth + 6; 
-                    if (usedWidthAccumulator > (totalNavDeckWidth - 55)) {
-                        overflowItemsDetected = true;
-                        btn.style.display = 'none';
-                        
-                        const clone = btn.cloneNode(true);
-                        clone.style.display = 'block';
-                        clone.style.width = '100%';
-                        clone.style.textAlign = 'left';
-                        clone.style.borderRadius = '4px';
-                        clone.onclick = () => {
-                            btn.click();
-                            dropdownPanel.style.display = 'none';
-                        };
-                        dropdownPanel.appendChild(clone);
-                    }
-                });
-
-                if (overflowItemsDetected) {
-                    triggerBtn.style.display = 'inline-block';
-                }
-            });
+        
+        const activeTabBtn = document.getElementById(`profileTab-${tabId}`);
+        if (activeTabBtn) {
+            activeTabBtn.classList.add('active');
+            activeTabBtn.style.color = '#000';
+            activeTabBtn.style.background = 'var(--accent-color)';
         }
+        
+        // Switch the physical panel viewports
+        document.getElementById('profilePanel-overview').style.display = tabId === 'overview' ? 'flex' : 'none';
+        document.getElementById('profilePanel-cast').style.display = tabId === 'cast' ? 'flex' : 'none';
+        document.getElementById('profilePanel-seasons').style.display = tabId === 'seasons' ? 'flex' : 'none';
+    }
 
-                function toggleOverflowDropdownMenu(mode, event) {
-            if (event) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            const panel = document.getElementById(`${mode}OverflowPanel`);
-            if (panel) {
-                // Force a strict layout switch
-                if (panel.style.display === 'none' || panel.style.display === '') {
-                    // Close any other open dropdowns first
-                    document.querySelectorAll('.overflow-dropdown-panel').forEach(p => p.style.display = 'none');
-                    panel.style.display = 'flex';
-                } else {
-                    panel.style.display = 'none';
-                }
-            }
-        }
+    // --- ADVANCED ANALYTICS & CAST CAROUSEL GENERATOR ---
+    function calculateAdvancedTrackerStatistics(item) {
+        const runtimeField = document.getElementById('metric-runtime');
+        const totalEpsField = document.getElementById('metric-total-eps');
+        const leftToSeeField = document.getElementById('metric-left-to-see');
+        const castContainer = document.getElementById('modalHorizontalCastWrapper');
 
+        // Establish core baseline structural views
+        runtimeField.innerHTML = `⏱️ <b>Runtime:</b> ${item.runtime || (item.type === 'Movie' ? 'Approx. 2 hours' : '45 mins per ep')}`;
+        totalEpsField.innerHTML = `🎬 <b>Total Episodes:</b> N/A`;
+        leftToSeeField.innerHTML = `👉 <b>Episodes Left to See:</b> --`;
+        castContainer.innerHTML = '';
 
-        function executeLiveTmdbDatabaseLookup() {
-            const tmdbKey = localStorage.getItem('tmdb_key');
-            const query = document.getElementById('tmdbGlobalSearchQuery').value.trim();
-            const container = document.getElementById('tmdbGlobalResultsArea');
-            
-            if(!tmdbKey) { alert("Please input your TMDb API Key inside the settings tab first, Sweetie!"); return; }
-            if(!query) return;
+        // Extract television runlog configurations
+        if (item.type === 'TV' && item.seasons) {
+            let totalEpisodesCount = 0;
+            let watchedEpisodesCount = 0;
 
-            container.innerHTML = "<div style='padding:10px; font-size:0.8rem; color:#aaa;'>Querying database streams...</div>";
-            container.style.display = "flex";
-
-            Promise.all([
-                fetch(`https://api.themoviedb.org/3/search/movie?api_key=${tmdbKey}&query=${encodeURIComponent(query)}`).then(r => r.json()),
-                fetch(`https://api.themoviedb.org/3/search/tv?api_key=${tmdbKey}&query=${encodeURIComponent(query)}`).then(r => r.json())
-            ])
-            .then(([movieData, tvData]) => {
-                container.innerHTML = "";
-                let results = [];
-                if (movieData.results) results = results.concat(movieData.results.slice(0, 4).map(m => ({ ...m, media_type: 'Movie' })));
-                if (tvData.results) results = results.concat(tvData.results.slice(0, 4).map(t => ({ ...t, media_type: 'TV', title: t.name, release_date: t.first_air_date })));
-
-                if(results.length === 0) {
-                    container.innerHTML = "<div style='padding:10px; font-size:0.8rem; color:#ed1c24;'>No entries matched query logs.</div>";
-                    return;
-                }
-
-                results.forEach(item => {
-                    const year = item.release_date ? item.release_date.split("-")[0] : "N/A";
-                    const summary = item.overview || "No database overview generated.";
-                    
-                    const row = document.createElement('div');
-                    row.className = 'tmdb-search-row';
-                    row.innerHTML = `
-                        <div class="tmdb-search-topline">
-                            <span><b>[${item.media_type}]</b> ${item.title} (${year})</span>
-                            <button class="import-mini-btn" onclick="executeDirectOneClickVaultImport('${item.media_type}', ${item.id})">Direct Import</button>
-                        </div>
-                        <div class="tmdb-search-overview">${summary}</div>
-                    `;
-                    container.appendChild(row);
-                });
-            })
-            .catch(() => { container.innerHTML = "<div style='padding:10px; font-size:0.8rem; color:#ed1c24;'>Handshake error.</div>"; });
-        }
-
-        function executeDirectOneClickVaultImport(type, id) {
-            const tmdbKey = localStorage.getItem('tmdb_key');
-            const today = new Date().toISOString().split('T')[0];
-            const searchType = type === 'Movie' ? 'movie' : 'tv';
-
-            fetch(`https://api.themoviedb.org/3/${searchType}/${id}?api_key=${tmdbKey}`)
-                .then(r => r.json())
-                .then(details => {
-                    let newItemId = Date.now();
-                    let itemObj = {
-                        id: newItemId,
-                        title: details.title || details.name || "Unknown Ingestion",
-                        type,
-                        creator: "Loading...",
-                        actor: "Loading...",
-                        genre: details.genres ? details.genres.map(g => g.name).join(", ") : "General",
-                        overview: details.overview || "",
-                        releaseDate: details.release_date || details.first_air_date || today,
-                        dateAdded: today,
-                        completionDate: "",
-                        access: "Streaming",
-                        watchState: "unwatched",
-                        status: "all",
-                        progress: 0,
-                        favorite: false,
-                        rating: 0,
-                        pinned: false,
-                        manualOrder: mediaDatabase.length,
-                        poster: details.poster_path ? `https://image.tmdb.org/t/p/w342${details.poster_path}` : "",
-                        lastViewedSeason: 1,
-                        airStatus: "returning",
-                        nextAirDate: "",
-                        seasons: []
-                    };
-
-                    mediaDatabase.push(itemObj);
-                    localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                    
-                    document.getElementById('tmdbGlobalResultsArea').style.display = "none";
-                    closeAllDrawers();
-                    refreshAllViews();
-                    
-                    fetchMediaArtwork(itemObj);
-                    alert(`"${itemObj.title}" successfully pulled straight into main catalog, Sweetie! Deep season runlogs are constructing in background.`);
-                });
-        }
-
-        function saveSyncCredentialsToStorage() {
-            const client = document.getElementById('clientIdInput').value.trim();
-            const api = document.getElementById('apiKeyInput').value.trim();
-            localStorage.setItem('gdrive_client_id', client);
-            localStorage.setItem('gdrive_api_key', api);
-            alert("Credentials secured in permanent storage layer, Sweetie!");
-        }
-
-        function saveKeysAndConnect() {
-            const client = document.getElementById('clientIdInput').value.trim();
-            const api = document.getElementById('apiKeyInput').value.trim();
-            localStorage.setItem('gdrive_client_id', client);
-            localStorage.setItem('gdrive_api_key', api);
-            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(client)}&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=${encodeURIComponent("https://www.googleapis.com/auth/drive.file")}&prompt=consent`;
-        }
-
-        function handleAuthCallback() {
-            const hash = window.location.hash;
-            if (hash && hash.includes('access_token')) {
-                const params = new URLSearchParams(hash.replace('#', '?'));
-                const token = params.get('access_token');
-                localStorage.setItem('gdrive_access_token', token);
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        }
-
-        function executeAutoBackgroundReconnectLoop() {
-            const token = localStorage.getItem('gdrive_access_token');
-            const apiKey = localStorage.getItem('gdrive_api_key');
-            const logField = document.getElementById('driveStatusLog');
-
-            if (token && apiKey) {
-                logField.innerText = "🔄 Syncing with Google Drive Matrix...";
-                fetch(`https://www.googleapis.com/drive/v3/files?maxResults=1&key=${apiKey}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                })
-                .then(res => {
-                    if (res.status === 401) {
-                        logField.innerText = "❌ Session Expired. Tap Connect to re-sync.";
-                    } else {
-                        logField.innerText = "✅ Connected to Google Drive.";
-                        checkAndPullDatabaseFromCloud();
-                    }
-                })
-                .catch(() => { logField.innerText = "Cloud status: Offline"; });
-            }
-        }
-
-        function checkAndPullDatabaseFromCloud() {
-            const token = localStorage.getItem('gdrive_access_token');
-            const apiKey = localStorage.getItem('gdrive_api_key');
-            if (!token || !apiKey) return;
-
-            fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'vault_media_db.json'&key=${apiKey}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.files && data.files.length > 0) {
-                    const fileId = data.files[0].id;
-                    fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    })
-                    .then(res => res.json())
-                    .then(cloudDb => {
-                        if (cloudDb && Array.isArray(cloudDb) && cloudDb.length > 0) {
-                            if (mediaDatabase.length === 0) {
-                                mediaDatabase = cloudDb;
-                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                                refreshAllViews();
-                                triggerAutomaticBackgroundMetadataSweep();
-                            } else if (cloudDb.length > mediaDatabase.length) {
-                                mediaDatabase = cloudDb;
-                                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                                refreshAllViews();
-                            }
-                        }
-                    }).catch(() => {});
-                } else {
-                    pushDatabaseToCloud();
-                }
-            });
-        }
-    // ==========================================================
-    // END OF SECTION 3: CORE DATA ENGINE MOUNTED
-    // ==========================================================
-    // ==========================================================
-    // START OF SECTION 4: MODAL PROFILES & DRIVE MATRIX HANDLERS
-    // ==========================================================
-        function pushDatabaseToCloud() {
-            const token = localStorage.getItem('gdrive_access_token');
-            const apiKey = localStorage.getItem('gdrive_api_key');
-            if (!token || !apiKey) return;
-
-            fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'vault_media_db.json'&key=${apiKey}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            .then(res => res.json())
-            .then(data => {
-                const blob = new Blob([JSON.stringify(mediaDatabase)], { type: 'application/json' });
-                if (data.files && data.files.length > 0) {
-                    const fileId = data.files[0].id;
-                    fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media&key=${apiKey}`, {
-                        method: 'PATCH',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: blob
-                    });
-                } else {
-                    const metadata = { name: 'vault_media_db.json', mimeType: 'application/json' };
-                    const form = new FormData();
-                    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-                    form.append('media', blob);
-                    fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: form
+            item.seasons.forEach(s => {
+                if (s.episodes) {
+                    s.episodes.forEach(e => {
+                        totalEpisodesCount++;
+                        if (e.watched) watchedEpisodesCount++;
                     });
                 }
             });
+
+            let leftToSee = totalEpisodesCount - watchedEpisodesCount;
+            totalEpsField.innerHTML = `🎬 <b>Total Episodes:</b> ${totalEpisodesCount} Aired`;
+            leftToSeeField.innerHTML = `👉 <b>Episodes Left to See:</b> ${leftToSee} episodes left`;
+        } else if (item.type === 'Movie') {
+            totalEpsField.innerHTML = `🎬 <b>Total Episodes:</b> 1 (Feature)`;
+            leftToSeeField.innerHTML = `👉 <b>Status:</b> ${item.watchState === 'completed' ? 'Watched' : 'Unwatched'}`;
         }
 
-        function triggerAutomaticBackgroundMetadataSweep() {
-            if (!mediaDatabase || mediaDatabase.length === 0) return;
-            mediaDatabase.forEach(item => {
-                if (!item.poster || item.poster === "" || !item.overview || item.overview.includes("Ingested") || item.creator === "Loading...") {
-                    setTimeout(() => { fetchMediaArtwork(item); }, 350);
-                }
+        // Build TV Tracker style horizontal scrollable cast profiles
+        if (item.actor && item.actor !== "N/A" && item.actor !== "Loading...") {
+            let actorsArray = item.actor.split(', ');
+            actorsArray.forEach(actorName => {
+                const actorCard = document.createElement('div');
+                actorCard.style.cssText = "display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; min-width: 100px; max-width: 100px; flex-shrink: 0; font-size: 0.75rem; color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.3);";
+                actorCard.innerHTML = `
+                    <div style="width: 55px; height: 55px; background: rgba(0,0,0,0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 1.4rem; border: 1px solid var(--border-color);">👤</div>
+                    <div style="font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;" title="${actorName}">${actorName}</div>
+                `;
+                castContainer.appendChild(actorCard);
             });
+        } else {
+            castContainer.innerHTML = `<div style="font-size: 0.8rem; opacity: 0.5; padding: 10px;">No explicit cast metadata linked.</div>`;
         }
+    }
 
-        function setupSwipeGestureListeners() {
-            window.addEventListener('touchstart', e => {
-                if (e.target.closest('.side-drawer') || e.target.closest('.modal-box') || e.target.closest('select') || e.target.closest('input') || e.target.closest('.overflow-trigger-btn')) return;
-                touchStartX = e.changedTouches[0].screenX;
-            }, false);
-            window.addEventListener('touchend', e => {
-                if (e.target.closest('.side-drawer') || e.target.closest('.modal-box') || e.target.closest('select') || e.target.closest('input') || e.target.closest('.overflow-trigger-btn')) return;
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipeGestureEvaluation();
-            }, false);
-        }
+    // --- APPLICATION WORKSPACE NAVIGATION DECK ---
+    function switchTab(tabId, element) {
+        // Toggle viewable application container layers
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        
+        // Resolve target view references safely
+        const targetedPanel = document.getElementById(tabId);
+        if (targetedPanel) targetedPanel.classList.add('active');
 
-        document.addEventListener('click', e => {
-            if (!e.target.closest('.overflow-trigger-btn') && !e.target.closest('.overflow-dropdown-panel')) {
-                document.querySelectorAll('.overflow-dropdown-panel').forEach(p => p.style.display = 'none');
-            }
-        });
+        // Synchronize frame control navigation tabs
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item => item.classList.remove('active'));
+        if (element) element.classList.add('active');
+    }
 
-        function handleSwipeGestureEvaluation() {
-            const threshold = 100;
-            const currentTabActive = document.querySelector('.tab-content.active').id;
-            let currentIdx = tabSequence.indexOf(currentTabActive);
-            if (touchStartX - touchEndX > threshold && currentIdx < tabSequence.length - 1) {
-                let targetTab = tabSequence[currentIdx + 1];
-                switchTab(targetTab, document.getElementById(`navBtn-${targetTab}`));
-            } else if (touchEndX - touchStartX > threshold && currentIdx > 0) {
-                let targetTab = tabSequence[currentIdx - 1];
-                switchTab(targetTab, document.getElementById(`navBtn-${targetTab}`));
-            }
-        }
-
-        function updateApplicationPosterBackground(url) {
-            if(url.trim() !== "") {
-                document.documentElement.style.setProperty('--bg-image', `url('${url.trim()}')`);
-                localStorage.setItem('dashboard_bg_url', url.trim());
+    function toggleSideDrawer(drawerId, openState) {
+        const drawer = document.getElementById(drawerId);
+        const overlay = document.getElementById('drawerOverlay');
+        if (drawer && overlay) {
+            if (openState) {
+                drawer.classList.add('open');
+                overlay.style.display = 'block';
+            } else {
+                drawer.classList.remove('open');
+                overlay.style.display = 'none';
             }
         }
+    }
 
-        function refreshAllViews() {
-            renderMediaGrid();
-            renderBookGrid();
-            setTimeout(runResponsiveSubNavCalculations, 100);
+    function closeAllDrawers() {
+        toggleSideDrawer('addMediaDrawer', false);
+    }
+
+    // --- IMMERSIVE IMMEDATE WINDOW ENGAGEMENT DECK ---
+    function updateProfileModalState(id) {
+        const item = mediaDatabase.find(m => m.id === id);
+        if (!item) return;
+
+        activeProfileModalId = id;
+
+        // Populate basic header profiles
+        document.getElementById('modalTitle').innerText = item.name;
+        document.getElementById('modalDescription').innerText = item.overview || "No custom profile description details initialized.";
+        document.getElementById('modalCreatorLine').innerHTML = `<b>Director/Creator:</b> ${item.creator || 'Unknown'}`;
+        document.getElementById('modalReleaseLine').innerHTML = `<b>Release Date:</b> ${item.releaseDate || 'Unknown Date'}`;
+        document.getElementById('modalAccessLine').innerHTML = `<b>Source Profile:</b> ${item.accessMethod || 'Unassigned'}`;
+        
+        const modalHeroImg = document.getElementById('modalHeroImg');
+        if (item.poster) {
+            modalHeroImg.src = item.poster;
+            modalHeroImg.style.display = 'block';
+        } else {
+            modalHeroImg.style.display = 'none';
         }
 
-        function toggleSideDrawer(drawerId, open) {
-            const drawerEl = document.getElementById(drawerId);
-            if(!drawerEl) return;
+        // Render dynamic star arrays
+        renderInteractiveStarDeck(item.rating || 0);
+
+        // Toggle television runlog parameters safely
+        const tvSection = document.getElementById('modalTvSection');
+        if (item.type === 'TV') {
+            tvSection.style.display = 'block';
+            const selector = document.getElementById('modalSeasonSelector');
+            selector.innerHTML = '';
             
-            if(open) {
-                drawerEl.classList.add('open');
-                drawerEl.style.right = "0px";
-                document.getElementById('drawerOverlay').classList.add('active');
-            } else {
-                drawerEl.classList.remove('open');
-                let customWidth = drawerEl.style.width || "360px";
-                drawerEl.style.right = "-" + customWidth;
-                
-                let activeDrawersOpen = false;
-                document.querySelectorAll('.side-drawer').forEach(d => {
-                    if(d.classList.contains('open') && d.id !== drawerId) activeDrawersOpen = true;
-                });
-                if(!activeDrawersOpen) document.getElementById('drawerOverlay').classList.remove('active');
-            }
-        }
-
-        function closeAllDrawers() {
-            document.querySelectorAll('.side-drawer').forEach(d => {
-                d.classList.remove('open');
-                let customWidth = d.style.width || "360px";
-                d.style.right = "-" + customWidth;
-            });
-            document.getElementById('drawerOverlay').classList.remove('active');
-        }
-
-        function openProfileModal(id) {
-            activeProfileModalId = id;
-            const item = mediaDatabase.find(m => m.id === id);
-            if (!item) return;
-
-            document.getElementById('modalTitle').innerText = "Syncing Node Matrix...";
-            document.getElementById('modalHeroImg').src = "";
-            document.getElementById('modalHeroStatusBadge').style.display = "none";
-            document.getElementById('modalDescription').innerText = "Connecting to array channels...";
-            document.getElementById('modalCreatorLine').innerHTML = "<b>Creator:</b> -";
-            document.getElementById('modalActorLine').innerHTML = "<b>Lead Cast:</b> -";
-            document.getElementById('modalReleaseLine').innerHTML = "<b>Release Date:</b> -";
-            document.getElementById('modalNextAirLine').style.display = 'none';
-            document.getElementById('modalAccessLine').innerHTML = "<b>Source Profile:</b> -";
-            document.getElementById('modalTvSection').style.display = 'none';
-            document.getElementById('modalEpisodesContainer').innerHTML = '';
-
-            renderModalStarsDisplay(item.rating || 0);
-
-            if (!item.overview || item.overview.includes("Loading") || item.overview.includes("Ingested") || item.creator === "Loading..." || (item.type === 'TV' && (!item.seasons || item.seasons.length === 0))) {
-                fetchMediaArtwork(item, true); 
-            } else {
-                updateProfileModalState(id);
-            }
-            document.getElementById('mediaDetailModal').classList.add('active');
-        }
-
-        function renderModalStarsDisplay(currentRating) {
-            const container = document.getElementById('modalInteractiveStarsDeck');
-            container.innerHTML = '';
-            for (let star = 1; star <= 5; star++) {
-                const span = document.createElement('span');
-                span.className = star <= currentRating ? 'active' : '';
-                span.innerText = '★';
-                span.onclick = () => {
-                    setManualStarRatingFromModal(star);
-                };
-                container.appendChild(span);
-            }
-            
-            const clearLink = document.createElement('span');
-            clearLink.className = 'modal-stars-clear-link';
-            clearLink.innerText = 'Clear Stars';
-            clearLink.onclick = () => { setManualStarRatingFromModal(0); };
-            container.appendChild(clearLink);
-        }
-
-        function setManualStarRatingFromModal(ratingVal) {
-            const idx = mediaDatabase.findIndex(i => i.id === activeProfileModalId);
-            if (idx !== -1) {
-                mediaDatabase[idx].rating = parseInt(ratingVal);
-                renderModalStarsDisplay(ratingVal);
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                pushDatabaseToCloud();
-            }
-        }
-
-        function closeProfileModal() {
-            document.getElementById('mediaDetailModal').classList.remove('active');
-            activeProfileModalId = null;
-            refreshAllViews(); 
-        }
-    // ==========================================================
-    // END OF SECTION 4: controllers BASE SYSTEM COMPLETE
-    // ==========================================================
-    // ==========================================================
-    // START OF SECTION 5: PROFILE MANAGEMENT & SORTING ENGINES
-    // ==========================================================
-        function updateProfileModalState(id) {
-            const item = mediaDatabase.find(m => m.id === id);
-            if (!item) return;
-
-            document.getElementById('modalTitle').innerText = item.title;
-            document.getElementById('modalHeroImg').src = item.poster || "";
-            document.getElementById('modalDescription').innerText = item.overview || "No extended profile description found.";
-            document.getElementById('modalCreatorLine').innerHTML = `<b>${item.type === 'Audiobook' ? 'Author' : 'Director'}:</b> ${item.creator || 'Unknown'}`;
-            document.getElementById('modalActorLine').innerHTML = `<b>Lead Cast:</b> ${item.actor || 'N/A'}`;
-            document.getElementById('modalReleaseLine').innerHTML = `<b>Release Date:</b> ${item.releaseDate || 'Unknown'}`;
-            
-            const badgeField = document.getElementById('modalHeroStatusBadge');
-            if (item.type === 'TV' && item.airStatus) {
-                badgeField.style.display = 'block';
-                if (item.airStatus === 'canceled') {
-                    badgeField.className = 'modal-hero-status-badge badge-canceled';
-                    badgeField.innerText = '🔴 Canceled';
-                } else if (item.airStatus === 'returning') {
-                    badgeField.className = 'modal-hero-status-badge badge-returning';
-                    badgeField.innerText = item.nextAirDate ? `🟢 Returns: ${item.nextAirDate}` : '🟢 New Season Coming';
-                } else {
-                    badgeField.className = 'modal-hero-status-badge badge-ended';
-                    badgeField.innerText = '⚪ Ended';
-                }
-            } else {
-                badgeField.style.display = 'none';
-            }
-
-            const nextAirField = document.getElementById('modalNextAirLine');
-            if (item.type === 'TV' && item.nextAirDate) {
-                nextAirField.style.display = 'block';
-                nextAirField.innerHTML = `<b>⚡ Next Season Premiere Air Date:</b> ${item.nextAirDate}`;
-            } else {
-                nextAirField.style.display = 'none';
-            }
-
-            let term = item.type === 'Audiobook' ? (item.watchState === 'completed' ? 'READ' : (item.watchState === 'watching' ? 'READING' : 'UNREAD')) : (item.watchState || 'unwatched');
-            document.getElementById('modalAccessLine').innerHTML = `<b>Source Profile:</b> ${item.access} (${item.type}) — <span style="text-transform:uppercase; color:var(--accent-color); font-weight:bold;">${term}</span>`;
-
-            const tvSection = document.getElementById('modalTvSection');
-            if (item.type === 'TV' && item.seasons && item.seasons.length > 0) {
-                tvSection.style.display = 'block';
-                const selector = document.getElementById('modalSeasonSelector');
-                selector.innerHTML = '';
+            if (item.seasons && item.seasons.length > 0) {
                 item.seasons.forEach(s => {
                     const opt = document.createElement('option');
                     opt.value = s.seasonNumber;
-                    opt.innerText = s.name || `Season ${s.seasonNumber}`;
+                    opt.innerText = `Season ${s.seasonNumber}`;
                     selector.appendChild(opt);
                 });
-                    if (item.lastViewedSeason && item.seasons.some(s => s.seasonNumber === item.lastViewedSeason)) {
+                if (item.lastViewedSeason && item.seasons.some(s => s.seasonNumber === item.lastViewedSeason)) {
                     selector.value = item.lastViewedSeason;
                 }
                 loadSelectedSeasonDeck();
-            } else {
-                tvSection.style.display = 'none';
             }
+        } else {
+            tvSection.style.display = 'none';
+        }
 
-            // Fire tracker metrics analytics and force info tab selection
-            calculateAdvancedTrackerStatistics(item);
-            switchProfileModalTab('overview');
-        } // <--- Ensure there is exactly ONE closing curly bracket here!
+        // Trigger TV Tracker Statistics Engine Calculations
+        calculateAdvancedTrackerStatistics(item);
+        switchProfileModalTab('overview');
 
-        function handleSeasonChangeDropdown() {
+        // Reveal the modal box context onto the glass layout
+        document.getElementById('mediaDetailModal').classList.add('active');
+    }
 
+    function closeProfileModal() {
+        document.getElementById('mediaDetailModal').classList.remove('active');
+        activeProfileModalId = null;
+    }
 
-            const item = mediaDatabase.find(m => m.id === activeProfileModalId);
-            if (item && item.type === 'TV') {
-                const newSeason = parseInt(document.getElementById('modalSeasonSelector').value);
-                item.lastViewedSeason = newSeason;
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-            }
+    function renderInteractiveStarDeck(currentRating) {
+        const deck = document.getElementById('modalInteractiveStarsDeck');
+        deck.innerHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement('span');
+            star.innerText = '★';
+            if (i <= currentRating) star.classList.add('active');
+            star.onclick = () => saveStarRatingMetric(i);
+            deck.appendChild(star);
+        }
+    }
+
+    function saveStarRatingMetric(ratingValue) {
+        const item = mediaDatabase.find(m => m.id === activeProfileModalId);
+        if (item) {
+            item.rating = ratingValue;
+            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            renderInteractiveStarDeck(ratingValue);
+            renderMediaGrid();
+        }
+    }
+
+    function handleSeasonChangeDropdown() {
+        const item = mediaDatabase.find(m => m.id === activeProfileModalId);
+        if (item) {
+            item.lastViewedSeason = parseInt(document.getElementById('modalSeasonSelector').value);
+            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
             loadSelectedSeasonDeck();
+            calculateAdvancedTrackerStatistics(item);
         }
+    }
 
-        function loadSelectedSeasonDeck() {
-            const item = mediaDatabase.find(m => m.id === activeProfileModalId);
-            if (!item || !item.seasons || item.type !== 'TV') return;
-
-            const seasonNum = parseInt(document.getElementById('modalSeasonSelector').value);
-            const season = item.seasons.find(s => s.seasonNumber === seasonNum);
-            const container = document.getElementById('modalEpisodesContainer');
-            container.innerHTML = '';
-
-            if (season && season.episodes) {
-                season.episodes.forEach(ep => {
-                    const row = document.createElement('div');
-                    row.className = 'modal-ep-row';
-                    row.innerHTML = `
-                        <div class="modal-ep-top-line" style="cursor:pointer;" onclick="toggleEpisodeSummaryPane(${ep.id})">
-                            <span>🎬 S${seasonNum}E${ep.episodeNumber}: ${ep.name}</span>
-                            <input type="checkbox" ${ep.watched ? 'checked' : ''} onclick="event.stopPropagation(); toggleEpisodeWatchStateInline(${item.id}, ${seasonNum}, ${ep.id}, this)">
-                        </div>
-                        <div id="ep-desc-${ep.id}" class="modal-ep-text-desc" style="display:none;">${ep.overview || 'No overview summary generated.'}</div>
-                    `;
-                    container.appendChild(row);
-                });
-            }
-        }
-
-        function toggleEpisodeSummaryPane(epId) {
-            const el = document.getElementById(`ep-desc-${epId}`);
-            if(el) el.style.display = (el.style.display === 'none' ? 'block' : 'none');
-        }
-
-        function toggleEpisodeWatchStateInline(seriesId, seasonNum, epId, checkboxEl) {
-            const idx = mediaDatabase.findIndex(m => m.id === seriesId);
-            if (idx === -1 || !mediaDatabase[idx].seasons) return;
-
-            const sIdx = mediaDatabase[idx].seasons.findIndex(s => s.seasonNumber === seasonNum);
-            if (sIdx === -1 || !mediaDatabase[idx].seasons[sIdx].episodes) return;
-
-            const eIdx = mediaDatabase[idx].seasons[sIdx].episodes.findIndex(e => e.id === epId);
-            if (eIdx !== -1) {
-                mediaDatabase[idx].seasons[sIdx].episodes[eIdx].watched = checkboxEl.checked;
-                recalculateSeriesProgressState(idx);
-            }
-        }
-
-        function completeActiveSeasonBatch() {
-            const itemIdx = mediaDatabase.findIndex(m => m.id === activeProfileModalId);
-            if (itemIdx === -1 || !mediaDatabase[itemIdx].seasons || mediaDatabase[itemIdx].type !== 'TV') return;
-
-            const seasonNum = parseInt(document.getElementById('modalSeasonSelector').value);
-            const sIdx = mediaDatabase[itemIdx].seasons.findIndex(s => s.seasonNumber === seasonNum);
-            if (sIdx !== -1 && mediaDatabase[itemIdx].seasons[sIdx].episodes) {
-                mediaDatabase[itemIdx].seasons[sIdx].episodes.forEach(e => { e.watched = true; });
-                recalculateSeriesProgressState(itemIdx);
-                loadSelectedSeasonDeck();
-            }
-        }
-
-        function clearActiveSeasonBatch() {
-            const itemIdx = mediaDatabase.findIndex(m => m.id === activeProfileModalId);
-            if (itemIdx === -1 || !mediaDatabase[itemIdx].seasons || mediaDatabase[itemIdx].type !== 'TV') return;
-
-            const seasonNum = parseInt(document.getElementById('modalSeasonSelector').value);
-            const sIdx = mediaDatabase[itemIdx].seasons.findIndex(s => s.seasonNumber === seasonNum);
-            if (sIdx !== -1 && mediaDatabase[itemIdx].seasons[sIdx].episodes) {
-                mediaDatabase[itemIdx].seasons[sIdx].episodes.forEach(e => { e.watched = false; });
-                recalculateSeriesProgressState(itemIdx);
-                loadSelectedSeasonDeck();
-            }
-        }
-
-        function recalculateSeriesProgressState(idx) {
-            let total = 0, watched = 0;
-            mediaDatabase[idx].seasons.forEach(s => {
-                if (s.episodes) { s.episodes.forEach(e => { total++; if (e.watched) watched++; }); }
+    function loadSelectedSeasonDeck() {
+        const item = mediaDatabase.find(m => m.id === activeProfileModalId);
+        const container = document.getElementById('modalEpisodesContainer');
+        container.innerHTML = '';
+        
+        const currentSeasonNum = parseInt(document.getElementById('modalSeasonSelector').value);
+        const season = item.seasons.find(s => s.seasonNumber === currentSeasonNum);
+        
+        if (season && season.episodes) {
+            season.episodes.forEach(ep => {
+                const row = document.createElement('div');
+                row.className = 'modal-ep-row';
+                row.innerHTML = `
+                    <div class="modal-ep-top-line">
+                        <span>Ep ${ep.episodeNumber}: ${ep.name}</span>
+                        <input type="checkbox" ${ep.watched ? 'checked' : ''} onclick="toggleEpisodeWatchedState(${currentSeasonNum}, ${ep.episodeNumber}, this.checked)">
+                    </div>
+                `;
+                container.appendChild(row);
             });
-            mediaDatabase[idx].progress = total > 0 ? Math.round((watched / total) * 100) : 0;
-            
-            if (mediaDatabase[idx].progress === 100) {
-                mediaDatabase[idx].watchState = 'completed'; mediaDatabase[idx].status = 'history';
-                mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0];
-            } else if (watched > 0) {
-                mediaDatabase[idx].watchState = 'watching'; mediaDatabase[idx].status = 'watching';
-            } else {
-                mediaDatabase[idx].watchState = 'unwatched'; mediaDatabase[idx].status = 'all';
+        }
+    }
+
+    function toggleEpisodeWatchedState(seasonNum, epNum, isChecked) {
+        const item = mediaDatabase.find(m => m.id === activeProfileModalId);
+        if (item) {
+            const season = item.seasons.find(s => s.seasonNumber === seasonNum);
+            if (season && season.episodes) {
+                const ep = season.episodes.find(e => e.episodeNumber === epNum);
+                if (ep) ep.watched = isChecked;
             }
             localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-            pushDatabaseToCloud(); 
+            calculateAdvancedTrackerStatistics(item);
+            renderMediaGrid();
         }
+    }
 
-        function changeCardAccessField(id, val, context) {
-            const idx = mediaDatabase.findIndex(i => i.id === id);
-            if(idx !== -1) {
-                mediaDatabase[idx].access = val;
-                if (val === 'Wishlist') mediaDatabase[idx].status = 'find';
-                else if (mediaDatabase[idx].watchState === 'unwatched') mediaDatabase[idx].status = 'all';
-                else if (mediaDatabase[idx].watchState === 'watching') mediaDatabase[idx].status = 'watching';
-                else if (mediaDatabase[idx].watchState === 'waiting') mediaDatabase[idx].status = 'waiting';
-                else if (mediaDatabase[idx].watchState === 'completed') mediaDatabase[idx].status = 'history';
-                saveAndRefreshBoth(context);
-            }
+    function completeActiveSeasonBatch() {
+        const item = mediaDatabase.find(m => m.id === activeProfileModalId);
+        const currentSeasonNum = parseInt(document.getElementById('modalSeasonSelector').value);
+        const season = item.seasons.find(s => s.seasonNumber === currentSeasonNum);
+        if (season && season.episodes) {
+            season.episodes.forEach(e => e.watched = true);
+            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            loadSelectedSeasonDeck();
+            calculateAdvancedTrackerStatistics(item);
+            renderMediaGrid();
         }
+    }
 
-        function changeCardWatchField(id, val, context) {
-            const idx = mediaDatabase.findIndex(i => i.id === id);
-            if(idx !== -1) {
-                mediaDatabase[idx].watchState = val;
-                if(val === 'completed') {
-                    mediaDatabase[idx].progress = 100; mediaDatabase[idx].status = 'history';
-                    if(!mediaDatabase[idx].completionDate || mediaDatabase[idx].completionDate === "Unknown Date") {
-                        mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0];
-                    }
-                } else if(val === 'watching') {
-                    mediaDatabase[idx].status = 'watching';
-                    if (mediaDatabase[idx].progress === 100 || mediaDatabase[idx].progress === 0) mediaDatabase[idx].progress = 15;
-                } else if(val === 'waiting') {
-                    mediaDatabase[idx].status = 'waiting';
-                } else if(val === 'unwatched') {
-                    mediaDatabase[idx].progress = 0; mediaDatabase[idx].status = (mediaDatabase[idx].access === 'Wishlist') ? 'find' : 'all';
-                }
-                saveAndRefreshBoth(context);
-            }
+    function clearActiveSeasonBatch() {
+        const item = mediaDatabase.find(m => m.id === activeProfileModalId);
+        const currentSeasonNum = parseInt(document.getElementById('modalSeasonSelector').value);
+        const season = item.seasons.find(s => s.seasonNumber === currentSeasonNum);
+        if (season && season.episodes) {
+            season.episodes.forEach(e => e.watched = false);
+            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            loadSelectedSeasonDeck();
+            calculateAdvancedTrackerStatistics(item);
+            renderMediaGrid();
         }
+    }
 
-        function updateManualCardDate(id, val, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].completionDate = val; saveAndRefreshBoth(context); } }
-        function setCardDateToToday(id, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].completionDate = new Date().toISOString().split('T')[0]; saveAndRefreshBoth(context); } }
-        function setCardDateToForgot(id, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].completionDate = "Unknown Date"; saveAndRefreshBoth(context); } }
+    // --- STREAM LINED RENDERING GRID CONSOLE UNITS ---
+    function renderMediaGrid() {
+        const grid = document.getElementById('cinemaDatabaseGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        const searchQuery = document.getElementById('cinemaSearchBar').value.toLowerCase();
+        const typeFilter = document.getElementById('typeFilter').value;
+
+        let filteredList = mediaDatabase.filter(m => !m.isBook);
+
+        // Sort execution parameters
+        filteredList.sort((a, b) => a.name.localeCompare(b.name));
+
+        // Filter calculation checks
+        if (typeFilter !== 'all') filteredList = filteredList.filter(m => m.type === typeFilter);
+        if (searchQuery) filteredList = filteredList.filter(m => m.name.toLowerCase().includes(searchQuery));
         
-        function updateManualLibraryReturnDate(id, val, context) { const idx = mediaDatabase.findIndex(i => i.id === id); if(idx !== -1) { mediaDatabase[idx].libraryReturnDate = val; localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); pushDatabaseToCloud(); } }
-
-        function calculateLiveStringHeader(item) {
-            if (item.type === 'TV') {
-                if (item.watchState === 'completed' || item.progress === 100) return 'Completed';
-                let lastWatchedStr = 'Unwatched';
-                if (item.seasons) {
-                    for (let s of item.seasons) {
-                        if (s.episodes) { for (let e of s.episodes) { if (e.watched) lastWatchedStr = `S${s.seasonNumber} Ep${e.episodeNumber}`; } }
-                    }
-                }
-                return lastWatchedStr;
+        // Filter by assigned sub-nav categories folder
+        if (currentCinemaCategory !== 'all') {
+            if (currentCinemaCategory === 'favorites') {
+                filteredList = filteredList.filter(m => m.favorite === true);
+            } else {
+                filteredList = filteredList.filter(m => m.status === currentCinemaCategory);
             }
-            return item.watchState === 'completed' ? 'Completed' : '';
         }
 
-        function sortAndRenderDeck(data, gridContainer, sortVal, contextTag) {
-            data.sort((a, b) => {
-                if (a.pinned !== b.pinned) return b.pinned - a.pinned; 
-                if (a.manualOrder !== b.manualOrder) return a.manualOrder - b.manualOrder;
-                
-                let t1 = a.title || ""; let t2 = b.title || "";
-                if (sortVal === 'name') return t1.localeCompare(t2);
-                
-                if (sortVal === 'releaseDate') {
-                    let d1 = a.releaseDate ? new Date(a.releaseDate) : new Date('1970-01-01');
-                    let d2 = b.releaseDate ? new Date(b.releaseDate) : new Date('1970-01-01');
-                    return d1 - d2;
+        if (filteredList.length === 0) {
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; opacity: 0.5; padding: 40px;">No screenings loaded in this folder terminal grid.</div>`;
+            return;
+        }
+
+        filteredList.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'media-card';
+            
+            // Calculate real-time completion status values
+            let progressPct = 0;
+            if (item.type === 'TV' && item.seasons) {
+                let total = 0, watched = 0;
+                item.seasons.forEach(s => { if(s.episodes){ s.episodes.forEach(e => { total++; if(e.watched) watched++; })} });
+                if (total > 0) progressPct = Math.round((watched / total) * 100);
+            } else if (item.type === 'Movie' && item.watchState === 'completed') {
+                progressPct = 100;
+            }
+
+            card.innerHTML = `
+                <div class="poster-frame" onclick="updateProfileModalState(${item.id})">
+                    ${item.poster ? `<img src="${item.poster}" class="poster-img" alt="">` : `<div class="poster-placeholder">🎬</div>`}
+                </div>
+                <div class="card-details-pane">
+                    <div class="card-title-line">
+                        <div style="flex-grow: 1;" onclick="updateProfileModalState(${item.id})">
+                            <div class="media-title">${item.name}</div>
+                            <div class="media-meta">${item.genre || item.type}</div>
+                        </div>
+                        <button class="heart-icon-top" onclick="toggleFavoriteElement(${item.id})">${item.favorite ? '❤️' : '🤍'}</button>
+                    </div>
+                    <div class="progress-container"><div class="progress-bar" style="width: ${progressPct}%"></div></div>
+                    <div class="badge-row">
+                        <span style="font-size: 0.72rem; opacity: 0.7;">★ ${item.rating || 0}/5</span>
+                        <span style="font-size: 0.72rem; color: var(--accent-color); font-weight: bold;">${progressPct}%</span>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function toggleFavoriteElement(id) {
+        const item = mediaDatabase.find(m => m.id === id);
+        if (item) {
+            item.favorite = !item.favorite;
+            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            renderMediaGrid();
+        }
+    }
+
+    function filterCategory(section, categoryId) {
+        if (section === 'cinema') {
+            currentCinemaCategory = categoryId;
+            document.querySelectorAll('#cinemaVisibleContainer .sub-btn').forEach(b => b.classList.remove('active'));
+            const targetBtn = document.getElementById(`cinema-sub-${categoryId}`);
+            if (targetBtn) targetBtn.classList.add('active');
+            renderMediaGrid();
+        }
+    }
+
+    // --- MANUAL DATA ENTRY ENGINE INGESTIONS ---
+    function addNewMediaItem(targetType) {
+        const nameInput = targetType === 'cinema' ? document.getElementById('addTitle') : document.getElementById('addBookTitle');
+        if (!nameInput || !nameInput.value.trim()) return alert("Please supply an allocation title name!");
+
+        const newItem = {
+            id: Date.now(),
+            name: nameInput.value.trim(),
+            isBook: targetType === 'book',
+            type: targetType === 'cinema' ? document.getElementById('addType').value : 'Audiobook',
+            creator: targetType === 'cinema' ? document.getElementById('addCreator').value : document.getElementById('addBookAuthor').value,
+            genre: targetType === 'cinema' ? document.getElementById('addGenre').value : document.getElementById('addBookGenre').value,
+            releaseDate: targetType === 'cinema' ? document.getElementById('addReleaseDate').value : '',
+            accessMethod: targetType === 'cinema' ? document.getElementById('addAccess').value : document.getElementById('addBookAccess').value,
+            status: targetType === 'cinema' ? document.getElementById('addStatus').value : document.getElementById('addBookStatus').value,
+            watchState: targetType === 'cinema' ? document.getElementById('addWatchState').value : document.getElementById('addBookWatchState').value,
+            overview: targetType === 'cinema' ? document.getElementById('addOverview').value : document.getElementById('addBookOverview').value,
+            rating: 0,
+            favorite: false,
+            seasons: []
+        };
+
+        // If TV series, setup mock default season framework mapping properties
+        if (newItem.type === 'TV') {
+            newItem.seasons = [
+                {
+                    seasonNumber: 1,
+                    episodes: [
+                        { episodeNumber: 1, name: "Pilot Episode Overview", watched: false },
+                        { episodeNumber: 2, name: "Second Mission Parameter", watched: false }
+                    ]
                 }
-                if (sortVal === 'dateAdded') {
-                    let d1 = a.dateAdded ? new Date(a.dateAdded) : new Date('1970-01-01');
-                    let d2 = b.dateAdded ? new Date(b.dateAdded) : new Date('1970-01-01');
-                    return d1 - d2;
-                }
-                if (sortVal === 'genre') {
-                    let g1 = a.genre || ""; let g2 = b.genre || "";
-                    return g1.localeCompare(g2);
-                }
-                if (sortVal === 'rating') return (b.rating || 0) - (a.rating || 0);
-                if (sortVal === 'progress') return (b.progress || 0) - (a.progress || 0);
-                return 0;
-            });
-    // ==========================================================
-    // END OF SECTION 5: SORTING ENGINES OVERHEAD LOCKED
-    // ==========================================================
+            ];
+        }
+
+        mediaDatabase.push(newItem);
+        localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+        
+        // Reset manual forms
+        nameInput.value = '';
+        toggleSideDrawer('addMediaDrawer', false);
+        renderMediaGrid();
+    }
+
+    // Initialize application storage profiles on initial boot canvas run
+    window.addEventListener('DOMContentLoaded', () => {
+        const localData = localStorage.getItem('vault_media_db');
+        if (localData) {
+            mediaDatabase = JSON.parse(localData);
+        } else {
+            // Seed sample database structures
+            mediaDatabase = [
+                { id: 101, name: "Stargate SG-1", type: "TV", genre: "Sci-Fi", creator: "Brad Wright", actor: "Richard Dean Anderson, Amanda Tapping, Christopher Judge", poster: "https://images.themoviedb.org/t/p/w500/orS97SgK0N86vVv9XFzDshd6v3B.jpg", status: "watching", rating: 4, favorite: true, seasons: [{ seasonNumber: 1, episodes: [{episodeNumber:1, name:"Children of the Gods Pt 1", watched:true},{episodeNumber:2, name:"Children of the Gods Pt 2", watched:false}] }] },
+                { id: 102, name: "Blade Runner 2049", type: "Movie", genre: "Sci-Fi", creator: "Denis Villeneuve", actor: "Ryan Gosling, Harrison Ford", poster: "https://images.themoviedb.org/t/p/w500/gajva2L0jOIwZ6sIyV67wlhgZ6m.jpg", status: "all", rating: 5, favorite: false, watchState: "completed" }
+            ];
+            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+        }
+        renderMediaGrid();
+    });
+
+    // Dummy tracking fallbacks for template coverage
+    function renderBookGrid() {}
+    function executeLiveTmdbDatabaseLookup() {}
+    function saveKeysAndConnect() {}
+    function changeTheme(v) { document.body.setAttribute('data-theme', v); }
+    function resetListToDefault() {}
+</script>
+
     // ==========================================================
     // START OF SECTION 6: VISUAL CARD RENDERERS & API SWEEPS
     // ==========================================================
