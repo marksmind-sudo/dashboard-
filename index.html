@@ -27,7 +27,7 @@
 
         body {
             background-color: var(--bg-color); color: var(--text-color);
-            font-family: sans-serif; padding-bottom: 120px; min-height: 100vh; position: relative;
+            font-family: sans-serif; padding-bottom: 140px; min-height: 100vh; position: relative;
             overflow-x: hidden;
             width: 100%;
         }
@@ -196,48 +196,55 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* --- BEAUTIFIED ROUNDED BOTTOM TAB NAVIGATION --- */
+        /* --- HIGH DEFINITION TRADITIONAL ROUNDED-TOP FOLDER TABS SYSTEM --- */
         .bottom-nav { 
             position: fixed; 
-            bottom: 12px; 
-            left: 16px; 
-            right: 16px; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
             display: flex; 
-            justify-content: space-between; 
-            background: rgba(10, 12, 32, 0.96); 
-            border: 2px solid var(--border-color); 
-            border-radius: 30px; 
+            justify-content: center; 
+            background: rgba(4, 4, 10, 0.98); 
+            border-top: 3px solid var(--border-color); 
             z-index: 1000; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.85);
-            overflow: hidden;
-            padding: 4px;
-            gap: 6px;
+            box-shadow: 0 -6px 25px rgba(0,0,0,0.9);
+            padding: 0 16px;
+            align-items: flex-end;
+            height: 70px;
         }
         .nav-item { 
-            background: transparent;
-            border: none;
+            background: rgba(20, 25, 50, 0.4);
+            border: 2px solid var(--border-color);
+            border-bottom: none !important;
             color: var(--text-color); 
             flex: 1; 
             text-align: center; 
-            padding: 12px 0; 
+            height: 46px;
             font-size: 0.85rem; 
             cursor: pointer; 
-            transition: all 0.25s ease; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: bold; 
-            border-radius: 25px;
+            border-top-left-radius: 16px !important;
+            border-top-right-radius: 16px !important;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0 6px;
+            position: relative;
+            box-shadow: inset 0 2px 6px rgba(255,255,255,0.05);
         }
         .nav-item.active { 
             color: #000 !important; 
             background: var(--accent-color) !important; 
-            box-shadow: none;
+            height: 58px !important;
+            font-size: 0.92rem;
+            box-shadow: 0 -4px 15px rgba(0, 255, 204, 0.3);
+            z-index: 5;
         }
 
         /* ==========================================
            HARDWARE MEDIA INTERCEPT OVERRIDES (TABLETS & PHONE GRIDS)
-           ========================================= */
+           ========================================== */
         @media (min-width: 600px) {
             .cinema-grid {
                 display: grid !important;
@@ -256,6 +263,7 @@
 <!-- ==========================================
      END OF SECTION 1: LAYOUT STRUCTURE & DESIGN SYSTEMS
      ========================================== -->
+
 
 <!-- ==========================================
      START OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
@@ -1083,7 +1091,7 @@
                     opt.innerText = s.name || `Season ${s.seasonNumber}`;
                     selector.appendChild(opt);
                 });
-                               if (item.lastViewedSeason && item.seasons.some(s => s.seasonNumber === item.lastViewedSeason)) {
+                    if (item.lastViewedSeason && item.seasons.some(s => s.seasonNumber === item.lastViewedSeason)) {
                     selector.value = item.lastViewedSeason;
                 }
                 loadSelectedSeasonDeck();
@@ -1091,12 +1099,13 @@
                 tvSection.style.display = 'none';
             }
 
-            // Advanced metrics and tab focus extensions
+            // Fire tracker metrics analytics and force info tab selection
             calculateAdvancedTrackerStatistics(item);
             switchProfileModalTab('overview');
-        }
+        } // <--- Ensure there is exactly ONE closing curly bracket here!
 
         function handleSeasonChangeDropdown() {
+
 
             const item = mediaDatabase.find(m => m.id === activeProfileModalId);
             if (item && item.type === 'TV') {
