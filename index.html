@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- ========================================== -->
+    <!-- SECTION 1: METADATA & FULL-SCREEN OVERLAYS  -->
+    <!-- ========================================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Entertainment Vault</title>
+
     <style>
-        /* --- CORE SYSTEM & THEMES --- */
+        /* ========================================== */
+        /* SECTION 2: THEME DESIGN SYSTEM (CSS CORES) */
+        /* ========================================== */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background-color: var(--bg-color, #020208); 
@@ -18,6 +24,7 @@
             min-height: 100vh;
         }
 
+        /* --- THEME VARIATION BLOCKS --- */
         [data-theme="cyberpunk"] {
             --bg-color: #020208; --panel-bg: rgba(10, 12, 32, 0.96); --text-color: #00ffcc;
             --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(16, 20, 48, 0.92);
@@ -39,24 +46,28 @@
             --accent-color: #0066cc; --border-color: #d2d2d7; --card-bg: #ffffff;
         }
 
+        /* ========================================== */
+        /* SECTION 3: LAYOUT DESIGN Blueprint STYLES  */
+        /* ========================================== */
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 15px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color, #00ffcc); margin-bottom: 15px; }
         header h1 { font-size: 1.5rem; }
         
         .theme-dropdown { background: #111; color: inherit; border: 1px solid inherit; padding: 6px; border-radius: 4px; }
         .control-filter-deck { display: flex; gap: 10px; padding: 0 15px 15px 15px; align-items: center; flex-wrap: wrap; }
-        .card-select, input[type="text"] { background: rgba(0,0,0,0.4); color: inherit; border: 1px solid var(--border-color, #00ffcc); padding: 8px; border-radius: 4px; }
+        .card-select, input[type="text"], input[type="password"] { background: rgba(0,0,0,0.4); color: inherit; border: 1px solid var(--border-color, #00ffcc); padding: 8px; border-radius: 4px; }
 
-        /* --- SUB NAVIGATION ARCHITECTURE --- */
+        /* --- NAVIGATION WRAPPERS & BUTTONS --- */
         .sub-nav-wrapper { padding: 0 15px; margin-bottom: 15px; overflow-x: auto; }
         .sub-nav { display: flex; gap: 8px; white-space: nowrap; }
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color, #00ffcc); color: inherit; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
         .sub-btn.active { background: var(--accent-color, #ff007f); color: #000; font-weight: bold; }
 
-        /* --- CINEMA RESPONSIVE GRID MATRIX --- */
+        /* --- RESPONSIVE WORKSPACE MEDIA GRID --- */
         .cinema-grid { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 15px; width: 100%; }
         @media (min-width: 600px) { .cinema-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (min-width: 1024px) { .cinema-grid { grid-template-columns: repeat(3, 1fr); } }
 
+        /* --- CARD OBJECT BLUEPRINTS --- */
         .media-card { background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
         .poster-frame { width: 100%; aspect-ratio: 16/9; background: #111; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; }
         .poster-img { width: 100%; height: 100%; object-fit: cover; }
@@ -64,11 +75,11 @@
         .media-title { font-size: 1.05rem; font-weight: bold; }
         .media-meta { font-size: 0.8rem; opacity: 0.7; }
 
-        /* Progress Bar */
+        /* --- TRACKING METERS --- */
         .progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
         .progress-bar { height: 100%; background: var(--accent-color, #ff007f); width: 0%; }
 
-        /* --- IMMERSIVE DRAWER & MODAL UI --- */
+        /* --- DRAWER FRAMES & POPUP OVERLAYS --- */
         .side-drawer { position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: #0a0c20; border-left: 2px solid var(--border-color, #00ffcc); z-index: 9999; transition: right 0.3s ease; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; color: #fff; }
         .side-drawer.open { right: 0; }
         .form-group { display: flex; flex-direction: column; gap: 4px; }
@@ -79,7 +90,7 @@
         .modal-canvas.active { display: flex; }
         .modal-box { background: #0a0c20; border: 2px solid var(--border-color, #00ffcc); width: 100%; max-width: 500px; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 15px; color: #fff; }
 
-        /* --- BOTTOM FOLDER NAVIGATION --- */
+        /* --- BOTTOM CONTROL NAVIGATION MENU --- */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: #04040a; border-top: 3px solid var(--border-color, #00ffcc); height: 65px; align-items: center; justify-content: space-around; padding: 0 10px; z-index: 1000; }
         .nav-item { color: inherit; padding: 10px; cursor: pointer; font-weight: bold; font-size: 0.9rem; flex: 1; text-align: center; }
         .nav-item.active { background: var(--accent-color, #ff007f); color: #000; border-radius: 8px 8px 0 0; }
@@ -89,6 +100,9 @@
 </head>
 <body data-theme="cyberpunk">
 
+    <!-- ========================================== -->
+    <!-- SECTION 4: GLOBAL HEADER SHELF              -->
+    <!-- ========================================== -->
     <header>
         <h1>Entertainment Vault</h1>
         <div style="display: flex; gap: 8px;">
@@ -103,7 +117,9 @@
         </div>
     </header>
 
-    <!-- Side Data Entry Drawer -->
+    <!-- ========================================== -->
+    <!-- SECTION 5: INGESTION SIDE DRAWER FRAMEWORK -->
+    <!-- ========================================== -->
     <div id="addMediaDrawer" class="side-drawer">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <h3>Add New Media Entry</h3>
@@ -116,7 +132,9 @@
         <button class="btn" onclick="addNewItem()" style="margin-top: 10px;">Ingest Entry</button>
     </div>
 
-    <!-- Immersive Detail Modal -->
+    <!-- ========================================== -->
+    <!-- SECTION 6: PROFILE POP-UP DETAILED MODAL   -->
+    <!-- ========================================== -->
     <div id="detailModal" class="modal-canvas" onclick="if(event.target === this) closeModal()">
         <div class="modal-box">
             <h2 id="modalTitle">Title</h2>
@@ -129,14 +147,17 @@
         </div>
     </div>
 
-    <!-- Viewports Workspaces -->
+    <!-- ========================================== -->
+    <!-- SECTION 7: CORE VIEWPORT MAIN WORKSPACE     -->
+    <!-- ========================================== -->
     <main>
-        <!-- Tab 1: Cinema Matrix -->
+        <!-- --- VIEWPORT TAB 1: CINEMA STREAM GRID --- -->
         <div id="mediaTab" class="tab-content active">
             <div class="control-filter-deck">
                 <input type="text" id="searchBar" placeholder="🔍 Search vault grid..." oninput="renderGrid()" style="flex-grow: 1;">
             </div>
 
+            <!-- SUB NAVIGATION ARCHITECTURE RAILS -->
             <div class="sub-nav-wrapper">
                 <div class="sub-nav">
                     <button id="sub-all" class="sub-btn active" onclick="filterCategory('all')">Main Collection</button>
@@ -146,19 +167,21 @@
                 </div>
             </div>
 
+            <!-- CORE OUTPUT ELEMENT PINPOINT -->
             <div id="cinemaDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- Tab 2: Goodreads Library Matrix -->
+        <!-- --- VIEWPORT TAB 2: GOODREADS MATRIX STANDBY --- -->
         <div id="goodreadsTab" class="tab-content">
             <div style="padding: 30px; text-align: center; opacity: 0.6;">📚 Library Database Standby Blueprint Loaded.</div>
         </div>
 
-        <!-- Tab 3: System Settings Panel -->
+        <!-- --- VIEWPORT TAB 3: SYSTEM SETTINGS RACK --- -->
         <div id="settingsTab" class="tab-content">
             <div style="background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 16px; max-width: 500px; margin: 0 auto;">
                 <h3 style="color: var(--text-color, #00ffcc); border-bottom: 1px solid var(--border-color, #00ffcc); padding-bottom: 8px;">Trakt Cloud Synchronizer</h3>
                 
+                <!-- ID TOKEN ENTRY GRID DECK -->
                 <div class="form-group">
                     <label>Trakt Client ID</label>
                     <div style="display: flex; gap: 8px; align-items: center;">
@@ -169,6 +192,7 @@
                     </div>
                 </div>
                 
+                <!-- SECRET PASSWORD ENTRY GRID DECK -->
                 <div class="form-group">
                     <label>Trakt Client Secret</label>
                     <div style="display: flex; gap: 8px; align-items: center;">
@@ -179,36 +203,46 @@
                     </div>
                 </div>
 
+                <!-- INITIAL OAUTH INTERCEPT BUTTONS -->
                 <button class="btn" onclick="window.initializeTraktDeviceAuth()">Link Trakt Account</button>
                 
-                <!-- Security Pin Authorization Slot (Hidden until needed) -->
+                <!-- DYNAMIC SECURITY PIN EXCHANGE HOOK (Toggled via script) -->
                 <div id="traktPinGroup" class="form-group" style="display: none; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
                     <label style="color: var(--accent-color, #ff007f);">Go to url: <a id="traktAuthUrl" href="#" target="_blank" style="color: #fff; text-decoration: underline;">Link Profile</a></label>
                     <input type="text" id="traktPinInput" placeholder="Enter Authorization PIN..." style="margin-top: 6px;">
                     <button class="btn" onclick="window.exchangeTraktPinForToken()" style="margin-top: 6px; background: #fff; color: #000;">Authorize Vault</button>
                 </div>
 
-                <div id="traktStatusLog" style="font-size: 0.8rem; text-align: center; color: var(--accent-color, #ff007f); margin-top: 4px;">Status: Standby (Local Mode)</div>
+                <!-- STREAM SYNC OPERATIONS PANEL -->
+                <button class="btn" onclick="window.pullTraktUserHistoryStream()" style="background: #00ffcc; color: #000; margin-top: 4px;">🔄 Sync Watch History Stream</button>
+
+                <!-- DYNAMIC FEEDBACK TEXT SLOT -->
+                <div id="traktStatusLog" style="font-size: 0.8rem; text-align: center; color: var(--accent-color); margin-top: 4px;">Status: Standby (Local Mode)</div>
             </div>
         </div>
     </main>
 
-    <!-- Navigation Command Bar Frame Deck -->
+    <!-- ========================================== -->
+    <!-- SECTION 8: PRIMARY COMMAND DOCK BAR BAR    -->
+    <!-- ========================================== -->
     <nav class="bottom-nav">
         <div id="navBtn-mediaTab" class="nav-item active" onclick="switchTab('mediaTab')">🎬 Media</div>
         <div id="navBtn-goodreadsTab" class="nav-item" onclick="switchTab('goodreadsTab')">📚 Goodreads</div>
         <div id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab')">⚙️ Settings</div>
     </nav>
 
-    <script>
-        // ==========================================
-        // START OF CORE APPLICATION LOGIC MATRIX
-        // ==========================================
 
+    <!-- ========================================== -->
+    <!-- SECTION 9: APPLICATION FUNCTION LOGIC SCRIPT-->
+    <!-- ========================================== -->
+    <script>
+        // --- CENTRAL BASE REPOSITORIES ---
         let mediaDatabase = [];
         let currentFilter = 'all';
         let activeItemId = null;
 
+        // --- SUB SECTION A: NAV & TAB SWAPPING LOGIC ---
+        // Location: Under database array initializers (Line ~448)
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -224,6 +258,8 @@
             document.body.setAttribute('data-theme', themeValue);
         }
 
+        // --- SUB SECTION B: UI WINDOW DRAWERS CONTROLLER ---
+        // Location: Below Theme Swapper functions (Line ~464)
         function toggleDrawer(openState) {
             const drawer = document.getElementById('addMediaDrawer');
             if (openState) drawer.classList.add('open');
@@ -237,6 +273,8 @@
             renderGrid();
         }
 
+        // --- SUB SECTION C: DATA ENTRY MANAGERS ---
+        // Location: Directly above Detail Profile Modal logic (Line ~478)
         function addNewItem() {
             const titleInput = document.getElementById('addTitle');
             if (!titleInput.value.trim()) return alert("Please type a title name!");
@@ -257,6 +295,8 @@
             renderGrid();
         }
 
+        // --- SUB SECTION D: MODAL CONTROLLER MATRIX ---
+        // Location: Mid-way down the script tag (Line ~502)
         function openModal(id) {
             const item = mediaDatabase.find(m => m.id === id);
             if (!item) return;
@@ -290,6 +330,8 @@
             }
         }
 
+        // --- SUB SECTION E: GRAPHICAL CARD STREAM RENDERER ---
+        // Location: Directly above DOMContentLoaded listener (Line ~539)
         function renderGrid() {
             const grid = document.getElementById('cinemaDatabaseGrid');
             if (!grid) return;
@@ -323,6 +365,8 @@
             });
         }
 
+        // --- SUB SECTION F: SYSTEM LAUNCH BOOT MATRIX ---
+        // Location: Base level runtime configuration container (Line ~576)
         window.addEventListener('DOMContentLoaded', () => {
             const localData = localStorage.getItem('vault_media_db');
             if (localData) {
@@ -337,12 +381,15 @@
             renderGrid();
         });
 
+
         // ==========================================
         // TRAKT API CLOUD SYNCHRONIZATION MATRIX
         // ==========================================
         let traktAccessToken = null;
         let traktRefreshToken = null;
 
+        // --- SYNCHRONIZER ELEMENT 1: CLIENT ACCESS HANDSHAKE ---
+        // Location: Under global Trakt token declarations (Line ~602)
         window.initializeTraktDeviceAuth = function() {
             const clientId = document.getElementById('traktClientIdInput').value.trim();
             const clientSecret = document.getElementById('traktClientSecretInput').value.trim();
@@ -368,6 +415,8 @@
             }
         };
 
+        // --- SYNCHRONIZER ELEMENT 2: PRIVACY PIN HANDSHAKE TOKENS ---
+        // Location: 34 Lines below initializeTraktDeviceAuth anchor (Line ~628)
         window.exchangeTraktPinForToken = function() {
             const clientId = localStorage.getItem('trakt_client_id');
             const clientSecret = localStorage.getItem('trakt_client_secret');
@@ -412,6 +461,74 @@
             });
         };
 
+        // --- SYNCHRONIZER ELEMENT 3: HISTORY DATABASE DATA PACKS PULLER ---
+        // Location: Located directly between token exchanger and boot matrix listeners (Line ~676)
+        window.pullTraktUserHistoryStream = function() {
+            if (!traktAccessToken) {
+                return alert("Your vault isn't authorized with Trakt yet, Sweetie!");
+            }
+
+            const clientId = localStorage.getItem('trakt_client_id');
+            document.getElementById('traktStatusLog').innerText = "Status: Syncing cloud history matrix...";
+
+            fetch('https://api.trakt.tv/sync/history?limit=50', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${traktAccessToken}`,
+                    'trakt-api-version': '2',
+                    'trakt-api-key': clientId
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Trakt cloud synchronization request rejected.");
+                return response.json();
+            })
+            .then(historyData => {
+                if (!historyData || historyData.length === 0) {
+                    document.getElementById('traktStatusLog').innerText = "Status: Connected! (Cloud Empty)";
+                    return;
+                }
+
+                historyData.forEach(record => {
+                    let itemName = "";
+                    let itemType = "";
+                    let itemGenre = "Sci-Fi";
+
+                    if (record.type === 'movie' && record.movie) {
+                        itemName = record.movie.title;
+                        itemType = "Movie";
+                    } else if (record.type === 'episode' && record.show) {
+                        itemName = record.show.title;
+                        itemType = "TV";
+                    }
+
+                    if (itemName && !mediaDatabase.some(m => m.name === itemName)) {
+                        mediaDatabase.push({
+                            id: Date.now() + Math.random(),
+                            name: itemName,
+                            type: itemType,
+                            genre: itemGenre,
+                            status: "completed"
+                        });
+                    }
+                });
+
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                renderGrid();
+                
+                document.getElementById('traktStatusLog').innerText = "Status: Connected! Sync Complete.";
+                document.getElementById('traktStatusLog').style.color = "#00ffcc";
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('traktStatusLog').innerText = "Status: Cloud Sync Interrupted.";
+                document.getElementById('traktStatusLog').style.color = "#ff007f";
+            });
+        };
+
+        // --- SYNCHRONIZER ELEMENT 4: AUTOMATED LOCAL CACHE RE-BOOT ENGINE ---
+        // Location: Absolute baseline listener wrapper (Line ~742)
         window.addEventListener('load', () => {
             const storedId = localStorage.getItem('trakt_client_id');
             const storedSecret = localStorage.getItem('trakt_client_secret');
