@@ -388,32 +388,52 @@
         let traktAccessToken = null;
         let traktRefreshToken = null;
 
-        // --- SYNCHRONIZER ELEMENT 1: CLIENT ACCESS HANDSHAKE ---
+               // --- SYNCHRONIZER ELEMENT 1: CLIENT ACCESS HANDSHAKE ---
         // Location: Under global Trakt token declarations (Line ~602)
         window.initializeTraktDeviceAuth = function() {
-            const clientId = document.getElementById('traktClientIdInput').value.trim();
-            const clientSecret = document.getElementById('traktClientSecretInput').value.trim();
+            // Force the app to fetch the elements directly at the exact moment of the click
+            const idField = document.getElementById('traktClientIdInput');
+            const secretField = document.getElementById('traktClientSecretInput');
+            const statusLog = document.getElementById('traktStatusLog');
+            
+            if (!idField || !secretField) {
+                return alert("System Error: Security input elements could not be located in the DOM matrix.");
+            }
+
+            const clientId = idField.value.trim();
+            const clientSecret = secretField.value.trim();
 
             if (!clientId || !clientSecret) {
                 return alert("Please enter both your Trakt Client ID and Client Secret, Sweetie!");
             }
 
+            // Lock the credentials into permanent device storage immediately
             localStorage.setItem('trakt_client_id', clientId);
             localStorage.setItem('trakt_client_secret', clientSecret);
 
-            document.getElementById('traktStatusLog').innerText = "Status: Generating auth link...";
+            if (statusLog) {
+                statusLog.innerText = "Status: Generating auth link...";
+                statusLog.style.color = "#ffcc00";
+            }
             
-            const authUrl = `https://trakt.tv/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
+            // Build the absolute direct authorization URI link
+            const authUrl = "https://trakt.tv/oauth/authorize?response_type=code&client_id=" + clientId + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob";
             
             const pinGroup = document.getElementById('traktPinGroup');
             const urlAnchor = document.getElementById('traktAuthUrl');
             
-            if (pinGroup && urlAnchor) {
-                urlAnchor.href = authUrl;
+            // Instantly force the elements to reveal themselves layout-side
+            if (urlAnchor) urlAnchor.href = authUrl;
+            if (pinGroup) {
+                pinGroup.style.setProperty('display', 'flex', 'important');
                 pinGroup.style.display = 'flex';
-                document.getElementById('traktStatusLog').innerText = "Status: Click 'Link Profile' above!";
+            }
+            
+            if (statusLog) {
+                statusLog.innerText = "Status: Click 'Link Profile' below!";
             }
         };
+
 
         // --- SYNCHRONIZER ELEMENT 2: PRIVACY PIN HANDSHAKE TOKENS ---
         // Location: 34 Lines below initializeTraktDeviceAuth anchor (Line ~628)
