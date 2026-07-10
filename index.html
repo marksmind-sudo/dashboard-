@@ -153,7 +153,8 @@
         <div id="goodreadsTab" class="tab-content">
             <div style="padding: 30px; text-align: center; opacity: 0.6;">📚 Library Database Standby Blueprint Loaded.</div>
         </div>
-        <!-- Core Viewport Tab 3: System Settings -->
+
+        <!-- Tab 3: System Settings Panel -->
         <div id="settingsTab" class="tab-content">
             <div style="background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 16px; max-width: 500px; margin: 0 auto;">
                 <h3 style="color: var(--text-color, #00ffcc); border-bottom: 1px solid var(--border-color, #00ffcc); padding-bottom: 8px;">Trakt Cloud Synchronizer</h3>
@@ -190,18 +191,16 @@
                 <div id="traktStatusLog" style="font-size: 0.8rem; text-align: center; color: var(--accent-color, #ff007f); margin-top: 4px;">Status: Standby (Local Mode)</div>
             </div>
         </div>
-
-
     </main>
 
     <!-- Navigation Command Bar Frame Deck -->
     <nav class="bottom-nav">
-        <div id="nav-mediaTab" class="nav-item active" onclick="switchTab('mediaTab')">🎬 Media</div>
-        <div id="nav-goodreadsTab" class="nav-item" onclick="switchTab('goodreadsTab')">📚 Goodreads</div>
-        <div id="nav-settingsTab" class="nav-item" onclick="switchTab('settingsTab')">⚙️ Settings</div>
+        <div id="navBtn-mediaTab" class="nav-item active" onclick="switchTab('mediaTab')">🎬 Media</div>
+        <div id="navBtn-goodreadsTab" class="nav-item" onclick="switchTab('goodreadsTab')">📚 Goodreads</div>
+        <div id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab')">⚙️ Settings</div>
     </nav>
 
-    <script>    <script>
+    <script>
         // ==========================================
         // START OF CORE APPLICATION LOGIC MATRIX
         // ==========================================
@@ -214,8 +213,11 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById('nav-' + tabId).classList.add('active');
+            const targetedPanel = document.getElementById(tabId);
+            if (targetedPanel) targetedPanel.classList.add('active');
+            
+            const targetedBtn = document.getElementById('navBtn-' + tabId);
+            if (targetedBtn) targetedBtn.classList.add('active');
         }
 
         function changeTheme(themeValue) {
@@ -428,5 +430,3 @@
     </script>
 </body>
 </html>
-
-
