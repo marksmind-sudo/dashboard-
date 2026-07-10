@@ -1053,28 +1053,21 @@
                     opt.innerText = s.name || `Season ${s.seasonNumber}`;
                     selector.appendChild(opt);
                 });
-                if (item.lastViewedSeason && item.seasons.some(s => s.seasonNumber === item.lastViewedSeason)) {
+                               if (item.lastViewedSeason && item.seasons.some(s => s.seasonNumber === item.lastViewedSeason)) {
                     selector.value = item.lastViewedSeason;
                 }
                 loadSelectedSeasonDeck();
             } else {
                 tvSection.style.display = 'none';
             }
-                             selector.value = item.lastViewedSeason;
-            }
-            loadSelectedSeasonDeck();
-        } else {
-            tvSection.style.display = 'none';
-        }
-        
-        // RIGHT HERE AT THE VERY BOTTOM OF THE FUNCTION, ADD this call line:
-        calculateAdvancedTrackerStatistics(item);
-        switchProfileModalTab('overview'); // Force reset tab focus back to main details page
-    }
 
+            // Advanced metrics and tab focus extensions
+            calculateAdvancedTrackerStatistics(item);
+            switchProfileModalTab('overview');
         }
 
         function handleSeasonChangeDropdown() {
+
             const item = mediaDatabase.find(m => m.id === activeProfileModalId);
             if (item && item.type === 'TV') {
                 const newSeason = parseInt(document.getElementById('modalSeasonSelector').value);
