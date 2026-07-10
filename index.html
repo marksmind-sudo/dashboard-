@@ -1,10 +1,305 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Test Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Entertainment Vault</title>
+    <style>
+        /* --- CORE SYSTEM & THEMES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-color, #020208); 
+            color: var(--text-color, #00ffcc);
+            font-family: sans-serif; 
+            padding-bottom: 90px; 
+            min-height: 100vh;
+        }
+
+        [data-theme="cyberpunk"] {
+            --bg-color: #020208; --panel-bg: rgba(10, 12, 32, 0.96); --text-color: #00ffcc;
+            --accent-color: #ff007f; --border-color: #00ffcc; --card-bg: rgba(16, 20, 48, 0.92);
+        }
+        [data-theme="star-trek"] {
+            --bg-color: #05070f; --panel-bg: rgba(12, 17, 34, 0.95); --text-color: #e2e8f0;
+            --accent-color: #ff9900; --border-color: #4a5568; --card-bg: rgba(19, 26, 48, 0.85);
+        }
+        [data-theme="steampunk"] {
+            --bg-color: #1a0f0d; --panel-bg: rgba(33, 22, 18, 0.97); --text-color: #fcefde;
+            --accent-color: #e5a93b; --border-color: #8c5827; --card-bg: rgba(46, 32, 26, 0.9);
+        }
+        [data-theme="tvtime-dark"] {
+            --bg-color: #141414; --panel-bg: #1f1f1f; --text-color: #ffffff;
+            --accent-color: #e50914; --border-color: #333333; --card-bg: #181818;
+        }
+        [data-theme="tvtime-light"] {
+            --bg-color: #f5f5f7; --panel-bg: #ffffff; --text-color: #1d1d1f;
+            --accent-color: #0066cc; --border-color: #d2d2d7; --card-bg: #ffffff;
+        }
+
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 15px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color, #00ffcc); margin-bottom: 15px; }
+        header h1 { font-size: 1.5rem; }
+        
+        .theme-dropdown { background: #111; color: inherit; border: 1px solid inherit; padding: 6px; border-radius: 4px; }
+        .control-filter-deck { display: flex; gap: 10px; padding: 0 15px 15px 15px; align-items: center; flex-wrap: wrap; }
+        .card-select, input[type="text"] { background: rgba(0,0,0,0.4); color: inherit; border: 1px solid var(--border-color, #00ffcc); padding: 8px; border-radius: 4px; }
+
+        /* --- SUB NAVIGATION ARCHITECTURE --- */
+        .sub-nav-wrapper { padding: 0 15px; margin-bottom: 15px; overflow-x: auto; }
+        .sub-nav { display: flex; gap: 8px; white-space: nowrap; }
+        .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color, #00ffcc); color: inherit; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
+        .sub-btn.active { background: var(--accent-color, #ff007f); color: #000; font-weight: bold; }
+
+        /* --- CINEMA RESPONSIVE GRID MATRIX --- */
+        .cinema-grid { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 15px; width: 100%; }
+        @media (min-width: 600px) { .cinema-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .cinema-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .media-card { background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+        .poster-frame { width: 100%; aspect-ratio: 16/9; background: #111; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; }
+        .poster-img { width: 100%; height: 100%; object-fit: cover; }
+        .card-details-pane { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .media-title { font-size: 1.05rem; font-weight: bold; }
+        .media-meta { font-size: 0.8rem; opacity: 0.7; }
+
+        /* Progress Bar */
+        .progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+        .progress-bar { height: 100%; background: var(--accent-color, #ff007f); width: 0%; }
+
+        /* --- IMMERSIVE DRAWER & MODAL UI --- */
+        .side-drawer { position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: #0a0c20; border-left: 2px solid var(--border-color, #00ffcc); z-index: 9999; transition: right 0.3s ease; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; color: #fff; }
+        .side-drawer.open { right: 0; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 0.75rem; font-weight: bold; }
+        .btn { background: var(--accent-color, #ff007f); color: #000; font-weight: bold; border: none; padding: 10px; border-radius: 4px; cursor: pointer; }
+
+        .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 15px; }
+        .modal-canvas.active { display: flex; }
+        .modal-box { background: #0a0c20; border: 2px solid var(--border-color, #00ffcc); width: 100%; max-width: 500px; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 15px; color: #fff; }
+
+        /* --- BOTTOM FOLDER NAVIGATION --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: #04040a; border-top: 3px solid var(--border-color, #00ffcc); height: 65px; align-items: center; justify-content: space-around; padding: 0 10px; z-index: 1000; }
+        .nav-item { color: inherit; padding: 10px; cursor: pointer; font-weight: bold; font-size: 0.9rem; flex: 1; text-align: center; }
+        .nav-item.active { background: var(--accent-color, #ff007f); color: #000; border-radius: 8px 8px 0 0; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
 </head>
-<body style="background: #141414; color: #00ffcc; font-family: sans-serif; padding: 50px; text-align: center;">
-    <h1>⚡ Entertainment Vault Test ⚡</h1>
-    <p>If you can see this text, your page is working perfectly fine!</p>
+<body data-theme="cyberpunk">
+
+    <header>
+        <h1>Entertainment Vault</h1>
+        <div style="display: flex; gap: 8px;">
+            <button class="sub-btn" style="background: var(--accent-color, #ff007f); color: #000; font-weight: bold;" onclick="toggleDrawer(true)">+ Add Title</button>
+            <select class="theme-dropdown" onchange="changeTheme(this.value)">
+                <option value="cyberpunk">Cyberpunk Neon</option>
+                <option value="star-trek">Star Trek Command</option>
+                <option value="steampunk">Steampunk Brass</option>
+                <option value="tvtime-dark">TV Time Dark</option>
+                <option value="tvtime-light">TV Time Light</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- Side Data Entry Drawer -->
+    <div id="addMediaDrawer" class="side-drawer">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3>Add New Media Entry</h3>
+            <button onclick="toggleDrawer(false)" style="background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer;">✕</button>
+        </div>
+        <div class="form-group"><label>Title Name</label><input type="text" id="addTitle" placeholder="e.g., Stargate SG-1"></div>
+        <div class="form-group"><label>Category Type</label><select id="addType" class="card-select"><option value="Movie">Movie</option><option value="TV">TV Series</option></select></div>
+        <div class="form-group"><label>Genres</label><input type="text" id="addGenre" placeholder="Sci-Fi, Adventure"></div>
+        <div class="form-group"><label>Folder Tracking Section</label><select id="addStatus" class="card-select"><option value="all">Main Collection</option><option value="watching">Currently Watching</option><option value="waiting">Waiting for Season</option><option value="completed">Completed Log</option></select></div>
+        <button class="btn" onclick="addNewItem()" style="margin-top: 10px;">Ingest Entry</button>
+    </div>
+
+    <!-- Immersive Detail Modal -->
+    <div id="detailModal" class="modal-canvas" onclick="if(event.target === this) closeModal()">
+        <div class="modal-box">
+            <h2 id="modalTitle">Title</h2>
+            <p id="modalMeta" style="opacity: 0.7; font-size: 0.9rem;"></p>
+            <div class="form-group">
+                <label>Update Status Folder</label>
+                <select id="modalFolderSelect" class="card-select" onchange="updateItemStatus(this.value)"></select>
+            </div>
+            <button class="btn" onclick="closeModal()">Close Panel</button>
+        </div>
+    </div>
+
+    <!-- Viewports Workspaces -->
+    <main>
+        <!-- Tab 1: Cinema Matrix -->
+        <div id="mediaTab" class="tab-content active">
+            <div class="control-filter-deck">
+                <input type="text" id="searchBar" placeholder="🔍 Search vault grid..." oninput="renderGrid()" style="flex-grow: 1;">
+            </div>
+
+            <div class="sub-nav-wrapper">
+                <div class="sub-nav">
+                    <button id="sub-all" class="sub-btn active" onclick="filterCategory('all')">Main Collection</button>
+                    <button id="sub-watching" class="sub-btn" onclick="filterCategory('watching')">🎬 Watching</button>
+                    <button id="sub-waiting" class="sub-btn" onclick="filterCategory('waiting')">⏳ Waiting</button>
+                    <button id="sub-completed" class="sub-btn" onclick="filterCategory('completed')">⚡ Completed</button>
+                </div>
+            </div>
+
+            <div id="cinemaDatabaseGrid" class="cinema-grid"></div>
+        </div>
+
+        <!-- Tab 2: Goodreads Library Matrix -->
+        <div id="goodreadsTab" class="tab-content">
+            <div style="padding: 30px; text-align: center; opacity: 0.6;">📚 Library Database Standby Blueprint Loaded.</div>
+        </div>
+
+        <!-- Tab 3: System Settings -->
+        <div id="settingsTab" class="tab-content">
+            <div style="padding: 30px; text-align: center; opacity: 0.6;">⚙️ Cloud Synchronization Interface Standby.</div>
+        </div>
+    </main>
+
+    <!-- Navigation Command Bar Frame Deck -->
+    <nav class="bottom-nav">
+        <div id="nav-mediaTab" class="nav-item active" onclick="switchTab('mediaTab')">🎬 Media</div>
+        <div id="nav-goodreadsTab" class="nav-item" onclick="switchTab('goodreadsTab')">📚 Goodreads</div>
+        <div id="nav-settingsTab" class="nav-item" onclick="switchTab('settingsTab')">⚙️ Settings</div>
+    </nav>
+
+    <script>
+        // ==========================================
+        // CORE APPLICATION LOGIC MATRIX
+        // ==========================================
+        let mediaDatabase = [];
+        let currentFilter = 'all';
+        let activeItemId = null;
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('nav-' + tabId).classList.add('active');
+        }
+
+        function changeTheme(themeValue) {
+            document.body.setAttribute('data-theme', themeValue);
+        }
+
+        function toggleDrawer(openState) {
+            const drawer = document.getElementById('addMediaDrawer');
+            if (openState) drawer.classList.add('open');
+            else drawer.classList.remove('open');
+        }
+
+        function filterCategory(catId) {
+            currentFilter = catId;
+            document.querySelectorAll('.sub-nav .sub-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('sub-' + catId).classList.add('active');
+            renderGrid();
+        }
+
+        function addNewItem() {
+            const titleInput = document.getElementById('addTitle');
+            if (!titleInput.value.trim()) return alert("Please type a title name!");
+
+            const newItem = {
+                id: Date.now(),
+                name: titleInput.value.trim(),
+                type: document.getElementById('addType').value,
+                genre: document.getElementById('addGenre').value || 'Sci-Fi',
+                status: document.getElementById('addStatus').value
+            };
+
+            mediaDatabase.push(newItem);
+            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            
+            titleInput.value = '';
+            toggleDrawer(false);
+            renderGrid();
+        }
+
+        function openModal(id) {
+            const item = mediaDatabase.find(m => m.id === id);
+            if (!item) return;
+            activeItemId = id;
+
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalMeta').innerText = `Type: ${item.type} | Genre: ${item.genre}`;
+            
+            const select = document.getElementById('modalFolderSelect');
+            select.innerHTML = `
+                <option value="all" ${item.status === 'all' ? 'selected' : ''}>Main Collection</option>
+                <option value="watching" ${item.status === 'watching' ? 'selected' : ''}>Currently Watching</option>
+                <option value="waiting" ${item.status === 'waiting' ? 'selected' : ''}>Waiting for Season</option>
+                <option value="completed" ${item.status === 'completed' ? 'selected' : ''}>Completed Log</option>
+            `;
+
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+            activeItemId = null;
+        }
+
+        function updateItemStatus(newStatus) {
+            const item = mediaDatabase.find(m => m.id === activeItemId);
+            if (item) {
+                item.status = newStatus;
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                renderGrid();
+            }
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('cinemaDatabaseGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const searchVal = document.getElementById('searchBar').value.toLowerCase();
+
+            let list = mediaDatabase.filter(m => {
+                const matchesSearch = m.name.toLowerCase().includes(searchVal);
+                const matchesFilter = (currentFilter === 'all' || m.status === currentFilter);
+                return matchesSearch && matchesFilter;
+            });
+
+            if (list.length === 0) {
+                grid.innerHTML = '<div style="text-align:center; padding:30px; opacity:0.5; grid-column:1/-1;">Vault stream empty.</div>';
+                return;
+            }
+
+            list.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'media-card';
+                card.innerHTML = `
+                    <div class="poster-frame" onclick="openModal(${item.id})">🎬</div>
+                    <div class="card-details-pane">
+                        <div class="media-title" onclick="openModal(${item.id})" style="cursor:pointer;">${item.name}</div>
+                        <div class="media-meta">${item.genre} (${item.type})</div>
+                        <div class="progress-container"><div class="progress-bar" style="width: ${item.status === 'completed' ? '100%' : '35%'}"></div></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const localData = localStorage.getItem('vault_media_db');
+            if (localData) {
+                mediaDatabase = JSON.parse(localData);
+            } else {
+                mediaDatabase = [
+                    { id: 101, name: "Stargate SG-1", type: "TV", genre: "Sci-Fi", status: "watching" },
+                    { id: 102, name: "Blade Runner 2049", type: "Movie", genre: "Sci-Fi", status: "all" }
+                ];
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            }
+            renderGrid();
+        });
+    </script>
 </body>
 </html>
+
