@@ -201,10 +201,11 @@
         <div id="nav-settingsTab" class="nav-item" onclick="switchTab('settingsTab')">⚙️ Settings</div>
     </nav>
 
-    <script>
+    <script>    <script>
         // ==========================================
-        // CORE APPLICATION LOGIC MATRIX
+        // START OF CORE APPLICATION LOGIC MATRIX
         // ==========================================
+
         let mediaDatabase = [];
         let currentFilter = 'all';
         let activeItemId = null;
@@ -333,13 +334,14 @@
             }
             renderGrid();
         });
-                // ==========================================
+
+        // ==========================================
         // TRAKT API CLOUD SYNCHRONIZATION MATRIX
         // ==========================================
         let traktAccessToken = null;
         let traktRefreshToken = null;
 
-        function initializeTraktDeviceAuth() {
+        window.initializeTraktDeviceAuth = function() {
             const clientId = document.getElementById('traktClientIdInput').value.trim();
             const clientSecret = document.getElementById('traktClientSecretInput').value.trim();
 
@@ -347,16 +349,13 @@
                 return alert("Please enter both your Trakt Client ID and Client Secret, Sweetie!");
             }
 
-            // Save credentials locally so the user doesn't have to re-enter them
             localStorage.setItem('trakt_client_id', clientId);
             localStorage.setItem('trakt_client_secret', clientSecret);
 
             document.getElementById('traktStatusLog').innerText = "Status: Generating auth link...";
             
-            // Generate the secure device login portal URL
             const authUrl = `https://trakt.tv/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
             
-            // Reveal the secret PIN input group and attach the URL hook
             const pinGroup = document.getElementById('traktPinGroup');
             const urlAnchor = document.getElementById('traktAuthUrl');
             
@@ -365,9 +364,9 @@
                 pinGroup.style.display = 'flex';
                 document.getElementById('traktStatusLog').innerText = "Status: Click 'Link Profile' above!";
             }
-        }
+        };
 
-        function exchangeTraktPinForToken() {
+        window.exchangeTraktPinForToken = function() {
             const clientId = localStorage.getItem('trakt_client_id');
             const clientSecret = localStorage.getItem('trakt_client_secret');
             const pinCode = document.getElementById('traktPinInput').value.trim();
@@ -376,7 +375,6 @@
 
             document.getElementById('traktStatusLog').innerText = "Status: Exchanging PIN for matrix tokens...";
 
-            // Send a secure cross-origin cloud request to Trakt's authorization center
             fetch('https://api.trakt.tv/oauth/token', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -410,9 +408,8 @@
                 document.getElementById('traktStatusLog').innerText = "Status: Authentication Failed. Check PIN.";
                 document.getElementById('traktStatusLog').style.color = "#ff007f";
             });
-        }
+        };
 
-        // Auto-load credentials from storage if they exist on initial launch boot
         window.addEventListener('load', () => {
             const storedId = localStorage.getItem('trakt_client_id');
             const storedSecret = localStorage.getItem('trakt_client_secret');
@@ -428,8 +425,8 @@
                 document.getElementById('traktStatusLog').style.color = "#00ffcc";
             }
         });
-
     </script>
 </body>
 </html>
+
 
