@@ -154,10 +154,34 @@
             <div style="padding: 30px; text-align: center; opacity: 0.6;">📚 Library Database Standby Blueprint Loaded.</div>
         </div>
 
-        <!-- Tab 3: System Settings -->
+             <!-- Core Viewport Tab 3: System Settings -->
         <div id="settingsTab" class="tab-content">
-            <div style="padding: 30px; text-align: center; opacity: 0.6;">⚙️ Cloud Synchronization Interface Standby.</div>
+            <div style="background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 16px; max-width: 500px; margin: 0 auto;">
+                <h3 style="color: var(--text-color, #00ffcc); border-bottom: 1px solid var(--border-color, #00ffcc); padding-bottom: 8px;">Trakt Cloud Synchronizer</h3>
+                
+                <div class="form-group">
+                    <label>Trakt Client ID</label>
+                    <input type="password" id="traktClientIdInput" placeholder="Paste Client ID here...">
+                </div>
+                
+                <div class="form-group">
+                    <label>Trakt Client Secret</label>
+                    <input type="password" id="traktClientSecretInput" placeholder="Paste Client Secret here...">
+                </div>
+
+                <button class="btn" onclick="initializeTraktDeviceAuth()">Link Trakt Account</button>
+                
+                <!-- Security Pin Authorization Slot (Hidden until needed) -->
+                <div id="traktPinGroup" class="form-group" style="display: none; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
+                    <label style="color: var(--accent-color, #ff007f);">Go to url: <a id="traktAuthUrl" href="#" target="_blank" style="color: #fff; text-decoration: underline;">Link Profile</a></label>
+                    <input type="text" id="traktPinInput" placeholder="Enter Authorization PIN..." style="margin-top: 6px;">
+                    <button class="btn" onclick="exchangeTraktPinForToken()" style="margin-top: 6px; background: #fff; color: #000;">Authorize Vault</button>
+                </div>
+
+                <div id="traktStatusLog" style="font-size: 0.8rem; text-align: center; color: var(--accent-color, #ff007f); margin-top: 4px;">Status: Standby (Local Mode)</div>
+            </div>
         </div>
+
     </main>
 
     <!-- Navigation Command Bar Frame Deck -->
