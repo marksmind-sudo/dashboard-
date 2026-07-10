@@ -339,9 +339,9 @@
             
             <!-- TV Tracker Style Tab Navigation Bar -->
             <div style="display: flex; background: rgba(0,0,0,0.4); border-bottom: 1px solid var(--border-color);">
-                <div id="profileTab-overview" class="nav-item active" style="padding: 10px 0; font-size: 0.8rem; border-radius: 0; cursor: pointer;" onclick="switchProfileModalTab('overview')">INFO</div>
-                <div id="profileTab-cast" class="nav-item" style="padding: 10px 0; font-size: 0.8rem; border-radius: 0; cursor: pointer;" onclick="switchProfileModalTab('cast')">CAST & CREW</div>
-                <div id="profileTab-seasons" class="nav-item" style="padding: 10px 0; font-size: 0.8rem; border-radius: 0; cursor: pointer;" onclick="switchProfileModalTab('seasons')">EPISODES</div>
+                <div id="profileTab-overview" class="nav-item active" style="padding: 10px 0; font-size: 0.8rem; border-radius: 0; cursor: pointer; height: auto;" onclick="switchProfileModalTab('overview')">INFO</div>
+                <div id="profileTab-cast" class="nav-item" style="padding: 10px 0; font-size: 0.8rem; border-radius: 0; cursor: pointer; height: auto;" onclick="switchProfileModalTab('cast')">CAST & CREW</div>
+                <div id="profileTab-seasons" class="nav-item" style="padding: 10px 0; font-size: 0.8rem; border-radius: 0; cursor: pointer; height: auto;" onclick="switchProfileModalTab('seasons')">EPISODES</div>
             </div>
             
             <div class="modal-body-scroll">
@@ -406,8 +406,8 @@
 
     <!-- Main Workspace Application Engine Viewports -->
     <main id="mainAppViewport">
-        <!-- Cinema Deck Active Viewport -->
-        <div id="cinemaTabPanel" class="tab-content active">
+        <!-- Core Viewport Tab 1: Cinema Matrix -->
+        <div id="mediaTab" class="tab-content active">
             <div class="control-filter-deck">
                 <select id="sortEngine" class="card-select" onchange="renderMediaGrid()">
                     <option value="name">Sort: Name</option>
@@ -444,8 +444,8 @@
             <div id="cinemaDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- Secondary Sub-Tab Viewports -->
-        <div id="goodreadsTabPanel" class="tab-content" style="padding: 0;">
+        <!-- Core Viewport Tab 2: Goodreads Library Matrix -->
+        <div id="goodreadsTab" class="tab-content" style="padding: 0;">
             <div class="control-filter-deck">
                 <select id="bookSortEngine" class="card-select" onchange="renderBookGrid()">
                     <option value="name">Sort: Name</option>
@@ -468,8 +468,8 @@
             <div id="bookDatabaseGrid" class="cinema-grid"></div>
         </div>
         
-        <!-- Core Settings Management Framework Panel -->
-        <div id="settingsTabPanel" class="tab-content" style="padding: 20px;">
+        <!-- Core Viewport Tab 3: System Settings Panel -->
+        <div id="settingsTab" class="tab-content" style="padding: 20px;">
             <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 16px; max-width: 500px; margin: 0 auto;">
                 <h3 style="color: var(--text-color); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">System Matrix Settings</h3>
                 <div class="form-group">
@@ -497,9 +497,9 @@
 
     <!-- Navigation Command Bar Frame Deck -->
     <nav class="bottom-nav">
-        <div id="navBtn-cinemaTabPanel" class="nav-item active" onclick="switchTab('cinemaTabPanel', this)">🎬 Media</div>
-        <div id="navBtn-goodreadsTabPanel" class="nav-item" onclick="switchTab('goodreadsTabPanel', this)">📚 Goodreads</div>
-        <div id="navBtn-settingsTabPanel" class="nav-item" onclick="switchTab('settingsTabPanel', this)">⚙️ Settings</div>
+        <div id="navBtn-mediaTab" class="nav-item active" onclick="switchTab('mediaTab', this)">🎬 Media</div>
+        <div id="navBtn-goodreadsTab" class="nav-item" onclick="switchTab('goodreadsTab', this)">📚 Goodreads</div>
+        <div id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab', this)">⚙️ Settings</div>
     </nav>
 
 <!-- ==========================================
