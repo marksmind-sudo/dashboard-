@@ -225,7 +225,7 @@
      END OF SECTION 1: LAYOUT STRUCTURE & DESIGN SYSTEMS
      ========================================== -->
 
-            <!-- ==========================================
+ <!-- ==========================================
      START OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
 <body>
@@ -296,7 +296,7 @@
         </div>
     </div>
 
-    <!-- Media Detail Profiles Dynamic Canvas Pop-Up Panel -->
+    <!-- Immersive Tabbed Profile Modal Engine -->
     <div id="mediaDetailModal" class="modal-canvas" onclick="if(event.target === this) closeProfileModal()">
         <div class="modal-box">
             <div class="modal-hero">
@@ -305,43 +305,71 @@
                 <div id="modalTitle" class="modal-title">Media Title</div>
             </div>
             
+            <!-- TV Tracker Style Tab Navigation Bar -->
+            <div style="display: flex; background: rgba(0,0,0,0.4); border-bottom: 1px solid var(--border-color);">
+                <button id="profileTab-overview" class="nav-item active" style="padding: 10px 0; font-size: 0.8rem; height: auto; box-shadow: none;" onclick="switchProfileModalTab('overview')">INFO</button>
+                <button id="profileTab-cast" class="nav-item" style="padding: 10px 0; font-size: 0.8rem; height: auto; box-shadow: none;" onclick="switchProfileModalTab('cast')">CAST & CREW</button>
+                <button id="profileTab-seasons" class="nav-item" style="padding: 10px 0; font-size: 0.8rem; height: auto; box-shadow: none;" onclick="switchProfileModalTab('seasons')">EPISODES</button>
+            </div>
+            
             <div class="modal-body-scroll">
-                <div id="modalDescription" class="modal-desc-text">Profile overview parameters...</div>
                 
-                <div id="modalCreatorLine" class="modal-meta-line"><b>Director:</b> -</div>
-                <div id="modalActorLine" class="modal-meta-line"><b>Lead Cast:</b> -</div>
-                <div id="modalReleaseLine" class="modal-meta-line"><b>Release Date:</b> -</div>
-                <div id="modalNextAirLine" class="modal-meta-line" style="color: #00ffcc;"></div>
-                <div id="modalAccessLine" class="modal-meta-line" style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;"><b>Source:</b> -</div>
-
-                <div class="modal-stars-rating-row">
-                    <label class="modal-meta-line" style="font-weight: bold;">Personal Rating:</label>
-                    <div id="modalInteractiveStarsDeck" class="modal-stars-deck"></div>
-                </div>
-
-                <div class="form-group" style="margin-top: 4px;">
-                    <label>Assigned Tracking Folder</label>
-                    <select id="modalFolderSelect" class="card-select" onchange="const item = mediaDatabase.find(m => m.id === activeProfileModalId); if(item){ item.status = this.value; localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); pushDatabaseToCloud(); }">
-                        <option value="all">Main Collection</option>
-                        <option value="watching">Currently Watching</option>
-                        <option value="waiting">Waiting for Season</option>
-                        <option value="history">Completed Log</option>
-                        <option value="find">Wishlist / Discover</option>
-                    </select>
-                </div>
-                
-                <!-- Dynamic Television Interactive Deck Panels -->
-                <div id="modalTvSection" style="display: none; margin-top: 4px;">
-                    <label class="modal-meta-line" style="font-weight: bold; display: block; margin-bottom: 6px;">Television Season Logrun</label>
-                    <div id="modalTvDeck" class="modal-tv-action-deck">
-                        <div class="modal-sub-selector">
-                            <select id="modalSeasonSelector" class="card-select" onchange="handleSeasonChangeDropdown()"></select>
-                        </div>
-                        <button class="macro-season-btn" onclick="completeActiveSeasonBatch()">Complete Season</button>
-                        <button class="macro-season-clear-btn" onclick="clearActiveSeasonBatch()">Reset</button>
+                <!-- TAB 1: OVERVIEW & METRICS -->
+                <div id="profilePanel-overview" style="display: flex; flex-direction: column; gap: 14px;">
+                    <div id="modalDescription" class="modal-desc-text">Profile overview parameters...</div>
+                    
+                    <!-- Advanced Analytics Metrics Blocks -->
+                    <div id="modalMetricsShelf" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem;">
+                        <div id="metric-runtime">⏱️ <b>Runtime:</b> -</div>
+                        <div id="metric-total-eps">🎬 <b>Total Episodes:</b> -</div>
+                        <div id="metric-left-to-see" style="grid-column: span 2; color: var(--accent-color);">👉 <b>Episodes Left to See:</b> -</div>
                     </div>
-                    <div id="modalEpisodesContainer" class="modal-episodes-deck"></div>
+
+                    <div id="modalCreatorLine" class="modal-meta-line"><b>Director:</b> -</div>
+                    <div id="modalReleaseLine" class="modal-meta-line"><b>Release Date:</b> -</div>
+                    <div id="modalNextAirLine" class="modal-meta-line" style="color: #00ffcc;"></div>
+                    <div id="modalAccessLine" class="modal-meta-line" style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;"><b>Source:</b> -</div>
+
+                    <div class="modal-stars-rating-row">
+                        <label class="modal-meta-line" style="font-weight: bold;">Personal Rating:</label>
+                        <div id="modalInteractiveStarsDeck" class="modal-stars-deck"></div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 4px;">
+                        <label>Assigned Tracking Folder</label>
+                        <select id="modalFolderSelect" class="card-select" onchange="const item = mediaDatabase.find(m => m.id === activeProfileModalId); if(item){ item.status = this.value; localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); pushDatabaseToCloud(); }">
+                            <option value="all">Main Collection</option>
+                            <option value="watching">Currently Watching</option>
+                            <option value="waiting">Waiting for Season</option>
+                            <option value="history">Completed Log</option>
+                            <option value="find">Wishlist / Discover</option>
+                        </select>
+                    </div>
                 </div>
+
+                <!-- TAB 2: DETAILED CAST ROW (TV Tracker Style Horizontal Scroll) -->
+                <div id="profilePanel-cast" style="display: none; flex-direction: column; gap: 12px;">
+                    <label class="modal-meta-line" style="font-weight: bold;">Main Cast Profile Array</label>
+                    <div id="modalHorizontalCastWrapper" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; width: 100%; scrollbar-width: thin;">
+                        <!-- Dynamic Cast Cards stream into here -->
+                    </div>
+                </div>
+                
+                <!-- TAB 3: TELEVISION RUNLOGS -->
+                <div id="profilePanel-seasons" style="display: none; flex-direction: column; gap: 4px;">
+                    <div id="modalTvSection" style="display: block; margin-top: 4px;">
+                        <label class="modal-meta-line" style="font-weight: bold; display: block; margin-bottom: 6px;">Television Season Logrun</label>
+                        <div id="modalTvDeck" class="modal-tv-action-deck">
+                            <div class="modal-sub-selector">
+                                <select id="modalSeasonSelector" class="card-select" onchange="handleSeasonChangeDropdown()"></select>
+                            </div>
+                            <button class="macro-season-btn" onclick="completeActiveSeasonBatch()">Complete Season</button>
+                            <button class="macro-season-clear-btn" onclick="clearActiveSeasonBatch()">Reset</button>
+                        </div>
+                        <div id="modalEpisodesContainer" class="modal-episodes-deck"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -373,10 +401,9 @@
                         <button id="cinema-sub-all" class="sub-btn active" onclick="filterCategory('cinema', 'all')">Main Collection</button>
                         <button id="cinema-sub-favorites" class="sub-btn" onclick="filterCategory('cinema', 'favorites')">❤️ Favorites</button>
                         <button id="cinema-sub-watching" class="sub-btn" onclick="filterCategory('cinema', 'watching')">🎬 Currently Watching</button>
-                       <button id="cinema-sub-waiting" class="sub-btn" onclick="filterCategory('cinema', 'waiting')">⏳ Waiting for Season</button>
-                       <button id="cinema-sub-justwatched" class="sub-btn" onclick="filterCategory('cinema', 'justwatched')">⚡ Just Watched</button>
-                      <button id="cinema-sub-find" class="sub-btn" onclick="filterCategory('cinema', 'find')">🔍 Wishlist / Discover</button>
-                     
+                        <button id="cinema-sub-waiting" class="sub-btn" onclick="filterCategory('cinema', 'waiting')">⏳ Waiting for Season</button>
+                        <button id="cinema-sub-justwatched" class="sub-btn" onclick="filterCategory('cinema', 'justwatched')">⚡ Just Watched</button>
+                        <button id="cinema-sub-find" class="sub-btn" onclick="filterCategory('cinema', 'find')">🔍 Wishlist / Discover</button>
                     </div>
                     <button id="cinemaOverflowTrigger" class="overflow-trigger-btn" onclick="toggleOverflowDropdownMenu('cinema', event)">...</button>
                     <div id="cinemaOverflowPanel" class="overflow-dropdown-panel"></div>
@@ -448,12 +475,73 @@
 <!-- ==========================================
      END OF SECTION 2: DOM APPLICATION FRAMEWORK & CORE INTERFACES
      ========================================== -->
- 
+
 
   <!-- ==========================================================
          START OF SECTION 3: JAVASCRIPT CORE DATA ENGINE
          ========================================================== -->
     <script>
+                 // --- TV TRACKER CORE EXTENSION HANDLERS ---
+        function switchProfileModalTab(tabId) {
+            // Cycle active style states on sub-tabs
+            document.querySelectorAll('#mediaDetailModal .nav-item').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`profileTab-${tabId}`).classList.add('active');
+            
+            // Toggle panel displays
+            document.getElementById('profilePanel-overview').style.display = tabId === 'overview' ? 'flex' : 'none';
+            document.getElementById('profilePanel-cast').style.display = tabId === 'cast' ? 'flex' : 'none';
+            document.getElementById('profilePanel-seasons').style.display = tabId === 'seasons' ? 'flex' : 'none';
+        }
+
+        // Expanded function hook to update advanced metrics inside updateProfileModalState
+        function calculateAdvancedTrackerStatistics(item) {
+            const runtimeField = document.getElementById('metric-runtime');
+            const totalEpsField = document.getElementById('metric-total-eps');
+            const leftToSeeField = document.getElementById('metric-left-to-see');
+            const castContainer = document.getElementById('modalHorizontalCastWrapper');
+
+            // Default display fallback reset
+            runtimeField.innerHTML = `⏱️ <b>Runtime:</b> ${item.type === 'Movie' ? 'Approx. 2 hours' : '45 mins per ep'}`;
+            totalEpsField.innerHTML = `🎬 <b>Total Episodes:</b> N/A`;
+            leftToSeeField.innerHTML = `👉 <b>Episodes Left to See:</b> --`;
+            castContainer.innerHTML = '';
+
+            // Calculate television metrics elements
+            if (item.type === 'TV' && item.seasons) {
+                let totalEpisodesCount = 0;
+                let watchedEpisodesCount = 0;
+
+                item.seasons.forEach(s => {
+                    if (s.episodes) {
+                        s.episodes.forEach(e => {
+                            totalEpisodesCount++;
+                            if (e.watched) watchedEpisodesCount++;
+                        });
+                    }
+                });
+
+                let leftToSee = totalEpisodesCount - watchedEpisodesCount;
+                totalEpsField.innerHTML = `🎬 <b>Total Episodes:</b> ${totalEpisodesCount} Aired`;
+                leftToSeeField.innerHTML = `👉 <b>Episodes Left to See:</b> ${leftToSee} episodes left`;
+            }
+
+            // Build out TV Tracker style horizontal cast profile avatars
+            if (item.actor && item.actor !== "N/A" && item.actor !== "Loading...") {
+                let actorsArray = item.actor.split(', ');
+                actorsArray.forEach(actorName => {
+                    const actorCard = document.createElement('div');
+                    actorCard.style.cssText = "display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 8px; border-radius: 6px; min-width: 90px; max-width: 90px; flex-shrink: 0; font-size: 0.72rem; color: #fff;";
+                    actorCard.innerHTML = `
+                        <div style="width: 50px; height: 50px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 6px; font-size: 1.2rem; border: 1px solid var(--border-color);">👤</div>
+                        <div style="font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;" title="${actorName}">${actorName}</div>
+                    `;
+                    castContainer.appendChild(actorCard);
+                });
+            } else {
+                castContainer.innerHTML = `<div style="font-size: 0.78rem; opacity: 0.5; padding: 10px;">No detailed cast array cached for this node.</div>`;
+            }
+        }
+
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db')) || [];
 
         let currentCinemaCategory = 'all';
@@ -972,6 +1060,18 @@
             } else {
                 tvSection.style.display = 'none';
             }
+                             selector.value = item.lastViewedSeason;
+            }
+            loadSelectedSeasonDeck();
+        } else {
+            tvSection.style.display = 'none';
+        }
+        
+        // RIGHT HERE AT THE VERY BOTTOM OF THE FUNCTION, ADD this call line:
+        calculateAdvancedTrackerStatistics(item);
+        switchProfileModalTab('overview'); // Force reset tab focus back to main details page
+    }
+
         }
 
         function handleSeasonChangeDropdown() {
