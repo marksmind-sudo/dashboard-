@@ -297,13 +297,18 @@
 
         // --- SUB SECTION D: MODAL CONTROLLER MATRIX ---
         // Location: Mid-way down the script tag (Line ~502)
+               // --- SUB SECTION D: MODAL CONTROLLER MATRIX ---
         function openModal(id) {
             const item = mediaDatabase.find(m => m.id === id);
             if (!item) return;
             activeItemId = id;
 
-            document.getElementById('modalTitle').innerText = item.name;
-            document.getElementById('modalMeta').innerText = `Type: ${item.type} | Genre: ${item.genre}`;
+            // Display the title along with the release year if available
+            document.getElementById('modalTitle').innerText = item.year ? `${item.name} (${item.year})` : item.name;
+            
+            // Build out a richer meta display including the summary overview below it
+            const overviewText = item.overview ? `<br><br><span style="font-size:0.85rem; opacity:0.9; display:block; line-height:1.4;">${item.overview}</span>` : '';
+            document.getElementById('modalMeta').innerHTML = `Type: ${item.type} | Genre: ${item.genre}${overviewText}`;
             
             const select = document.getElementById('modalFolderSelect');
             select.innerHTML = `
@@ -315,6 +320,7 @@
 
             document.getElementById('detailModal').classList.add('active');
         }
+
 
         function closeModal() {
             document.getElementById('detailModal').classList.remove('active');
@@ -486,76 +492,108 @@
 
         // --- SYNCHRONIZER ELEMENT 3: HISTORY DATABASE DATA PACKS PULLER ---
         // Location: Located directly between token exchanger and boot matrix listeners (Line ~676)
-                 window.pullTraktUserHistoryStream = function() {
-            // Check if the token variable actually holds data
+        
+        window.pullTraktUserHistoryStream = async function() {
             if (!traktAccessToken) {
                 return alert("Sync Denied: Your browser variable 'traktAccessToken' is currently null or empty. Please re-authorize, Sweetie!");
             }
 
             const clientId = localStorage.getItem('trakt_client_id');
-            document.getElementById('traktStatusLog').innerText = "Status: Syncing cloud history matrix...";
+            const statusLog = document.getElementById('traktStatusLog');
+            statusLog.innerText = "Status: Syncing cloud history matrix...";
+            statusLog.style.color = "#ffcc00";
 
-            fetch('https://api.trakt.tv/sync/history?limit=50', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${traktAccessToken}`,
-                    'trakt-api-version': '2',
-                    'trakt-api-key': clientId
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    // Fetch the exact status code to diagnose the server rejection
-                    throw new Error("Server rejected request with Status Code: " + response.status);
-                }
-                return response.json();
-            })
-            .then(historyData => {
+            try {
+                // 1. Fetch the raw history stream
+                const response = await fetch('https://api.trakt.tv/sync/history?limit=20', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${traktAccessToken}`,
+                        'trakt-api-version': '2',
+                        'trakt-api-key': clientId
+                    }
+                });
+
+                if (!response.ok) throw new Error("Server rejected request with Status Code: " + response.status);
+                const historyData = await response.json();
+
                 if (!historyData || historyData.length === 0) {
-                    document.getElementById('traktStatusLog').innerText = "Status: Connected! (Cloud Empty)";
+                    statusLog.innerText = "Status: Connected! (Cloud Empty)";
                     return;
                 }
 
-                historyData.forEach(record => {
+                // 2. Loop through history and fetch deep metadata for new titles
+                for (const record of historyData) {
                     let itemName = "";
                     let itemType = "";
-                    let itemGenre = "Sci-Fi";
+                    let fetchUrl = "";
 
                     if (record.type === 'movie' && record.movie) {
                         itemName = record.movie.title;
                         itemType = "Movie";
+                        fetchUrl = `https://api.trakt.tv/movies/${record.movie.ids.slug}?extended=full`;
                     } else if (record.type === 'episode' && record.show) {
                         itemName = record.show.title;
                         itemType = "TV";
+                        fetchUrl = `https://api.trakt.tv/shows/${record.show.ids.slug}?extended=full`;
                     }
 
+                    // Only fetch if it's a title we don't already have in our local grid
                     if (itemName && !mediaDatabase.some(m => m.name === itemName)) {
+                        let genres = ["Sci-Fi"]; // fallback
+                        let overview = "No matrix description available.";
+                        let year = "";
+
+                        try {
+                            const metaResponse = await fetch(fetchUrl, {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'trakt-api-version': '2',
+                                    'trakt-api-key': clientId
+                                }
+                            });
+                            
+                            if (metaResponse.ok) {
+                                const metaData = await metaResponse.json();
+                                if (metaData.genres && metaData.genres.length > 0) {
+                                    // Capitalize first letters of genres nicely
+                                    genres = metaData.genres.map(g => g.charAt(0).toUpperCase() + g.slice(1));
+                                }
+                                if (metaData.overview) overview = metaData.overview;
+                                if (metaData.year) year = metaData.year;
+                            }
+                        } catch (metaErr) {
+                            console.error("Failed fetching deep metadata for " + itemName, metaErr);
+                        }
+
                         mediaDatabase.push({
                             id: Date.now() + Math.random(),
                             name: itemName,
                             type: itemType,
-                            genre: itemGenre,
+                            genre: genres.join(', '),
+                            year: year,
+                            overview: overview,
                             status: "completed"
                         });
                     }
-                });
+                }
 
                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                 renderGrid();
                 
-                document.getElementById('traktStatusLog').innerText = "Status: Connected! Sync Complete.";
-                document.getElementById('traktStatusLog').style.color = "#00ffcc";
-            })
-            .catch(err => {
+                statusLog.innerText = "Status: Connected! Deep Sync Complete.";
+                statusLog.style.color = "#00ffcc";
+
+            } catch (err) {
                 console.error(err);
-                // Trigger a direct alert window showing the exact system error details
                 alert("Diagnostic Log Alert:\n" + err.message);
-                
-                document.getElementById('traktStatusLog').innerText = "Status: Cloud Sync Interrupted.";
-                document.getElementById('traktStatusLog').style.color = "#ff007f";
-            });
+                statusLog.innerText = "Status: Cloud Sync Interrupted.";
+                statusLog.style.color = "#ff007f";
+            }
         };
+
 
 
         // --- SYNCHRONIZER ELEMENT 4: AUTOMATED LOCAL CACHE RE-BOOT ENGINE ---
