@@ -330,17 +330,19 @@
             }
         }
 
-        // --- SUB SECTION E: GRAPHICAL CARD STREAM RENDERER ---
+                // --- SUB SECTION E: GRAPHICAL CARD STREAM RENDERER ---
         // Location: Directly above DOMContentLoaded listener (Line ~539)
         function renderGrid() {
             const grid = document.getElementById('cinemaDatabaseGrid');
             if (!grid) return;
             grid.innerHTML = '';
 
-            const searchVal = document.getElementById('searchBar').value.toLowerCase();
+            // SAFE GUARD: Read the search input safely, defaulting to an empty string if it's unreadable
+            const searchInput = document.getElementById('searchBar');
+            const searchVal = (searchInput && searchInput.value) ? searchInput.value.toLowerCase() : '';
 
             let list = mediaDatabase.filter(m => {
-                const matchesSearch = m.name.toLowerCase().includes(searchVal);
+                const matchesSearch = m.name && m.name.toLowerCase().includes(searchVal);
                 const matchesFilter = (currentFilter === 'all' || m.status === currentFilter);
                 return matchesSearch && matchesFilter;
             });
@@ -364,6 +366,7 @@
                 grid.appendChild(card);
             });
         }
+
 
         // --- SUB SECTION F: SYSTEM LAUNCH BOOT MATRIX ---
         // Location: Base level runtime configuration container (Line ~576)
