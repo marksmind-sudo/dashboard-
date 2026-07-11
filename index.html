@@ -483,9 +483,10 @@
 
         // --- SYNCHRONIZER ELEMENT 3: HISTORY DATABASE DATA PACKS PULLER ---
         // Location: Located directly between token exchanger and boot matrix listeners (Line ~676)
-        window.pullTraktUserHistoryStream = function() {
+                 window.pullTraktUserHistoryStream = function() {
+            // Check if the token variable actually holds data
             if (!traktAccessToken) {
-                return alert("Your vault isn't authorized with Trakt yet, Sweetie!");
+                return alert("Sync Denied: Your browser variable 'traktAccessToken' is currently null or empty. Please re-authorize, Sweetie!");
             }
 
             const clientId = localStorage.getItem('trakt_client_id');
@@ -501,7 +502,10 @@
                 }
             })
             .then(response => {
-                if (!response.ok) throw new Error("Trakt cloud synchronization request rejected.");
+                if (!response.ok) {
+                    // Fetch the exact status code to diagnose the server rejection
+                    throw new Error("Server rejected request with Status Code: " + response.status);
+                }
                 return response.json();
             })
             .then(historyData => {
@@ -542,10 +546,14 @@
             })
             .catch(err => {
                 console.error(err);
+                // Trigger a direct alert window showing the exact system error details
+                alert("Diagnostic Log Alert:\n" + err.message);
+                
                 document.getElementById('traktStatusLog').innerText = "Status: Cloud Sync Interrupted.";
                 document.getElementById('traktStatusLog').style.color = "#ff007f";
             });
         };
+
 
         // --- SYNCHRONIZER ELEMENT 4: AUTOMATED LOCAL CACHE RE-BOOT ENGINE ---
         // Location: Absolute baseline listener wrapper (Line ~742)
