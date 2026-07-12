@@ -238,6 +238,16 @@
                     <input type="text" id="traktPinInput" placeholder="Enter Authorization PIN..." style="margin-top: 6px;">
                     <button class="btn" onclick="window.exchangeTraktPinForToken()" style="margin-top: 6px; background: #fff; color: #000;">Authorize Vault</button>
                 </div>
+                <!-- TMDB VISUAL ENGINE KEY DECK -->
+                <div class="form-group" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
+                    <label>TMDB (Movie Database) API Key</label>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="password" id="tmdbApiKeyInput" placeholder="Paste TMDB API Key here..." style="flex-grow: 1;">
+                        <label style="font-size: 0.75rem; display: flex; align-items: center; gap: 4px; white-space: nowrap; cursor: pointer; color: #8888aa;">
+                            <input type="checkbox" onchange="document.getElementById('tmdbApiKeyInput').type = this.checked ? 'text' : 'password'"> Show
+                        </label>
+                    </div>
+                </div>
 
                 <!-- STREAM SYNC OPERATIONS PANEL -->
                 <button class="btn" onclick="window.pullTraktUserHistoryStream()" style="background: #00ffcc; color: #000; margin-top: 4px;">🔄 Sync Watch History Stream</button>
@@ -403,11 +413,17 @@
                 return;
             }
 
-            list.forEach(item => {
+                       list.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'media-card';
+                
+                // If the item has a TMDB poster path saved, use it. Otherwise, use the fallback emoji.
+                const posterHtml = item.posterPath 
+                    ? `<img class="poster-img" src="https://image.tmdb.org/t/p/w500${item.posterPath}" alt="${item.name}" onclick="openModal(${item.id})">`
+                    : `<div class="poster-frame" onclick="openModal(${item.id})">🎬</div>`;
+
                 card.innerHTML = `
-                    <div class="poster-frame" onclick="openModal(${item.id})">🎬</div>
+                    ${posterHtml}
                     <div class="card-details-pane">
                         <div class="media-title" onclick="openModal(${item.id})" style="cursor:pointer;">${item.name}</div>
                         <div class="media-meta">${item.genre} (${item.type})</div>
@@ -416,6 +432,7 @@
                 `;
                 grid.appendChild(card);
             });
+
         }   
 
         // --- SUB SECTION F: SYSTEM LAUNCH BOOT MATRIX ---
@@ -527,7 +544,7 @@
             reader.readAsText(file);
         }
 
-        // 2. Filter Rail Switcher
+             // 2. Filter Rail Switcher
         function filterBookCategory(catId) {
             currentBookFilter = catId;
             document.querySelectorAll('#goodreadsTab .sub-nav .sub-btn').forEach(btn => btn.classList.remove('active'));
@@ -538,7 +555,7 @@
             renderBookGrid();
         }
 
-        // 3. StoryGraph-Inspired Renderer
+        // 3. StoryGraph-Inspired Renderer (Upgraded with Open Library Cover Matrix)
         function renderBookGrid() {
             const grid = document.getElementById('bookLibraryDatabaseGrid');
             if (!grid) return;
@@ -557,25 +574,30 @@
 
             list.forEach(book => {
                 const isAudio = book.format.includes('audio');
-                const icon = isAudio ? '🎧' : '📖';
-                const progressWidth = book.status === 'read' ? '100%' : book.status === 'currently-reading' ? '45%' : '0%';
+                const fallbackIcon = isAudio ? '🎧' : '📖';
+                
+                // Encode the title text string safely so the URL doesn't shatter on spaces or special characters
+                const encodedTitle = encodeURIComponent(book.title);
 
                 const card = document.createElement('div');
                 card.className = 'media-card';
-                               card.innerHTML = `
-                    <div class="poster-frame" onclick="openModal(${book.id}, 'book')" style="font-size: 2.5rem; background: rgba(0,0,0,0.3); flex-grow: 1; cursor: pointer;">${icon}</div>
+                card.innerHTML = `
+                    <div class="poster-frame" onclick="openModal(${book.id}, 'book')" style="background: rgba(0,0,0,0.3); flex-grow: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; aspect-ratio: 2/3; overflow: hidden;">
+                        <img class="poster-img" src="https://covers.openlibrary.org/b/title/${encodedTitle}-M.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="width:100%; height:100%; object-fit:cover;">
+                        <span style="display:none; font-size:2.5rem;">${fallbackIcon}</span>
+                    </div>
                     <div class="card-details-pane">
                         <div class="media-title" onclick="openModal(${book.id}, 'book')" style="cursor: pointer;">${book.title}</div>
                         <div class="media-meta" style="text-transform: capitalize;">By ${book.author} | ${book.format}</div>
                         <div class="progress-container" style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px;">
-                            <div class="progress-bar" style="width: ${progressWidth}; background: var(--accent-color); border-radius: 4px;"></div>
+                            <div class="progress-bar" style="width: ${book.status === 'read' ? '100%' : '45%'}; background: var(--accent-color); border-radius: 4px;"></div>
                         </div>
                     </div>
                 `;
-
                 grid.appendChild(card);
             });
         }
+
         // ==========================================
         // TRAKT API CLOUD SYNCHRONIZATION MATRIX
         // ==========================================
@@ -779,24 +801,22 @@
             }
         };
 
-
-
-        // --- SYNCHRONIZER ELEMENT 4: AUTOMATED LOCAL CACHE RE-BOOT ENGINE ---
-        // Location: Absolute baseline listener wrapper (Line ~742)
+               // --- SYNCHRONIZER ELEMENT 4: AUTOMATED LOCAL CACHE RE-BOOT ENGINE ---
         window.addEventListener('load', () => {
             const storedId = localStorage.getItem('trakt_client_id');
             const storedSecret = localStorage.getItem('trakt_client_secret');
             const storedToken = localStorage.getItem('trakt_access_token');
-            // Load book database if it exists
-            const localBooks = localStorage.getItem('vault_book_db');
-            if (localBooks) {
-                bookDatabase = JSON.parse(localBooks);
-                renderBookGrid();
-            }
-            
+            const storedTmdb = localStorage.getItem('tmdb_api_key'); // 👈 Grab TMDB
+
             if (storedId) document.getElementById('traktClientIdInput').value = storedId;
             if (storedSecret) document.getElementById('traktClientSecretInput').value = storedSecret;
+            if (storedTmdb) document.getElementById('tmdbApiKeyInput').value = storedTmdb; // 👈 Populate input
             
+            // Save the TMDB key whenever the user changes focus or tabs away
+            document.getElementById('tmdbApiKeyInput').addEventListener('change', (e) => {
+                localStorage.setItem('tmdb_api_key', e.target.value.trim());
+            });
+
             if (storedToken) {
                 traktAccessToken = storedToken;
                 traktRefreshToken = localStorage.getItem('trakt_refresh_token');
@@ -804,6 +824,7 @@
                 document.getElementById('traktStatusLog').style.color = "#00ffcc";
             }
         });
+
     </script>
 </body>
 </html>
