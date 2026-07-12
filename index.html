@@ -171,10 +171,36 @@
             <div id="cinemaDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- --- VIEWPORT TAB 2: GOODREADS MATRIX STANDBY --- -->
+               <!-- --- VIEWPORT TAB 2: BOOK LIBRARY DATABASE GRID --- -->
         <div id="goodreadsTab" class="tab-content">
-            <div style="padding: 30px; text-align: center; opacity: 0.6;">📚 Library Database Standby Blueprint Loaded.</div>
+            <!-- FILE UPLOAD CONTROL DECK -->
+            <div class="control-filter-deck" style="justify-content: space-between; background: rgba(0,0,0,0.2); padding: 12px; margin: 0 15px 15px 15px; border-radius: 6px; border: 1px dashed var(--border-color);">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 0.85rem; font-weight: bold;">Sync StoryGraph History</span>
+                    <span style="font-size: 0.7rem; opacity: 0.7;">Upload your exported CSV file to populate the matrix.</span>
+                </div>
+                <input type="file" id="storygraphCsvFile" accept=".csv" style="display: none;" onchange="importStoryGraphData(this)">
+                <button class="sub-btn" onclick="document.getElementById('storygraphCsvFile').click()" style="background: var(--accent-color); color: #000; font-weight: bold; border-radius: 4px;">📥 Select CSV File</button>
+            </div>
+
+            <!-- LIBRARY FILTER RAILS -->
+            <div class="sub-nav-wrapper">
+                <div class="sub-nav">
+                    <button id="book-sub-all" class="sub-btn active" onclick="filterBookCategory('all')">All Books</button>
+                    <button id="book-sub-reading" class="sub-btn" onclick="filterBookCategory('currently-reading')">📖 Reading</button>
+                    <button id="book-sub-audio" class="sub-btn" onclick="filterBookCategory('audiobook')">🎧 Audiobooks</button>
+                    <button id="book-sub-read" class="sub-btn" onclick="filterBookCategory('read')">✅ Completed</button>
+                </div>
+            </div>
+
+            <!-- STORYGRAPH STYLE RESPONSIVE BOOK GRID -->
+            <div id="bookLibraryDatabaseGrid" class="cinema-grid">
+                <div style="text-align:center; padding:40px; opacity:0.5; grid-column:1/-1;">
+                    📚 Book vault stream empty.<br><span style="font-size:0.8rem;">Upload your StoryGraph data sheet above to unlock your tracking logs, Sweetie!</span>
+                </div>
+            </div>
         </div>
+
 
         <!-- --- VIEWPORT TAB 3: SYSTEM SETTINGS RACK --- -->
         <div id="settingsTab" class="tab-content">
@@ -222,14 +248,15 @@
         </div>
     </main>
 
-    <!-- ========================================== -->
+   <    <!-- ========================================== -->
     <!-- SECTION 8: PRIMARY COMMAND DOCK BAR BAR    -->
     <!-- ========================================== -->
     <nav class="bottom-nav">
         <div id="navBtn-mediaTab" class="nav-item active" onclick="switchTab('mediaTab')">🎬 Media</div>
-        <div id="navBtn-goodreadsTab" class="nav-item" onclick="switchTab('goodreadsTab')">📚 Goodreads</div>
+        <div id="navBtn-goodreadsTab" class="nav-item" onclick="switchTab('goodreadsTab')">📚 Book Library</div>
         <div id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab')">⚙️ Settings</div>
     </nav>
+
 
 
     <!-- ========================================== -->
