@@ -322,31 +322,49 @@
             renderGrid();
         }
 
-        // --- SUB SECTION D: MODAL CONTROLLER MATRIX ---
-        // Location: Mid-way down the script tag (Line ~502)
-               // --- SUB SECTION D: MODAL CONTROLLER MATRIX ---
-        function openModal(id) {
-            const item = mediaDatabase.find(m => m.id === id);
-            if (!item) return;
+              // --- SUB SECTION D: MODAL CONTROLLER MATRIX ---
+        function openModal(id, itemType = 'media') {
             activeItemId = id;
-
-            // Display the title along with the release year if available
-            document.getElementById('modalTitle').innerText = item.year ? `${item.name} (${item.year})` : item.name;
-            
-            // Build out a richer meta display including the summary overview below it
-            const overviewText = item.overview ? `<br><br><span style="font-size:0.85rem; opacity:0.9; display:block; line-height:1.4;">${item.overview}</span>` : '';
-            document.getElementById('modalMeta').innerHTML = `Type: ${item.type} | Genre: ${item.genre}${overviewText}`;
-            
             const select = document.getElementById('modalFolderSelect');
-            select.innerHTML = `
-                <option value="all" ${item.status === 'all' ? 'selected' : ''}>Main Collection</option>
-                <option value="watching" ${item.status === 'watching' ? 'selected' : ''}>Currently Watching</option>
-                <option value="waiting" ${item.status === 'waiting' ? 'selected' : ''}>Waiting for Season</option>
-                <option value="completed" ${item.status === 'completed' ? 'selected' : ''}>Completed Log</option>
-            `;
+            
+            if (itemType === 'book') {
+                const book = bookDatabase.find(b => b.id === id);
+                if (!book) return;
+
+                document.getElementById('modalTitle').innerText = book.title;
+                document.getElementById('modalMeta').innerHTML = `
+                    <strong>Author:</strong> ${book.author}<br>
+                    <strong>Format:</strong> ${book.format.toUpperCase()}<br>
+                    <strong>Status:</strong> ${book.status.replace('-', ' ').toUpperCase()}
+                `;
+                
+                // Simple status folders for books
+                select.innerHTML = `
+                    <option value="to-read" ${book.status === 'to-read' ? 'selected' : ''}>To Read</option>
+                    <option value="currently-reading" ${book.status === 'currently-reading' ? 'selected' : ''}>Currently Reading</option>
+                    <option value="read" ${book.status === 'read' ? 'selected' : ''}>Completed Log</option>
+                `;
+            } else {
+                // Media (Movies/TV) path
+                const item = mediaDatabase.find(m => m.id === id);
+                if (!item) return;
+
+                document.getElementById('modalTitle').innerText = item.year ? `${item.name} (${item.year})` : item.name;
+                
+                const overviewText = item.overview ? `<br><br><span style="font-size:0.85rem; opacity:0.9; display:block; line-height:1.4;">${item.overview}</span>` : '';
+                document.getElementById('modalMeta').innerHTML = `Type: ${item.type} | Genre: ${item.genre}${overviewText}`;
+                
+                select.innerHTML = `
+                    <option value="all" ${item.status === 'all' ? 'selected' : ''}>Main Collection</option>
+                    <option value="watching" ${item.status === 'watching' ? 'selected' : ''}>Currently Watching</option>
+                    <option value="waiting" ${item.status === 'waiting' ? 'selected' : ''}>Waiting for Season</option>
+                    <option value="completed" ${item.status === 'completed' ? 'selected' : ''}>Completed Log</option>
+                `;
+            }
 
             document.getElementById('detailModal').classList.add('active');
         }
+
 
 
         function closeModal() {
@@ -422,52 +440,79 @@
         let bookDatabase = [];
         let currentBookFilter = 'all';
 
-        // 1. The StoryGraph CSV Parser Engine
+                // 1. The StoryGraph CSV Parser Engine
         function importStoryGraphData(input) {
             const file = input.files[0];
             if (!file) return;
 
-            const statusLog = document.getElementById('traktStatusLog'); // borrow status line if needed
             const reader = new FileReader();
-            
             reader.onload = function(e) {
                 const text = e.target.result;
-                const rows = text.split('\n');
+                
+                // Robust CSV row splitter that respects newlines inside quotes
+                const rows = [];
+                let currentRow = [];
+                let currentCell = '';
+                let insideQuotes = false;
+
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const nextChar = text[i + 1];
+
+                    if (char === '"') {
+                        if (insideQuotes && nextChar === '"') {
+                            currentCell += '"'; // Handle escaped quotes
+                            i++;
+                        } else {
+                            insideQuotes = !insideQuotes; // Toggle quote state
+                        }
+                    } else if (char === ',' && !insideQuotes) {
+                        currentRow.push(currentCell.trim());
+                        currentCell = '';
+                    } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+                        if (char === '\r' && nextChar === '\n') i++;
+                        currentRow.push(currentCell.trim());
+                        if (currentRow.join('').length > 0) rows.push(currentRow);
+                        currentRow = [];
+                        currentCell = '';
+                    } else {
+                        currentCell += char;
+                    }
+                }
+                if (currentCell || currentRow.length > 0) {
+                    currentRow.push(currentCell.trim());
+                    rows.push(currentRow);
+                }
+
                 if (rows.length <= 1) return alert("The selected CSV file appears to be empty, Sweetie!");
 
-                // Basic CSV Header Mapper
-                const headers = rows[0].split(',').map(h => h.replace(/["\r]/g, '').trim().toLowerCase());
-                
+                // Standardize headers
+                const headers = rows[0].map(h => h.toLowerCase());
                 const titleIdx = headers.indexOf('title');
                 const authorIdx = headers.indexOf('author');
                 const formatIdx = headers.indexOf('format');
                 const statusIdx = headers.indexOf('status');
 
                 if (titleIdx === -1) {
-                    return alert("Matrix Sync Error: Could not find a 'Title' column in this StoryGraph sheet structure.");
+                    return alert("Matrix Sync Error: Could not find a 'Title' column in this StoryGraph sheet.");
                 }
 
                 let newBooks = [];
 
                 for (let i = 1; i < rows.length; i++) {
-                    if (!rows[i].trim()) continue;
-                    
-                    // Simple regex to parse CSV rows that might contain commas inside quotes
-                    const matches = rows[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || rows[i].split(',');
-                    const cleanCells = matches.map(c => c.replace(/^"|"$/g, '').replace(/[\r]/g, '').trim());
+                    const cells = rows[i];
+                    if (!cells[titleIdx]) continue;
 
-                    const title = cleanCells[titleIdx];
-                    if (!title) continue;
-
-                    const author = authorIdx !== -1 ? cleanCells[authorIdx] : 'Unknown Author';
-                    const format = formatIdx !== -1 ? cleanCells[formatIdx].toLowerCase() : 'print';
-                    const status = statusIdx !== -1 ? cleanCells[statusIdx].toLowerCase() : 'read';
+                    const title = cells[titleIdx];
+                    const author = authorIdx !== -1 && cells[authorIdx] ? cells[authorIdx] : 'Unknown Author';
+                    const format = formatIdx !== -1 && cells[formatIdx] ? cells[formatIdx].toLowerCase() : 'print';
+                    const status = statusIdx !== -1 && cells[statusIdx] ? cells[statusIdx].toLowerCase() : 'read';
 
                     newBooks.push({
                         id: Date.now() + Math.random(),
                         title: title,
                         author: author,
-                        format: format, // e.g., 'audiobook', 'digital', 'print'
+                        format: format,
                         status: status === 'currently reading' ? 'currently-reading' : status
                     });
                 }
@@ -476,10 +521,9 @@
                     bookDatabase = newBooks;
                     localStorage.setItem('vault_book_db', JSON.stringify(bookDatabase));
                     renderBookGrid();
-                    alert(`Successfully imported ${newBooks.length} books into your vault grid, Sweetie!`);
+                    alert(`Successfully imported ${newBooks.length} real books into your vault grid, Sweetie!`);
                 }
             };
-
             reader.readAsText(file);
         }
 
@@ -518,16 +562,17 @@
 
                 const card = document.createElement('div');
                 card.className = 'media-card';
-                card.innerHTML = `
-                    <div class="poster-frame" style="font-size: 2.5rem; background: rgba(0,0,0,0.3); flex-grow: 1;">${icon}</div>
+                               card.innerHTML = `
+                    <div class="poster-frame" onclick="openModal(${book.id}, 'book')" style="font-size: 2.5rem; background: rgba(0,0,0,0.3); flex-grow: 1; cursor: pointer;">${icon}</div>
                     <div class="card-details-pane">
-                        <div class="media-title">${book.title}</div>
+                        <div class="media-title" onclick="openModal(${book.id}, 'book')" style="cursor: pointer;">${book.title}</div>
                         <div class="media-meta" style="text-transform: capitalize;">By ${book.author} | ${book.format}</div>
                         <div class="progress-container" style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px;">
                             <div class="progress-bar" style="width: ${progressWidth}; background: var(--accent-color); border-radius: 4px;"></div>
                         </div>
                     </div>
                 `;
+
                 grid.appendChild(card);
             });
         }
