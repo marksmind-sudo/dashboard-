@@ -700,104 +700,101 @@
         // --- SYNCHRONIZER ELEMENT 3: HISTORY DATABASE DATA PACKS PULLER ---
         // Location: Located directly between token exchanger and boot matrix listeners (Line ~676)
         
-        window.pullTraktUserHistoryStream = async function() {
+              window.pullTraktUserHistoryStream = async function() {
+            const statusLog = document.getElementById('traktStatusLog');
             if (!traktAccessToken) {
-                return alert("Sync Denied: Your browser variable 'traktAccessToken' is currently null or empty. Please re-authorize, Sweetie!");
+                statusLog.innerText = "Error: Please link your Trakt account first!";
+                statusLog.style.color = "#ff4444";
+                return;
             }
 
-            const clientId = localStorage.getItem('trakt_client_id');
-            const statusLog = document.getElementById('traktStatusLog');
-            statusLog.innerText = "Status: Syncing cloud history matrix...";
-            statusLog.style.color = "#ffcc00";
+            statusLog.innerText = "Synchronizing deep media stream...";
+            statusLog.style.color = "#ffff00";
+
+            const tmdbKey = localStorage.getItem('tmdb_api_key') || '';
 
             try {
-                // 1. Fetch the raw history stream
-                const response = await fetch('https://api.trakt.tv/sync/history?limit=20', {
-                    method: 'GET',
+                // Fetch a deeper history window (100 items) to catch unique entries
+                const response = await fetch('https://api.trakt.tv/sync/history?limit=100', {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${traktAccessToken}`,
                         'trakt-api-version': '2',
-                        'trakt-api-key': clientId
+                        'trakt-api-key': document.getElementById('traktClientIdInput').value.trim()
                     }
                 });
 
-                if (!response.ok) throw new Error("Server rejected request with Status Code: " + response.status);
-                const historyData = await response.json();
+                if (!response.ok) throw new Error(`Trakt network response fault: ${response.status}`);
+                const data = await response.json();
 
-                if (!historyData || historyData.length === 0) {
-                    statusLog.innerText = "Status: Connected! (Cloud Empty)";
-                    return;
-                }
+                let updatedEntries = [...mediaDatabase];
 
-                // 2. Loop through history and fetch deep metadata for new titles
-                for (const record of historyData) {
-                    let itemName = "";
-                    let itemType = "";
-                    let fetchUrl = "";
+                for (const record of data) {
+                    const type = record.type; // 'movie' or 'episode'
+                    let name = '';
+                    let year = '';
+                    let genre = 'Speculative'; 
+                    let tmdbId = null;
 
-                    if (record.type === 'movie' && record.movie) {
-                        itemName = record.movie.title;
-                        itemType = "Movie";
-                        fetchUrl = `https://api.trakt.tv/movies/${record.movie.ids.slug}?extended=full`;
-                    } else if (record.type === 'episode' && record.show) {
-                        itemName = record.show.title;
-                        itemType = "TV";
-                        fetchUrl = `https://api.trakt.tv/shows/${record.show.ids.slug}?extended=full`;
+                    if (type === 'movie' && record.movie) {
+                        name = record.movie.title;
+                        year = record.movie.year;
+                        genre = 'Movie';
+                        tmdbId = record.movie.ids.tmdb;
+                    } else if (type === 'episode' && record.show) {
+                        name = record.show.title;
+                        year = record.show.year;
+                        genre = 'TV Show';
+                        tmdbId = record.show.ids.tmdb;
                     }
 
-                    // Only fetch if it's a title we don't already have in our local grid
-                    if (itemName && !mediaDatabase.some(m => m.name === itemName)) {
-                        let genres = ["Sci-Fi"]; // fallback
-                        let overview = "No matrix description available.";
-                        let year = "";
+                    if (!name) continue;
 
-                        try {
-                            const metaResponse = await fetch(fetchUrl, {
-                                method: 'GET',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'trakt-api-version': '2',
-                                    'trakt-api-key': clientId
+                    // Unique guard: check if this title is already inside our vault array
+                    const exists = updatedEntries.some(m => m.name.toLowerCase() === name.toLowerCase());
+                    if (!exists) {
+                        let posterPath = '';
+                        let overview = 'No cloud synopsis loaded.';
+
+                        // If user provided a TMDB API Key, fetch the real cover art and overview!
+                        if (tmdbKey && tmdbId) {
+                            try {
+                                const tmdbType = type === 'movie' ? 'movie' : 'tv';
+                                const tmdbRes = await fetch(`https://api.themoviedb.org/3/${tmdbType}/${tmdbId}?api_key=${tmdbKey}`);
+                                if (tmdbRes.ok) {
+                                    const tmdbData = await tmdbRes.json();
+                                    posterPath = tmdbData.poster_path || '';
+                                    if (tmdbData.overview) overview = tmdbData.overview;
                                 }
-                            });
-                            
-                            if (metaResponse.ok) {
-                                const metaData = await metaResponse.json();
-                                if (metaData.genres && metaData.genres.length > 0) {
-                                    // Capitalize first letters of genres nicely
-                                    genres = metaData.genres.map(g => g.charAt(0).toUpperCase() + g.slice(1));
-                                }
-                                if (metaData.overview) overview = metaData.overview;
-                                if (metaData.year) year = metaData.year;
+                            } catch (e) {
+                                console.log("TMDB fetch coordinate dropped: ", e);
                             }
-                        } catch (metaErr) {
-                            console.error("Failed fetching deep metadata for " + itemName, metaErr);
                         }
 
-                        mediaDatabase.push({
+                        updatedEntries.push({
                             id: Date.now() + Math.random(),
-                            name: itemName,
-                            type: itemType,
-                            genre: genres.join(', '),
+                            name: name,
                             year: year,
-                            overview: overview,
-                            status: "completed"
+                            type: type === 'movie' ? 'Movie' : 'TV',
+                            genre: genre,
+                            status: 'all',
+                            posterPath: posterPath,
+                            overview: overview
                         });
                     }
                 }
 
+                mediaDatabase = updatedEntries;
                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                 renderGrid();
-                
-                statusLog.innerText = "Status: Connected! Deep Sync Complete.";
+
+                statusLog.innerText = "Sync Complete! Visual assets locked.";
                 statusLog.style.color = "#00ffcc";
 
             } catch (err) {
                 console.error(err);
-                alert("Diagnostic Log Alert:\n" + err.message);
-                statusLog.innerText = "Status: Cloud Sync Interrupted.";
-                statusLog.style.color = "#ff007f";
+                statusLog.innerText = `Sync Interrupted: ${err.message}`;
+                statusLog.style.color = "#ff4444";
             }
         };
 
