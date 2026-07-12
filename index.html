@@ -363,7 +363,7 @@
             }
         }
 
-                // --- SUB SECTION E: GRAPHICAL CARD STREAM RENDERER ---
+             // --- SUB SECTION E: GRAPHICAL CARD STREAM RENDERER ---
         // Location: Directly above DOMContentLoaded listener (Line ~539)
         function renderGrid() {
             const grid = document.getElementById('cinemaDatabaseGrid');
@@ -398,8 +398,7 @@
                 `;
                 grid.appendChild(card);
             });
-        }
-
+        }   
 
         // --- SUB SECTION F: SYSTEM LAUNCH BOOT MATRIX ---
         // Location: Base level runtime configuration container (Line ~576)
@@ -418,6 +417,120 @@
         });
 
 
+
+        // --- SUB SECTION F-2: BOOK LIBRARY DATABASE CONTROLLERS ---
+        let bookDatabase = [];
+        let currentBookFilter = 'all';
+
+        // 1. The StoryGraph CSV Parser Engine
+        function importStoryGraphData(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const statusLog = document.getElementById('traktStatusLog'); // borrow status line if needed
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const rows = text.split('\n');
+                if (rows.length <= 1) return alert("The selected CSV file appears to be empty, Sweetie!");
+
+                // Basic CSV Header Mapper
+                const headers = rows[0].split(',').map(h => h.replace(/["\r]/g, '').trim().toLowerCase());
+                
+                const titleIdx = headers.indexOf('title');
+                const authorIdx = headers.indexOf('author');
+                const formatIdx = headers.indexOf('format');
+                const statusIdx = headers.indexOf('status');
+
+                if (titleIdx === -1) {
+                    return alert("Matrix Sync Error: Could not find a 'Title' column in this StoryGraph sheet structure.");
+                }
+
+                let newBooks = [];
+
+                for (let i = 1; i < rows.length; i++) {
+                    if (!rows[i].trim()) continue;
+                    
+                    // Simple regex to parse CSV rows that might contain commas inside quotes
+                    const matches = rows[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || rows[i].split(',');
+                    const cleanCells = matches.map(c => c.replace(/^"|"$/g, '').replace(/[\r]/g, '').trim());
+
+                    const title = cleanCells[titleIdx];
+                    if (!title) continue;
+
+                    const author = authorIdx !== -1 ? cleanCells[authorIdx] : 'Unknown Author';
+                    const format = formatIdx !== -1 ? cleanCells[formatIdx].toLowerCase() : 'print';
+                    const status = statusIdx !== -1 ? cleanCells[statusIdx].toLowerCase() : 'read';
+
+                    newBooks.push({
+                        id: Date.now() + Math.random(),
+                        title: title,
+                        author: author,
+                        format: format, // e.g., 'audiobook', 'digital', 'print'
+                        status: status === 'currently reading' ? 'currently-reading' : status
+                    });
+                }
+
+                if (newBooks.length > 0) {
+                    bookDatabase = newBooks;
+                    localStorage.setItem('vault_book_db', JSON.stringify(bookDatabase));
+                    renderBookGrid();
+                    alert(`Successfully imported ${newBooks.length} books into your vault grid, Sweetie!`);
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        // 2. Filter Rail Switcher
+        function filterBookCategory(catId) {
+            currentBookFilter = catId;
+            document.querySelectorAll('#goodreadsTab .sub-nav .sub-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const targetedBtn = document.getElementById('book-sub-' + (catId === 'currently-reading' ? 'reading' : catId === 'audiobook' ? 'audio' : catId));
+            if (targetedBtn) targetedBtn.classList.add('active');
+            
+            renderBookGrid();
+        }
+
+        // 3. StoryGraph-Inspired Renderer
+        function renderBookGrid() {
+            const grid = document.getElementById('bookLibraryDatabaseGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            let list = bookDatabase.filter(b => {
+                if (currentBookFilter === 'all') return true;
+                if (currentBookFilter === 'audiobook') return b.format.includes('audio');
+                return b.status === currentBookFilter;
+            });
+
+            if (list.length === 0) {
+                grid.innerHTML = '<div style="text-align:center; padding:40px; opacity:0.5; grid-column:1/-1;">No books match this category layout, Marcus.</div>';
+                return;
+            }
+
+            list.forEach(book => {
+                const isAudio = book.format.includes('audio');
+                const icon = isAudio ? '🎧' : '📖';
+                const progressWidth = book.status === 'read' ? '100%' : book.status === 'currently-reading' ? '45%' : '0%';
+
+                const card = document.createElement('div');
+                card.className = 'media-card';
+                card.innerHTML = `
+                    <div class="poster-frame" style="font-size: 2.5rem; background: rgba(0,0,0,0.3); flex-grow: 1;">${icon}</div>
+                    <div class="card-details-pane">
+                        <div class="media-title">${book.title}</div>
+                        <div class="media-meta" style="text-transform: capitalize;">By ${book.author} | ${book.format}</div>
+                        <div class="progress-container" style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px;">
+                            <div class="progress-bar" style="width: ${progressWidth}; background: var(--accent-color); border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
         // ==========================================
         // TRAKT API CLOUD SYNCHRONIZATION MATRIX
         // ==========================================
@@ -629,7 +742,13 @@
             const storedId = localStorage.getItem('trakt_client_id');
             const storedSecret = localStorage.getItem('trakt_client_secret');
             const storedToken = localStorage.getItem('trakt_access_token');
-
+            // Load book database if it exists
+            const localBooks = localStorage.getItem('vault_book_db');
+            if (localBooks) {
+                bookDatabase = JSON.parse(localBooks);
+                renderBookGrid();
+            }
+            
             if (storedId) document.getElementById('traktClientIdInput').value = storedId;
             if (storedSecret) document.getElementById('traktClientSecretInput').value = storedSecret;
             
