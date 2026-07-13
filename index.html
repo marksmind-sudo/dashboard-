@@ -806,7 +806,7 @@
 
         // --- SYNCHRONIZER ELEMENT 3: HISTORY DATABASE DATA PACKS PULLER ---
         // Location: Located directly between token exchanger and boot matrix listeners (Line ~676)
-                              window.pullTraktUserHistoryStream = async function() {
+                   window.pullTraktUserHistoryStream = async function() {
             const statusLog = document.getElementById('traktStatusLog');
             if (!traktAccessToken) {
                 statusLog.innerText = "Error: Please link your Trakt account first!";
@@ -819,11 +819,11 @@
 
             const tmdbKey = localStorage.getItem('tmdb_api_key') || '';
             let updatedEntries = [...mediaDatabase];
-            let changesMade = false;
 
             // --- PHASE 1: RETROACTIVE TEXT SEARCH PATCH FOR OLD BLANK CARDS ---
             if (tmdbKey) {
                 statusLog.innerText = "Repairing legacy placeholders...";
+                let legacyChanges = false;
                 for (let item of updatedEntries) {
                     if (!item.posterPath || !item.overview || item.overview === 'No cloud synopsis loaded.') {
                         try {
@@ -837,7 +837,7 @@
                                     item.overview = searchData.results[0].overview || 'No description found.';
                                     if (searchData.results[0].first_air_date) item.year = searchData.results[0].first_air_date.split('-')[0];
                                     if (searchData.results[0].release_date) item.year = searchData.results[0].release_date.split('-')[0];
-                                    changesMade = true;
+                                    legacyChanges = true;
                                 }
                             }
                         } catch (err) {
@@ -845,16 +845,21 @@
                         }
                     }
                 }
+                if (legacyChanges) {
+                    mediaDatabase = updatedEntries;
+                    localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                    renderGrid();
+                }
             }
 
-            // --- PHASE 2: TOTAL EXHAUSTIVE HISTORICAL SYNC ---
+            // --- PHASE 2: TOTAL EXHAUSTIVE INCREMENTAL SYNC ENGINE ---
             try {
                 let page = 1;
                 let keepScanning = true;
                 const limitPerPage = 50;
 
                 while (keepScanning) {
-                    statusLog.innerText = `Ingesting deep history records (Scanning Page ${page})...`;
+                    statusLog.innerText = `Ingesting logs: Page ${page} (Total items: ${updatedEntries.length})`;
                     
                     const response = await fetch(`https://api.trakt.tv/sync/history?limit=${limitPerPage}&page=${page}`, {
                         headers: {
@@ -871,11 +876,12 @@
                     
                     const data = await response.json();
                     
-                    // Break out of the infinite loop if the page returns completely empty
                     if (!data || data.length === 0) {
                         keepScanning = false;
                         break;
                     }
+
+                    let pageChangesMade = false;
 
                     for (const record of data) {
                         const type = record.type;
@@ -927,25 +933,27 @@
                                 posterPath: posterPath,
                                 overview: overview
                             });
-                            changesMade = true;
+                            pageChangesMade = true;
                         }
                     }
 
-                    // If we received fewer items than the limit, we've hit the end of the history stream
+                    // ⚡️ REAL-TIME RENDERING INITIALIZATION: Push to UI immediately after each page finishes
+                    if (pageChangesMade) {
+                        mediaDatabase = updatedEntries;
+                        localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                        renderGrid();
+                    }
+
                     if (data.length < limitPerPage) {
                         keepScanning = false;
                     } else {
-                        page++; // Step directly to the next coordinate page
+                        page++;
+                        // Add a tiny breather millisecond break so your tablet browser stays completely fluid
+                        await new Promise(resolve => setTimeout(resolve, 50));
                     }
                 }
 
-                if (changesMade) {
-                    mediaDatabase = updatedEntries;
-                    localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                    renderGrid();
-                }
-
-                statusLog.innerText = "Sync Complete! Entire history vault locked.";
+                statusLog.innerText = `Sync Complete! Unified library locked (${mediaDatabase.length} items).`;
                 statusLog.style.color = "#00ffcc";
 
             } catch (err) {
