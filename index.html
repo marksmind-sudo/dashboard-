@@ -61,19 +61,71 @@
         .sub-nav { display: flex; gap: 8px; white-space: nowrap; }
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color, #00ffcc); color: inherit; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
         .sub-btn.active { background: var(--accent-color, #ff007f); color: #000; font-weight: bold; }
+/* --- COMPACT SCANNABLE GRID MATRIX --- */
+.cinema-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important; /* Forces smaller, denser columns */
+    gap: 12px !important;
+    padding: 12px !important;
+}
 
-        /* --- RESPONSIVE WORKSPACE MEDIA GRID --- */
-        .cinema-grid { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 15px; width: 100%; }
-        @media (min-width: 600px) { .cinema-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1024px) { .cinema-grid { grid-template-columns: repeat(3, 1fr); } }
+/* --- COMPACT CARD RESIZING BLOCK --- */
+.media-card {
+    background: rgba(20, 20, 35, 0.65);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 270px !important; /* Constrains total card height strictly */
+    transition: transform 0.2s ease;
+}
 
-        /* --- CARD OBJECT BLUEPRINTS --- */
-        .media-card { background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
-        .poster-frame { width: 100%; aspect-ratio: 16/9; background: #111; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; }
-        .poster-img { width: 100%; height: 100%; object-fit: cover; }
-        .card-details-pane { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-        .media-title { font-size: 1.05rem; font-weight: bold; }
-        .media-meta { font-size: 0.8rem; opacity: 0.7; }
+.media-card:hover {
+    transform: translateY(-4px);
+}
+
+/* --- SLEEK IMAGE PROFILE BOUNDARY --- */
+.poster-frame {
+    width: 100% !important;
+    height: 190px !important; /* Clamps the cover art window down perfectly */
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.poster-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Crops image correctly without distortion */
+}
+
+/* --- COMPRESSED TEXT RAILS --- */
+.card-details-pane {
+    padding: 6px 8px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+.media-title {
+    font-size: 0.8rem !important;
+    font-weight: bold;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Keeps long titles clean on a single line */
+}
+
+.media-meta {
+    font-size: 0.68rem !important;
+    opacity: 0.7;
+    margin-bottom: 2px;
+}
 
         /* --- TRACKING METERS --- */
         .progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
@@ -333,7 +385,7 @@
         }
 
               // --- SUB SECTION D: MODAL CONTROLLER MATRIX ---
-        function openModal(id, itemType = 'media') {
+              function openModal(id, itemType = 'media') {
             activeItemId = id;
             const select = document.getElementById('modalFolderSelect');
             
@@ -343,26 +395,34 @@
 
                 document.getElementById('modalTitle').innerText = book.title;
                 document.getElementById('modalMeta').innerHTML = `
-                    <strong>Author:</strong> ${book.author}<br>
-                    <strong>Format:</strong> ${book.format.toUpperCase()}<br>
-                    <strong>Status:</strong> ${book.status.replace('-', ' ').toUpperCase()}
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; background: rgba(255,255,255,0.04); padding: 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.75rem;">
+                        <div><span style="opacity:0.6;">Primary Author:</span> <strong style="color:var(--accent-color); display:block;">${book.author}</strong></div>
+                        <div><span style="opacity:0.6;">Format Edition:</span> <strong style="display:block; text-transform: uppercase;">${book.format}</strong></div>
+                    </div>
+                    <div style="font-size: 0.8rem; line-height: 1.4; opacity: 0.9; padding: 8px; background: rgba(0,0,0,0.2); border-left: 2px solid var(--accent-color); border-radius: 2px;">
+                        📚 <strong>System Synopsis:</strong> Literary database log dynamically verified via local file sync. Reading profile rules are locked inside local storage.
+                    </div>
                 `;
                 
-                // Simple status folders for books
                 select.innerHTML = `
                     <option value="to-read" ${book.status === 'to-read' ? 'selected' : ''}>To Read</option>
                     <option value="currently-reading" ${book.status === 'currently-reading' ? 'selected' : ''}>Currently Reading</option>
                     <option value="read" ${book.status === 'read' ? 'selected' : ''}>Completed Log</option>
                 `;
             } else {
-                // Media (Movies/TV) path
                 const item = mediaDatabase.find(m => m.id === id);
                 if (!item) return;
 
                 document.getElementById('modalTitle').innerText = item.year ? `${item.name} (${item.year})` : item.name;
                 
-                const overviewText = item.overview ? `<br><br><span style="font-size:0.85rem; opacity:0.9; display:block; line-height:1.4;">${item.overview}</span>` : '';
-                document.getElementById('modalMeta').innerHTML = `Type: ${item.type} | Genre: ${item.genre}${overviewText}`;
+                const summaryHtml = item.overview 
+                    ? `<div style="margin-top: 10px; font-size: 0.8rem; line-height: 1.4; opacity: 0.9; padding: 8px; background: rgba(0,0,0,0.2); border-left: 2px solid var(--accent-color); border-radius: 2px;"><strong>Overview:</strong> ${item.overview}</div>` 
+                    : '';
+                    
+                document.getElementById('modalMeta').innerHTML = `
+                    <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 4px;"><strong>Type:</strong> ${item.type} | <strong>Genre:</strong> ${item.genre}</div>
+                    ${summaryHtml}
+                `;
                 
                 select.innerHTML = `
                     <option value="all" ${item.status === 'all' ? 'selected' : ''}>Main Collection</option>
@@ -374,6 +434,7 @@
 
             document.getElementById('detailModal').classList.add('active');
         }
+
 
 
 
@@ -807,6 +868,15 @@
 
             if (storedId) document.getElementById('traktClientIdInput').value = storedId;
             if (storedSecret) document.getElementById('traktClientSecretInput').value = storedSecret;
+                // Load and draw cached book library database if it exists
+             const localBooks = localStorage.getItem('vault_book_db');
+            if (localBooks) {
+             bookDatabase = JSON.parse(localBooks);
+             if (typeof renderBookGrid === 'function') {
+            renderBookGrid();
+        }
+    }
+            
             if (storedTmdb) document.getElementById('tmdbApiKeyInput').value = storedTmdb; // 👈 Populate input
             
             // Save the TMDB key whenever the user changes focus or tabs away
