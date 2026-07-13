@@ -584,11 +584,11 @@
                 }
 
                 if (rows.length <= 1) return alert("The selected CSV file appears to be empty, Sweetie!");
-                // Standardize headers
+                               // Standardize headers
                 const headers = rows[0].map(h => h.toLowerCase());
                 const titleIdx = headers.indexOf('title');
                 
-                // 💡 PUSH THE NEW SMART SCANNED SNIPPET RIGHT HERE:
+                // Smart header catch-all scanner
                 let authorIdx = -1;
                 for (let idx = 0; idx < headers.length; idx++) {
                     if (headers[idx].includes('author')) {
@@ -599,6 +599,7 @@
                 
                 const formatIdx = headers.indexOf('format');
                 const statusIdx = headers.indexOf('status');
+
 
                 if (titleIdx === -1) {
                     return alert("Matrix Sync Error: Could not find a 'Title' column in this StoryGraph sheet.");
@@ -789,7 +790,7 @@
 
         // --- SYNCHRONIZER ELEMENT 3: HISTORY DATABASE DATA PACKS PULLER ---
         // Location: Located directly between token exchanger and boot matrix listeners (Line ~676)
-                window.pullTraktUserHistoryStream = async function() {
+                       window.pullTraktUserHistoryStream = async function() {
             const statusLog = document.getElementById('traktStatusLog');
             if (!traktAccessToken) {
                 statusLog.innerText = "Error: Please link your Trakt account first!";
@@ -832,7 +833,6 @@
 
             // --- PHASE 2: DEEP PAGINATED HISTORICAL SYNC ---
             try {
-                // Iterates through 5 historical log pages to pull down your complete catalog
                 for (let page = 1; page <= 5; page++) {
                     statusLog.innerText = `Scanning history records (Deep Page ${page}/5)...`;
                     
@@ -919,7 +919,7 @@
                 statusLog.style.color = "#ff4444";
             }
         };
-;
+
 
                // --- SYNCHRONIZER ELEMENT 4: AUTOMATED LOCAL CACHE RE-BOOT ENGINE ---
         window.addEventListener('load', () => {
