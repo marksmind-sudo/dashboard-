@@ -99,18 +99,18 @@
         .progress-bar { height: 100%; background: var(--accent-color, #ff007f); width: 0%; }
 
         /* ========================================== */
-        /* SECTION 6: HIGH-CAPACITY TABLET MODAL CORE */
+        /* SECTION 6: THE CINEMATIC MAX-WIDTH MODAL   */
         /* ========================================== */
-        .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.88); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 24px; }
+        .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
         .modal-canvas.active { display: flex; }
         
-        /* 📱 SCALE UP PROPORTIONS FOR EXTENSIVE DATA VIEWS */
+        /* 📱 CINEMATIC SCALE UP FOR RICH DATA ACCOMMODATION */
         .modal-box { 
             background: #090b1e; 
             border: 2px solid var(--border-color, #00ffcc); 
-            width: 95%; 
-            max-width: 960px; 
-            max-height: 85vh;
+            width: 98%; 
+            max-width: 1100px; 
+            max-height: 90vh;
             border-radius: 14px; 
             padding: 24px; 
             display: flex; 
@@ -120,7 +120,6 @@
             position: relative;
         }
 
-        /* 📌 STICKY HEADER ACCESSIBLE DISMISS BAR */
         .modal-header-shelf {
             display: flex;
             justify-content: space-between;
@@ -141,10 +140,10 @@
             background: rgba(255, 0, 127, 0.1);
             border: 1px solid var(--accent-color);
             color: var(--accent-color);
-            padding: 8px 18px;
+            padding: 10px 22px;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -153,36 +152,38 @@
             color: #000;
         }
 
-        /* --- ACTOR PICTURES SIZE Dial INCREASE --- */
+        /* --- ACTOR PICTURES SIZE DIAL INCREASE --- */
         .cast-horizontal-row { display: flex; gap: 16px; overflow-x: auto; padding: 10px 0; }
         .cast-pill-card { 
             background: rgba(255,255,255,0.03); 
             border: 1px solid rgba(255,255,255,0.08); 
             border-radius: 10px; 
-            padding: 10px; 
+            padding: 12px; 
             display: flex; 
             flex-direction: column; 
             align-items: center;
-            min-width: 130px; 
+            min-width: 145px; 
             cursor: pointer;
             transition: all 0.2s;
         }
         .cast-pill-card:hover { background: rgba(255, 0, 127, 0.12); border-color: var(--accent-color); }
-        .cast-avatar { width: 95px; height: 95px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.15); }
+        .cast-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.15); }
 
         /* --- BULK SEASON AND INTERACTIVE EPISODE VIEWS --- */
         .season-vertical-list { display: flex; flex-direction: column; gap: 8px; }
         .season-list-header { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 12px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; }
         .season-click-shelf { flex-grow: 1; cursor: pointer; display: flex; justify-content: space-between; padding-right: 20px; }
         .episode-container-block { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.06); border-top: none; border-radius: 0 0 6px 6px; padding: 12px; display: none; flex-direction: column; gap: 10px; }
-        .episode-row-item { display: flex; align-items: flex-start; gap: 12px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 6px; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.03); }
-        .episode-row-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent-color); cursor: pointer; margin-top: 2px; }
+        .episode-row-item { display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 6px; font-size: 0.88rem; border: 1px solid rgba(255,255,255,0.03); }
+        .episode-row-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent-color); cursor: pointer; }
+        
+        .rating-inline-selector { background: rgba(0,0,0,0.6); color: var(--text-color); border: 1px solid var(--border-color); padding: 6px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
 
         /* --- SETTINGS PADDING FIX FOR EASY PRESS --- */
         .side-drawer { position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: #0a0c20; border-left: 2px solid var(--border-color); z-index: 9999; transition: right 0.3s ease; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; color: #fff; }
         .side-drawer.open { right: 0; }
         .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-size: 0.8rem; font-weight: bold; }
+        .form-group label { font-size: 0.85rem; font-weight: bold; }
         
         .btn { background: var(--accent-color, #ff007f); color: #000; font-weight: bold; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-size: 0.95rem; text-align: center; width: 100%; transition: opacity 0.2s; }
         .btn:active { opacity: 0.8; }
@@ -243,9 +244,29 @@
             </div>
             <div class="modal-scroll-body">
                 <div id="modalMeta"></div>
-                <div class="form-group">
-                    <label style="color: var(--accent-color);">Update Status Folder</label>
-                    <select id="modalFolderSelect" class="card-select" onchange="updateItemStatus(this.value)"></select>
+                
+                <!-- 🎯 CORE INTERACTIVE MAIN SCORE DECK -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: rgba(255,255,255,0.02); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="form-group">
+                        <label style="color: var(--text-color);">Update Status Folder</label>
+                        <select id="modalFolderSelect" class="card-select" onchange="updateItemStatus(this.value)"></select>
+                    </div>
+                    <div class="form-group">
+                        <label style="color: var(--accent-color); font-weight: bold;">⭐ Your Personal Score Rating</label>
+                        <select id="modalGlobalRatingSelect" class="card-select" style="border-color: var(--accent-color);" onchange="updateGlobalItemRating(this.value)">
+                            <option value="">Not Rated</option>
+                            <option value="10">10 - Masterpiece</option>
+                            <option value="9">9 - Great</option>
+                            <option value="8">8 - Very Good</option>
+                            <option value="7">7 - Good</option>
+                            <option value="6">6 - Fine</option>
+                            <option value="5">5 - Average</option>
+                            <option value="4">4 - Bad</option>
+                            <option value="3">3 - Very Bad</option>
+                            <option value="2">2 - Horrible</option>
+                            <option value="1">1 - Appalling</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -253,13 +274,13 @@
 
     <!-- 👤 NESTED ACTOR BIOGRAPHY MODAL PORTAL -->
     <div id="actorModal" class="modal-canvas" onclick="if(event.target === this) document.getElementById('actorModal').classList.remove('active')">
-        <div class="modal-box" style="max-width: 760px; background: #090b1e; border-color: var(--text-color);">
+        <div class="modal-box" style="max-width: 900px; background: #090b1e; border-color: var(--text-color);">
             <div class="modal-header-shelf">
-                <h3 id="actorModalName" style="color: var(--text-color); font-size:1.4rem;">Actor Profile</h3>
+                <h3 id="actorModalName" style="color: var(--text-color); font-size:1.5rem;">Actor Profile</h3>
                 <button class="close-action-pill" onclick="document.getElementById('actorModal').classList.remove('active')" style="border-color:var(--text-color); color:var(--text-color); background:rgba(255,255,255,0.05);">✕ Back to Catalog</button>
             </div>
             <div class="modal-scroll-body">
-                <div id="actorModalContent" style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 4px;"></div>
+                <div id="actorModalContent" style="display: flex; gap: 24px; flex-wrap: wrap; margin-top: 4px;"></div>
             </div>
         </div>
     </div>
@@ -405,8 +426,11 @@
         let mediaDatabase = [];
         let bookDatabase = [];
         let watchedEpisodesLog = JSON.parse(localStorage.getItem('vault_watched_episodes') || '{}');
+        let episodeRatingsLog = JSON.parse(localStorage.getItem('vault_episode_ratings') || '{}');
+        
         let currentFilter = 'all', currentTvFilter = 'all', currentMovieFilter = 'all', currentBookFilter = 'all';
         let activeItemId = null;
+        let activeItemType = 'media';
         let traktAccessToken = null;
 
         function switchTab(tabId) {
@@ -454,17 +478,27 @@
 
                 const avatar = bData.profile_path ? `https://image.tmdb.org/t/p/w300${bData.profile_path}` : '';
                 const bio = bData.biography || 'No biographical overview text filed.';
-                const credits = bData.combined_credits?.cast?.slice(0, 8).map(c => `<div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.03);">📺 <strong>${c.title || c.name}</strong> as <em>${c.character || 'Self'}</em> (${c.release_date || c.first_air_date || 'N/A'})</div>`).join('') || 'None logged.';
+                
+                // Enhanced Career Appearances Layout Mapping
+                const credits = bData.combined_credits?.cast
+                    ?.sort((a,b) => b.vote_count - a.vote_count)
+                    ?.slice(0, 12)
+                    ?.map(c => `
+                        <div style="padding:6px; background:rgba(255,255,255,0.02); border-radius:4px; margin-bottom:4px; display:flex; justify-content:space-between; font-size:0.85rem; border:1px solid rgba(255,255,255,0.03);">
+                            <span>🎬 <strong>${c.title || c.name}</strong> as <em>${c.character || 'Self'}</em></span>
+                            <span style="color:var(--text-color); font-size:0.75rem; font-weight:bold;">⭐ ${c.vote_average ? c.vote_average.toFixed(1) : 'N/A'} (${c.release_date || c.first_air_date || 'N/A'})</span>
+                        </div>
+                    `).join('') || 'None logged.';
 
                 content.innerHTML = `
-                    ${avatar ? `<img src="${avatar}" style="width:200px; border-radius:10px; aspect-ratio:2/3; object-fit:cover; box-shadow:0 6px 16px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1);">` : ''}
-                    <div style="flex:1; min-width:320px; display:flex; flex-direction:column; gap:12px; font-size:0.9rem; line-height:1.5;">
-                        <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
-                            📌 Place of Birth: <strong>${bData.place_of_birth || 'Unknown'}</strong><br>
-                            📅 Birth Date: <strong>${bData.birthday || 'N/A'}</strong> ${bData.deathday ? `| ✝️ Died: <strong>${bData.deathday}</strong>` : ''}
+                    ${avatar ? `<img src="${avatar}" style="width:250px; border-radius:12px; aspect-ratio:2/3; object-fit:cover; box-shadow:0 6px 16px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1);">` : ''}
+                    <div style="flex:1; min-width:360px; display:flex; flex-direction:column; gap:12px; font-size:0.92rem; line-height:1.5;">
+                        <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:6px; border:1px solid rgba(255,255,255,0.05); display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                            <div>📌 Place of Birth:<br><strong>${bData.place_of_birth || 'Unknown'}</strong></div>
+                            <div>📅 Birth Date:<br><strong>${bData.birthday || 'N/A'}</strong> ${bData.deathday ? ` (✝️ ${bData.deathday})` : ''}</div>
                         </div>
-                        <div style="max-height:180px; overflow-y:auto; background:rgba(0,0,0,0.4); padding:12px; border-radius:6px; border:1px solid rgba(255,255,255,0.03); opacity:0.9;">${bio}</div>
-                        <div style="margin-top:4px;"><h4 style="color:var(--accent-color); margin-bottom:6px; font-size:0.95rem;">Notable Career Appearances</h4><div style="max-height:150px; overflow-y:auto; padding-right:4px;">${credits}</div></div>
+                        <div style="max-height:220px; overflow-y:auto; background:rgba(0,0,0,0.4); padding:14px; border-radius:6px; border:1px solid rgba(255,255,255,0.03); opacity:0.9; text-align:justify;">${bio}</div>
+                        <div style="margin-top:4px;"><h4 style="color:var(--accent-color); margin-bottom:6px; font-size:1rem; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:4px;">High-Rating Career Dossier Log</h4><div style="max-height:200px; overflow-y:auto; padding-right:4px;">${credits}</div></div>
                     </div>
                 `;
             } catch(e) { content.innerHTML = `Matrix failure collecting actor file indices.`; }
@@ -496,15 +530,23 @@
                 container.innerHTML = data.episodes.map(ep => {
                     const logKey = `${tmdbId}-${seasonNum}-${ep.episode_number}`;
                     const isChecked = watchedEpisodesLog[logKey] ? 'checked' : '';
+                    const storedRating = episodeRatingsLog[logKey] || '';
+
                     return `
                         <div class="episode-row-item">
                             <input type="checkbox" id="chk-${logKey}" ${isChecked} onchange="window.toggleEpisodeWatchStatus('${logKey}', this.checked)">
                             <div style="flex-grow:1;">
-                                <div style="display:flex; justify-content:space-between; font-weight:bold; color:#fff;">
+                                <div style="display:flex; justify-content:between; align-items:center; font-weight:bold; color:#fff; width:100%; gap:12px;">
                                     <span>Ep ${ep.episode_number}: ${ep.name}</span>
-                                    <span style="color:var(--text-color); font-size:0.75rem;">⭐ ${ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A'}</span>
+                                    <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+                                        <span style="color:#aaa; font-size:0.75rem; font-weight:normal;">TMDB: ⭐ ${ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A'}</span>
+                                        <select class="rating-inline-selector" onchange="window.updateEpisodeRating('${logKey}', this.value)">
+                                            <option value="">Rate Ep</option>
+                                            ${[10,9,8,7,6,5,4,3,2,1].map(r => `<option value="${r}" ${storedRating == r ? 'selected' : ''}>${r}</option>`).join('')}
+                                        </select>
+                                    </div>
                                 </div>
-                                <p style="font-size:0.78rem; opacity:0.8; margin-top:4px; line-height:1.4;">${ep.overview || 'No description summary logged.'}</p>
+                                <p style="font-size:0.8rem; opacity:0.85; margin-top:4px; line-height:1.4;">${ep.overview || 'No description summary logged.'}</p>
                             </div>
                         </div>
                     `;
@@ -518,7 +560,12 @@
             localStorage.setItem('vault_watched_episodes', JSON.stringify(watchedEpisodesLog));
         };
 
-        // ⚡ BULK ACTION TOGGLE FOR ENTIRE SEASONS AT ONCE
+        window.updateEpisodeRating = function(logKey, ratingScore) {
+            if (ratingScore) episodeRatingsLog[logKey] = ratingScore;
+            else delete episodeRatingsLog[logKey];
+            localStorage.setItem('vault_episode_ratings', JSON.stringify(episodeRatingsLog));
+        };
+
         window.bulkToggleSeasonEpisodes = async function(btn, tmdbId, seasonNum, index) {
             event.stopPropagation();
             const tmdbKey = localStorage.getItem('tmdb_api_key');
@@ -539,7 +586,6 @@
                             if (nextState === 'all') watchedEpisodesLog[logKey] = true;
                             else delete watchedEpisodesLog[logKey];
                             
-                            // Contextually sync local dynamic DOM checkboxes if open
                             const domChk = document.getElementById(`chk-${logKey}`);
                             if (domChk) domChk.checked = (nextState === 'all');
                         });
@@ -549,21 +595,38 @@
             } catch(e) {}
         };
 
+        // --- GLOBAL ITEM RATING AND DATA PERSISTENCE HANDLERS ---
+        window.updateGlobalItemRating = function(ratingVal) {
+            if (activeItemType === 'book') {
+                let book = bookDatabase.find(b => b.id === activeItemId);
+                if (book) book.personalRating = ratingVal;
+                localStorage.setItem('vault_book_db', JSON.stringify(bookDatabase));
+            } else {
+                let item = mediaDatabase.find(m => m.id === activeItemId);
+                if (item) item.personalRating = ratingVal;
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            }
+        };
+
         // --- SUB SECTION D: MODAL CONTROLLER OVERHAUL ---
         function openModal(id, itemType = 'media') {
             activeItemId = id;
+            activeItemType = itemType;
             const select = document.getElementById('modalFolderSelect');
+            const ratingSelect = document.getElementById('modalGlobalRatingSelect');
             const metaContainer = document.getElementById('modalMeta');
             
             if (itemType === 'book') {
                 const book = bookDatabase.find(b => b.id === id);
                 if (!book) return;
                 document.getElementById('modalTitle').innerText = book.title;
+                ratingSelect.value = book.personalRating || '';
+                
                 metaContainer.innerHTML = `
                     <div style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
-                        <img src="https://covers.openlibrary.org/b/title/${encodeURIComponent(book.title)}-M.jpg" style="width: 150px; border-radius: 8px; object-fit: cover; aspect-ratio: 2/3; box-shadow: 0 6px 16px rgba(0,0,0,0.6);">
+                        <img src="https://covers.openlibrary.org/b/title/${encodeURIComponent(book.title)}-M.jpg" style="width: 160px; border-radius: 8px; object-fit: cover; aspect-ratio: 2/3; box-shadow: 0 6px 16px rgba(0,0,0,0.6);">
                         <div style="flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 8px;">
-                            <div style="display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 0.92rem; background: rgba(255,255,255,0.03); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 0.95rem; background: rgba(255,255,255,0.03); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                                 <div>✍️ Author/Creator: <strong style="color:var(--accent-color);">${book.author}</strong></div>
                                 <div>📖 Edition Format: <strong style="text-transform: uppercase; color:#fff;">${book.format}</strong></div>
                                 <div>📚 Book Series Index: <strong style="color:var(--text-color);">${book.series || 'Stand-Alone Novel'}</strong></div>
@@ -577,6 +640,7 @@
                 const item = mediaDatabase.find(m => m.id === id);
                 if (!item) return;
                 document.getElementById('modalTitle').innerText = item.name;
+                ratingSelect.value = item.personalRating || '';
                 
                 const imgSrc = item.posterPath ? `https://image.tmdb.org/t/p/w500${item.posterPath}` : '';
                 const studioLabel = item.type === 'Movie' ? 'Production Studio' : 'Network/Platform';
@@ -588,7 +652,7 @@
                         castHtml = `<div class="cast-horizontal-row">` + cast.map(c => `
                             <div class="cast-pill-card" onclick="window.lookupActorProfile('${c.name.replace(/'/g, "\\'")}')">
                                 ${c.profile ? `<img class="cast-avatar" src="https://image.tmdb.org/t/p/w185${c.profile}">` : `<div class="cast-avatar" style="background:#222; display:flex; align-items:center; justify-content:center;">👤</div>`}
-                                <span style="font-size:0.82rem; font-weight:bold; color:#fff; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${c.name}</span>
+                                <span style="font-size:0.85rem; font-weight:bold; color:#fff; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${c.name}</span>
                             </div>
                         `).join('') + `</div>`;
                     } catch(e) {}
@@ -598,13 +662,13 @@
                 if (item.type === 'TV' && item.seasonsData) {
                     try {
                         const seasons = JSON.parse(item.seasonsData);
-                        extensionsHtml = `<div style="margin-top:12px;"><h4 style="font-size:0.95rem; color:var(--accent-color); margin-bottom:8px;">Season Tracker Grid (Tap Rows to Drilldown Episodes)</h4><div class="season-vertical-list">` +
+                        extensionsHtml = `<div style="margin-top:12px;"><h4 style="font-size:1rem; color:var(--accent-color); margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:4px;">Season Tracker Grid (Tap Rows to Manage Individual Episode Ratings)</h4><div class="season-vertical-list">` +
                             seasons.map((s, idx) => `
                                 <div style="display:flex; flex-direction:column;">
                                     <div class="season-list-header">
                                         <div class="season-click-shelf" onclick="window.toggleEpisodeContainer(${idx}, ${item.tmdbId || 0}, ${s.season_number})">
                                             <span>${s.name}</span>
-                                            <span style="opacity:0.7; font-weight:normal;">${s.episode_count} Episodes</span>
+                                            <span style="opacity:0.7; font-weight:normal; font-size:0.85rem;">${s.episode_count} Episodes (${s.air_year || 'N/A'})</span>
                                         </div>
                                         <button class="sub-btn" style="padding:4px 10px; font-size:0.75rem; border-color:var(--accent-color); margin:0;" onclick="window.bulkToggleSeasonEpisodes(this, ${item.tmdbId || 0}, ${s.season_number}, ${idx})">✓ Mark Season</button>
                                     </div>
@@ -616,19 +680,19 @@
 
                 metaContainer.innerHTML = `
                     <div style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
-                        ${imgSrc ? `<img src="${imgSrc}" style="width: 160px; border-radius: 8px; object-fit: cover; aspect-ratio: 2/3; box-shadow: 0 6px 18px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1);">` : '🎬'}
-                        <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 8px;">
-                            <div style="display: grid; grid-template-columns: 1fr; gap: 4px; font-size: 0.85rem; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-                                <div>🎬 Classification Type: <strong style="color:#fff;">${item.type}</strong></div>
-                                <div>📅 Release Year: <strong>${item.year || 'N/A'}</strong></div>
-                                <div>🏢 ${studioLabel}: <strong style="color:var(--text-color);">${item.network || 'Not Indexed'}</strong></div>
-                                <div>🎬 Director/Creator: <strong style="color:var(--accent-color);">${item.director || 'Not Indexed'}</strong></div>
+                        ${imgSrc ? `<img src="${imgSrc}" style="width: 180px; border-radius: 8px; object-fit: cover; aspect-ratio: 2/3; box-shadow: 0 6px 18px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1);">` : '🎬'}
+                        <div style="flex: 1; min-width: 320px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.88rem; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                                <div>🎬 Classification Type:<br><strong style="color:#fff;">${item.type}</strong></div>
+                                <div>📅 Release Year:<br><strong>${item.year || 'N/A'}</strong></div>
+                                <div>🏢 ${studioLabel}:<br><strong style="color:var(--text-color);">${item.network || 'Not Indexed'}</strong></div>
+                                <div>🎬 Director/Creator:<br><strong style="color:var(--accent-color);">${item.director || 'Not Indexed'}</strong></div>
                             </div>
-                            <p style="font-size: 0.88rem; line-height: 1.5; opacity: 0.9; max-height: 120px; overflow-y:auto; padding-right:4px;">${item.overview || 'No description cataloged.'}</p>
+                            <p style="font-size: 0.92rem; line-height: 1.5; opacity: 0.9; max-height: 140px; overflow-y:auto; padding-right:4px; text-align:justify;">${item.overview || 'No description cataloged.'}</p>
                         </div>
                     </div>
                     <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-                        <h4 style="font-size: 0.92rem; color: var(--text-color); margin-bottom: 4px;">Starring Cast (Tap Headshots for Details)</h4>
+                        <h4 style="font-size: 1rem; color: var(--text-color); margin-bottom: 4px;">Starring Cast Network (Tap Headshots for Expanded Bio Profile)</h4>
                         ${castHtml}
                     </div>
                     ${extensionsHtml}
@@ -769,7 +833,7 @@
                                     if (t.seasons) item.seasonsData = JSON.stringify(t.seasons.map(s => ({ name: s.name, episode_count: s.episode_count, season_number: s.season_number, air_year: s.air_date ? s.air_date.split('-')[0] : '' })));
                                     if (t.credits) {
                                         item.director = item.type === 'Movie' ? (t.credits.crew?.find(c => c.job === 'Director')?.name || '') : (t.created_by?.[0]?.name || '');
-                                        item.actorsData = JSON.stringify(t.credits.cast?.slice(0, 10).map(c => ({ name: c.name, profile: c.profile_path })));
+                                        item.actorsData = JSON.stringify(t.credits.cast?.slice(0, 12).map(c => ({ name: c.name, profile: c.profile_path })));
                                     }
                                     changesMade = true;
                                 }
@@ -779,8 +843,8 @@
                     } catch (err) {}
                 }
             }
-            if (changesMade) { localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); renderGrid(); renderTvGrid(); renderMovieGrid(); alert("Handshake complete: Widescreen headshots and bulk season selectors fully updated, Marcus!"); }
-            else { alert("All local files completely optimized, Sweetie!"); }
+            if (changesMade) { localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); renderGrid(); renderTvGrid(); renderMovieGrid(); alert("Handshake complete: Extended layouts, episode selectors, and ratings ready!"); }
+            else { alert("All local library configurations completely optimized, Marcus!"); }
             statusLog.innerText = "Status: Connected Mode";
         };
 
