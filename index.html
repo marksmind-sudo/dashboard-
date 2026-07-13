@@ -210,7 +210,8 @@
             <div id="mediaMetricsDeck" style="display: flex; gap: 8px; padding: 10px 15px 0 15px; justify-content: flex-start; flex-wrap: wrap;"></div>
             
             <div class="control-filter-deck">
-                <input type="text" id="searchBar" placeholder="🔍 Search vault grid..." oninput="renderGrid()" style="flex-grow: 1;">
+               <input type="text" id="searchBar" placeholder="🔍 Search titles, actors, directors, networks, series..." oninput="renderGrid()" style="flex-grow: 1;">
+
                 <!-- 🔃 TRACKER ALPHABETICAL/RELEASE YEAR SORT SELECTOR -->
                 <select id="mediaSortOrder" onchange="renderGrid()" class="card-select" style="min-width: 130px;">
                     <option value="default">Sort: History Log</option>
@@ -240,7 +241,8 @@
 
             <!-- BOOK SEARCH RAILS -->
             <div class="control-filter-deck" style="padding-bottom: 10px;">
-                <input type="text" id="bookSearchBar" placeholder="🔍 Search book title or author..." oninput="renderBookGrid()" style="flex-grow: 1;">
+               <input type="text" id="bookSearchBar" placeholder="🔍 Search title, author, book series..." oninput="renderBookGrid()" style="flex-grow: 1;">
+
                 <!-- 🔃 LITERARY ALPHABETICAL SORT SELECTOR -->
                 <select id="bookSortOrder" onchange="renderBookGrid()" class="card-select" style="min-width: 130px;">
                     <option value="default">Sort: Default Log</option>
@@ -434,7 +436,7 @@
                     <option value="currently-reading" ${book.status === 'currently-reading' ? 'selected' : ''}>Currently Reading</option>
                     <option value="read" ${book.status === 'read' ? 'selected' : ''}>Completed Log</option>
                 `;
-            } else {
+                       } else {
                 const item = mediaDatabase.find(m => m.id === id);
                 if (!item) return;
 
@@ -445,20 +447,40 @@
                     ? `<img src="${imgSrc}" style="width: 110px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.5); object-fit: cover; aspect-ratio: 2/3;">`
                     : `<div style="width: 110px; height: 165px; background: rgba(0,0,0,0.3); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 1px dashed rgba(255,255,255,0.1);">🎬</div>`;
 
+                // Generate season tracker metrics for TV Shows dynamically
+                const seasonHtml = item.type === 'TV' && item.seasonsCount
+                    ? `<div style="margin-top: 6px; background: rgba(255, 0, 127, 0.05); border: 1px solid rgba(255,0,127,0.2); padding: 8px; border-radius: 6px; font-size: 0.75rem;">
+                         🗓️ <strong>Series Structure:</strong> ${item.seasonsCount} Full Seasons logged via cloud sync.
+                       </div>`
+                    : '';
+
+                // Generate collection metrics for Movie series franchises
+                const collectionHtml = item.belongsToCollection
+                    ? `<div style="margin-top: 6px; background: rgba(0, 255, 204, 0.05); border: 1px solid rgba(0,255,204,0.2); padding: 8px; border-radius: 6px; font-size: 0.75rem;">
+                         🎬 <strong>Franchise Connection:</strong> Part of the <em>${item.belongsToCollection}</em> saga.
+                       </div>`
+                    : '';
+
                 metaContainer.innerHTML = `
                     <div style="display: flex; gap: 16px; margin-top: 12px; align-items: flex-start;">
                         ${imgHtml}
                         <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.75rem; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
-                                <div><span style="opacity:0.5;">Type:</span> <strong style="color:#fff;">${item.type}</strong></div>
-                                <div><span style="opacity:0.5;">Year:</span> <strong style="color:#fff;">${item.year || 'N/A'}</strong></div>
-                                <div style="grid-column: 1 / -1;"><span style="opacity:0.5;">Genre Index:</span> <strong style="color:var(--accent-color);">${item.genre}</strong></div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.72rem; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                                <div><span style="opacity:0.5;">Type:</span> <strong>${item.type}</strong></div>
+                                <div><span style="opacity:0.5;">Year:</span> <strong>${item.year || 'N/A'}</strong></div>
+                                <div style="grid-column: 1 / -1;"><span style="opacity:0.5;">Network/Studio:</span> <strong style="color:#fff;">${item.network || 'N/A'}</strong></div>
+                                <div style="grid-column: 1 / -1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><span style="opacity:0.5;">Director/Creator:</span> <strong style="color:var(--accent-color);">${item.director || 'N/A'}</strong></div>
                             </div>
-                            <div style="font-size: 0.78rem; line-height: 1.4; opacity: 0.85; max-height: 105px; overflow-y: auto; padding-right: 4px; margin-top: 4px;">
+                            <div style="font-size: 0.75rem; line-height: 1.3; opacity: 0.85; max-height: 75px; overflow-y: auto; padding-right: 2px;">
                                 ${item.overview || 'No cloud synopsis loaded.'}
                             </div>
                         </div>
                     </div>
+                    <div style="margin-top: 8px; font-size: 0.72rem; opacity: 0.7; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        👤 <strong>Starring Cast:</strong> ${item.actors || 'No credited cast index saved.'}
+                    </div>
+                    ${seasonHtml}
+                    ${collectionHtml}
                 `;
                 
                 select.innerHTML = `
@@ -468,6 +490,7 @@
                     <option value="completed" ${item.status === 'completed' ? 'selected' : ''}>Completed Log</option>
                 `;
             }
+
 
             document.getElementById('detailModal').classList.add('active');
         }
@@ -507,11 +530,18 @@
             const searchInput = document.getElementById('searchBar');
             const searchVal = (searchInput && searchInput.value) ? searchInput.value.toLowerCase() : '';
 
-            let list = mediaDatabase.filter(m => {
-                const matchesSearch = m.name && m.name.toLowerCase().includes(searchVal);
+                        let list = mediaDatabase.filter(m => {
+                const titleMatch = m.name && m.name.toLowerCase().includes(searchVal);
+                const actorMatch = m.actors && m.actors.toLowerCase().includes(searchVal);
+                const directorMatch = m.director && m.director.toLowerCase().includes(searchVal);
+                const networkMatch = m.network && m.network.toLowerCase().includes(searchVal);
+                const collectionMatch = m.belongsToCollection && m.belongsToCollection.toLowerCase().includes(searchVal);
+                
+                const matchesSearch = titleMatch || actorMatch || directorMatch || networkMatch || collectionMatch;
                 const matchesFilter = (currentFilter === 'all' || m.status === currentFilter);
                 return matchesSearch && matchesFilter;
             });
+
 
             const sortOrder = document.getElementById('mediaSortOrder')?.value || 'default';
             if (sortOrder === 'alpha') {
