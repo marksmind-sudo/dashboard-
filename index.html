@@ -52,14 +52,14 @@
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 15px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color, #00ffcc); margin-bottom: 15px; }
         header h1 { font-size: 1.5rem; }
         
-        .header-controls { display: flex; gap: 10px; align-items: center; }
-        .theme-dropdown { background: #111; color: inherit; border: 1px solid var(--border-color); padding: 6px; border-radius: 4px; }
+        .header-controls { display: flex; gap: 12px; align-items: center; }
+        .theme-dropdown { background: #111; color: inherit; border: 1px solid var(--border-color); padding: 8px; border-radius: 4px; }
         .control-filter-deck { display: flex; gap: 10px; padding: 0 15px 15px 15px; align-items: center; flex-wrap: wrap; }
-        .card-select, input[type="text"], input[type="password"] { background: rgba(0,0,0,0.4); color: inherit; border: 1px solid var(--border-color, #00ffcc); padding: 8px; border-radius: 4px; }
+        .card-select, input[type="text"], input[type="password"] { background: rgba(0,0,0,0.4); color: inherit; border: 1px solid var(--border-color, #00ffcc); padding: 10px; border-radius: 6px; font-size: 0.9rem; }
 
         .sub-nav-wrapper { padding: 0 15px; margin-bottom: 15px; overflow-x: auto; }
         .sub-nav { display: flex; gap: 8px; white-space: nowrap; }
-        .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color, #00ffcc); color: inherit; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
+        .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color, #00ffcc); color: inherit; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; }
         .sub-btn.active { background: var(--accent-color, #ff007f); color: #000; font-weight: bold; }
 
         .cinema-grid {
@@ -98,57 +98,103 @@
         .progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
         .progress-bar { height: 100%; background: var(--accent-color, #ff007f); width: 0%; }
 
-        /* --- MODAL DIAL LAYOUT --- */
-        .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
+        /* ========================================== */
+        /* SECTION 6: HIGH-CAPACITY TABLET MODAL CORE */
+        /* ========================================== */
+        .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.88); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 24px; }
         .modal-canvas.active { display: flex; }
         
+        /* 📱 SCALE UP PROPORTIONS FOR EXTENSIVE DATA VIEWS */
         .modal-box { 
-            background: #0a0c20; 
+            background: #090b1e; 
             border: 2px solid var(--border-color, #00ffcc); 
             width: 95%; 
-            max-width: 780px; 
-            max-height: 90vh;
-            border-radius: 12px; 
+            max-width: 960px; 
+            max-height: 85vh;
+            border-radius: 14px; 
             padding: 24px; 
             display: flex; 
             flex-direction: column; 
             gap: 16px; 
             color: #fff; 
-            overflow-y: auto;
+            position: relative;
         }
 
-        /* --- VISUAL INTERACTIVE CAST SCROLL RAILS --- */
-        .cast-horizontal-row { display: flex; gap: 12px; overflow-x: auto; padding: 8px 0; margin-top: 4px; }
+        /* 📌 STICKY HEADER ACCESSIBLE DISMISS BAR */
+        .modal-header-shelf {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 12px;
+            margin-bottom: 4px;
+        }
+        .modal-scroll-body {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-right: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .close-action-pill {
+            background: rgba(255, 0, 127, 0.1);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .close-action-pill:hover {
+            background: var(--accent-color);
+            color: #000;
+        }
+
+        /* --- ACTOR PICTURES SIZE Dial INCREASE --- */
+        .cast-horizontal-row { display: flex; gap: 16px; overflow-x: auto; padding: 10px 0; }
         .cast-pill-card { 
-            background: rgba(255,255,255,0.04); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 8px; 
-            padding: 8px; 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 10px; 
+            padding: 10px; 
             display: flex; 
             flex-direction: column; 
             align-items: center;
-            min-width: 110px; 
+            min-width: 130px; 
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
-        .cast-pill-card:hover { background: rgba(255, 0, 127, 0.15); border-color: var(--accent-color); }
-        .cast-avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.2); }
+        .cast-pill-card:hover { background: rgba(255, 0, 127, 0.12); border-color: var(--accent-color); }
+        .cast-avatar { width: 95px; height: 95px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.15); }
 
-        /* --- SEASON & EPISODE STYLES MAPPED FROM SCREENSHOT --- */
-        .season-vertical-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
-        .season-list-header { display: flex; justify-content: space-between; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
-        .season-list-header:hover { border-color: var(--text-color); }
-        .episode-container-block { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-top: none; border-radius: 0 0 6px 6px; padding: 10px; display: none; flex-direction: column; gap: 8px; }
-        .episode-row-item { display: flex; align-items: flex-start; gap: 10px; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 4px; font-size: 0.8rem; }
-        .episode-row-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent-color); cursor: pointer; margin-top: 2px; }
+        /* --- BULK SEASON AND INTERACTIVE EPISODE VIEWS --- */
+        .season-vertical-list { display: flex; flex-direction: column; gap: 8px; }
+        .season-list-header { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 12px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; }
+        .season-click-shelf { flex-grow: 1; cursor: pointer; display: flex; justify-content: space-between; padding-right: 20px; }
+        .episode-container-block { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.06); border-top: none; border-radius: 0 0 6px 6px; padding: 12px; display: none; flex-direction: column; gap: 10px; }
+        .episode-row-item { display: flex; align-items: flex-start; gap: 12px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 6px; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.03); }
+        .episode-row-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent-color); cursor: pointer; margin-top: 2px; }
 
-        .side-drawer { position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: #0a0c20; border-left: 2px solid var(--border-left); z-index: 9999; transition: right 0.3s ease; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; color: #fff; }
+        /* --- SETTINGS PADDING FIX FOR EASY PRESS --- */
+        .side-drawer { position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: #0a0c20; border-left: 2px solid var(--border-color); z-index: 9999; transition: right 0.3s ease; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; color: #fff; }
         .side-drawer.open { right: 0; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 0.8rem; font-weight: bold; }
+        
+        .btn { background: var(--accent-color, #ff007f); color: #000; font-weight: bold; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-size: 0.95rem; text-align: center; width: 100%; transition: opacity 0.2s; }
+        .btn:active { opacity: 0.8; }
+
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: #04040a; border-top: 3px solid var(--border-color); height: 65px; align-items: center; justify-content: space-around; padding: 0 10px; z-index: 1000; }
         .nav-item { color: inherit; padding: 10px; cursor: pointer; font-weight: bold; font-size: 0.9rem; flex: 1; text-align: center; }
         .nav-item.active { background: var(--accent-color); color: #000; border-radius: 8px 8px 0 0; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+
+        .gear-btn { background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: #fff; font-weight: bold; font-size: 0.88rem; padding: 8px 14px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+        .gear-btn:hover { background: var(--accent-color); color: #000; }
     </style>
 </head>
 <body data-theme="cyberpunk">
@@ -167,31 +213,54 @@
                 <option value="tvtime-dark">TV Time Dark</option>
                 <option value="tvtime-light">TV Time Light</option>
             </select>
-            <button class="gear-btn" onclick="switchTab('settingsTab')">⚙️ Settings</button>
+            <button class="gear-btn" onclick="switchTab('settingsTab')">⚙️ Control Engine</button>
         </div>
     </header>
+
+    <!-- ========================================== -->
+    <!-- SECTION 5: INGESTION SIDE DRAWER FRAMEWORK -->
+    <!-- ========================================== -->
+    <div id="addMediaDrawer" class="side-drawer">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3>Add New Media Entry</h3>
+            <button onclick="toggleDrawer(false)" style="background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer;">✕</button>
+        </div>
+        <div class="form-group"><label>Title Name</label><input type="text" id="addTitle" placeholder="e.g., Stargate SG-1"></div>
+        <div class="form-group"><label>Category Type</label><select id="addType" class="card-select"><option value="TV">TV Series</option><option value="Movie">Movie</option></select></div>
+        <div class="form-group"><label>Genres</label><input type="text" id="addGenre" placeholder="Sci-Fi, Adventure"></div>
+        <div class="form-group"><label>Folder Tracking Section</label><select id="addStatus" class="card-select"><option value="all">Main Collection</option><option value="watching">Currently Watching</option><option value="waiting">Waiting for Season</option><option value="find">Stuff to Find</option><option value="completed">Completed Log</option></select></div>
+        <button class="btn" onclick="addNewItem()" style="margin-top: 10px;">Ingest Entry</button>
+    </div>
 
     <!-- ========================================== -->
     <!-- SECTION 6: PROFILE POP-UP DETAILED MODAL   -->
     <!-- ========================================== -->
     <div id="detailModal" class="modal-canvas" onclick="if(event.target === this) closeModal()">
         <div class="modal-box">
-            <h2 id="modalTitle" style="border-bottom: 2px solid var(--accent-color); padding-bottom: 6px; font-size: 1.6rem;">Title</h2>
-            <div id="modalMeta"></div>
-            <div class="form-group" style="margin-top: 10px;">
-                <label style="color: var(--accent-color);">Update Status Folder</label>
-                <select id="modalFolderSelect" class="card-select" onchange="updateItemStatus(this.value)"></select>
+            <div class="modal-header-shelf">
+                <h2 id="modalTitle" style="font-size: 1.6rem; max-width: 75%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Title</h2>
+                <button class="close-action-pill" onclick="closeModal()">✕ Close Window</button>
             </div>
-            <button class="btn" onclick="closeModal()" style="margin-top: 8px;">Close Panel</button>
+            <div class="modal-scroll-body">
+                <div id="modalMeta"></div>
+                <div class="form-group">
+                    <label style="color: var(--accent-color);">Update Status Folder</label>
+                    <select id="modalFolderSelect" class="card-select" onchange="updateItemStatus(this.value)"></select>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- 👤 NESTED ACTOR BIOGRAPHY MODAL PORTAL -->
     <div id="actorModal" class="modal-canvas" onclick="if(event.target === this) document.getElementById('actorModal').classList.remove('active')">
-        <div class="modal-box" style="max-width: 550px; background: #0c0f26; border-color: var(--text-color);">
-            <h3 id="actorModalName" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px;">Actor Profile</h3>
-            <div id="actorModalContent" style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px;"></div>
-            <button class="btn" onclick="document.getElementById('actorModal').classList.remove('active')" style="margin-top: 10px; background: var(--text-color); color:#000;">Return to Media</button>
+        <div class="modal-box" style="max-width: 760px; background: #090b1e; border-color: var(--text-color);">
+            <div class="modal-header-shelf">
+                <h3 id="actorModalName" style="color: var(--text-color); font-size:1.4rem;">Actor Profile</h3>
+                <button class="close-action-pill" onclick="document.getElementById('actorModal').classList.remove('active')" style="border-color:var(--text-color); color:var(--text-color); background:rgba(255,255,255,0.05);">✕ Back to Catalog</button>
+            </div>
+            <div class="modal-scroll-body">
+                <div id="actorModalContent" style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 4px;"></div>
+            </div>
         </div>
     </div>
 
@@ -222,7 +291,7 @@
             <div id="cinemaDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- --- VIEWPORT TAB 1B: TELEVISION dedic GRID --- -->
+        <!-- --- VIEWPORT TAB 1B: TELEVISION dedicated GRID --- -->
         <div id="tvTab" class="tab-content">
             <div id="tvMetricsDeck" style="display: flex; gap: 8px; padding: 10px 15px 0 15px; justify-content: flex-start; flex-wrap: wrap;"></div>
             <div class="control-filter-deck">
@@ -282,43 +351,42 @@
 
         <!-- --- VIEWPORT TAB 3: SYSTEM SETTINGS RACK --- -->
         <div id="settingsTab" class="tab-content">
-            <div style="background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 16px; max-width: 500px; margin: 0 auto;">
-                <h3 style="color: var(--text-color, #00ffcc); border-bottom: 1px solid var(--border-color, #00ffcc); padding-bottom: 8px;">Vault Engine Control Deck</h3>
+            <div style="background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 0 auto; box-shadow: 0 6px 20px rgba(0,0,0,0.4);">
+                <h3 style="color: var(--text-color, #00ffcc); border-bottom: 1px solid var(--border-color, #00ffcc); padding-bottom: 10px;">Vault Engine Control Deck</h3>
                 
-                <!-- 🛠️ RESTORED VISIBILITY TOGGLE RAILS FOR PRIVACY KEYS -->
                 <div class="form-group">
                     <label>Trakt Client ID</label>
-                    <div style="display:flex; gap:6px; align-items:center;">
+                    <div style="display:flex; gap:8px; align-items:center;">
                         <input type="password" id="traktClientIdInput" placeholder="Paste Client ID here..." style="flex-grow:1;">
-                        <label style="font-size:0.75rem; white-space:nowrap; cursor:pointer;"><input type="checkbox" onchange="document.getElementById('traktClientIdInput').type = this.checked ? 'text' : 'password'"> Show</label>
+                        <label style="font-size:0.8rem; white-space:nowrap; cursor:pointer; user-select:none;"><input type="checkbox" onchange="document.getElementById('traktClientIdInput').type = this.checked ? 'text' : 'password'"> Show</label>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Trakt Client Secret</label>
-                    <div style="display:flex; gap:6px; align-items:center;">
+                    <div style="display:flex; gap:8px; align-items:center;">
                         <input type="password" id="traktClientSecretInput" placeholder="Paste Client Secret here..." style="flex-grow:1;">
-                        <label style="font-size:0.75rem; white-space:nowrap; cursor:pointer;"><input type="checkbox" onchange="document.getElementById('traktClientSecretInput').type = this.checked ? 'text' : 'password'"> Show</label>
+                        <label style="font-size:0.8rem; white-space:nowrap; cursor:pointer; user-select:none;"><input type="checkbox" onchange="document.getElementById('traktClientSecretInput').type = this.checked ? 'text' : 'password'"> Show</label>
                     </div>
                 </div>
                 <button class="btn" onclick="window.initializeTraktDeviceAuth()">Link Trakt Account</button>
                 
-                <div id="traktPinGroup" style="display: none; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px; flex-direction: column; gap: 8px;">
-                    <label style="color: var(--accent-color, #ff007f); font-weight: bold; font-size:0.8rem;">Go to verification url: <a id="traktAuthUrl" href="#" target="_blank" style="color: #fff; text-decoration: underline;">Link Profile</a></label>
-                    <input type="text" id="traktPinInput" placeholder="Enter Verification PIN..." class="card-select" style="background:rgba(0,0,0,0.6);">
+                <div id="traktPinGroup" style="display: none; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 14px; flex-direction: column; gap: 10px;">
+                    <label style="color: var(--accent-color, #ff007f); font-weight: bold; font-size:0.85rem;">Go to verification link: <a id="traktAuthUrl" href="#" target="_blank" style="color: #fff; text-decoration: underline;">Link Profile</a></label>
+                    <input type="text" id="traktPinInput" placeholder="Enter Verification PIN..." class="card-select" style="background:rgba(0,0,0,0.6); padding:12px;">
                     <button class="btn" onclick="window.exchangeTraktPinForToken()" style="background: #fff; color: #000;">Authorize Vault Token</button>
                 </div>
 
-                <div class="form-group" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
+                <div class="form-group" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 14px;">
                     <label>TMDB (Movie Database) API Key</label>
-                    <div style="display:flex; gap:6px; align-items:center;">
+                    <div style="display:flex; gap:8px; align-items:center;">
                         <input type="password" id="tmdbApiKeyInput" placeholder="Paste TMDB API Key here..." style="flex-grow:1;">
-                        <label style="font-size:0.75rem; white-space:nowrap; cursor:pointer;"><input type="checkbox" onchange="document.getElementById('tmdbApiKeyInput').type = this.checked ? 'text' : 'password'"> Show</label>
+                        <label style="font-size:0.8rem; white-space:nowrap; cursor:pointer; user-select:none;"><input type="checkbox" onchange="document.getElementById('tmdbApiKeyInput').type = this.checked ? 'text' : 'password'"> Show</label>
                     </div>
                 </div>
-                <button class="btn" onclick="window.pullTraktUserHistoryStream()" style="background: #00ffcc; color: #000; margin-top: 4px;">🔄 Sync Watch History Stream</button>
-                <button class="btn" onclick="window.repairExistingMediaMetadata()" style="background: #ff007f; color: #fff; margin-top: 4px; font-size: 0.8rem;">⚡ Force Full Meta Scraping Repair</button>
+                <button class="btn" onclick="window.pullTraktUserHistoryStream()" style="background: #00ffcc; color: #000;">🔄 Sync Watch History Stream</button>
+                <button class="btn" onclick="window.repairExistingMediaMetadata()" style="background: #ff007f; color: #fff;">⚡ Force Full Meta Scraping Repair</button>
                 
-                <div id="traktStatusLog" style="font-size: 0.8rem; text-align: center; color: var(--accent-color); margin-top: 4px;">Status: Standby (Local Mode)</div>
+                <div id="traktStatusLog" style="font-size: 0.85rem; text-align: center; color: var(--accent-color); font-weight: bold;">Status: Standby (Local Mode)</div>
             </div>
         </div>
     </main>
@@ -364,15 +432,15 @@
         function filterTvCategory(catId) { currentTvFilter = catId; document.querySelectorAll('#tvTab .sub-nav .sub-btn').forEach(btn => btn.classList.toggle('active', btn.id==='tv-sub-'+catId)); renderTvGrid(); }
         function filterMovieCategory(catId) { currentMovieFilter = catId; document.querySelectorAll('#moviesTab .sub-nav .sub-btn').forEach(btn => btn.classList.toggle('active', btn.id==='movie-sub-'+catId)); renderMovieGrid(); }
 
-        // --- INTERACTIVE CAST PROFILE LOOKUP ENGINE ---
+        // --- INTERACTIVE ACTOR PROFILE LOOKUP ENGINE ---
         window.lookupActorProfile = async function(actorName) {
             const content = document.getElementById('actorModalContent');
             document.getElementById('actorModalName').innerText = actorName;
-            content.innerHTML = `<div style="padding:15px; opacity:0.6;">Searching TMDB dossier...</div>`;
+            content.innerHTML = `<div style="padding:20px; opacity:0.6; font-size:0.95rem;">Searching TMDB network registry...</div>`;
             document.getElementById('actorModal').classList.add('active');
 
             const tmdbKey = localStorage.getItem('tmdb_api_key');
-            if (!tmdbKey) { content.innerHTML = `Provide TMDB API key in Settings to inspect casting data details.`; return; }
+            if (!tmdbKey) { content.innerHTML = `Provide TMDB API key in Control Deck to inspect casting files.`; return; }
 
             try {
                 const searchRes = await fetch(`https://api.themoviedb.org/3/search/person?api_key=${tmdbKey}&query=${encodeURIComponent(actorName)}`);
@@ -384,22 +452,25 @@
                 const bioRes = await fetch(`https://api.themoviedb.org/3/person/${personId}?api_key=${tmdbKey}&append_to_response=combined_credits`);
                 const bData = await bioRes.json();
 
-                const avatar = bData.profile_path ? `https://image.tmdb.org/t/p/w185${bData.profile_path}` : '';
-                const bio = bData.biography || 'No biographical logging found.';
-                const credits = bData.combined_credits?.cast?.slice(0, 5).map(c => `<strong>${c.title || c.name}</strong> (${c.release_date || c.first_air_date || 'N/A'})`).join('<br>') || 'None logged.';
+                const avatar = bData.profile_path ? `https://image.tmdb.org/t/p/w300${bData.profile_path}` : '';
+                const bio = bData.biography || 'No biographical overview text filed.';
+                const credits = bData.combined_credits?.cast?.slice(0, 8).map(c => `<div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.03);">📺 <strong>${c.title || c.name}</strong> as <em>${c.character || 'Self'}</em> (${c.release_date || c.first_air_date || 'N/A'})</div>`).join('') || 'None logged.';
 
                 content.innerHTML = `
-                    ${avatar ? `<img src="${avatar}" style="width:120px; border-radius:6px; aspect-ratio:2/3; object-fit:cover; box-shadow:0 4px 10px rgba(0,0,0,0.4);">` : ''}
-                    <div style="flex:1; min-width:240px; display:flex; flex-direction:column; gap:8px; font-size:0.82rem;">
-                        <div>📍 Born: <strong>${bData.place_of_birth || 'Unknown'}</strong> | ${bData.birthday || 'N/A'}</div>
-                        <div style="max-height:120px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:8px; border-radius:4px; opacity:0.85;">${bio}</div>
-                        <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:6px;">🎬 <span style="color:var(--accent-color); font-weight:bold;">Vault Known Roles:</span><br>${credits}</div>
+                    ${avatar ? `<img src="${avatar}" style="width:200px; border-radius:10px; aspect-ratio:2/3; object-fit:cover; box-shadow:0 6px 16px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1);">` : ''}
+                    <div style="flex:1; min-width:320px; display:flex; flex-direction:column; gap:12px; font-size:0.9rem; line-height:1.5;">
+                        <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
+                            📌 Place of Birth: <strong>${bData.place_of_birth || 'Unknown'}</strong><br>
+                            📅 Birth Date: <strong>${bData.birthday || 'N/A'}</strong> ${bData.deathday ? `| ✝️ Died: <strong>${bData.deathday}</strong>` : ''}
+                        </div>
+                        <div style="max-height:180px; overflow-y:auto; background:rgba(0,0,0,0.4); padding:12px; border-radius:6px; border:1px solid rgba(255,255,255,0.03); opacity:0.9;">${bio}</div>
+                        <div style="margin-top:4px;"><h4 style="color:var(--accent-color); margin-bottom:6px; font-size:0.95rem;">Notable Career Appearances</h4><div style="max-height:150px; overflow-y:auto; padding-right:4px;">${credits}</div></div>
                     </div>
                 `;
-            } catch(e) { content.innerHTML = `Matrix failure collecting actor files.`; }
+            } catch(e) { content.innerHTML = `Matrix failure collecting actor file indices.`; }
         };
 
-        // --- INTERACTIVE TV SEASON & EPISODE DRILLDOWN LISTENER ---
+        // --- INTERACTIVE TV SEASON & BULK EPISODE TOGGLE CORE ---
         window.toggleEpisodeContainer = async function(index, tmdbId, seasonNum) {
             const container = document.getElementById(`episode-block-${index}`);
             if (container.style.display === 'flex') {
@@ -407,7 +478,7 @@
                 return;
             }
             container.style.display = 'flex';
-            container.innerHTML = `<div style="font-size:0.75rem; opacity:0.6; padding:6px;">Downloading episode data indices...</div>`;
+            container.innerHTML = `<div style="font-size:0.8rem; opacity:0.6; padding:8px;">Downloading detailed episode files...</div>`;
 
             const tmdbKey = localStorage.getItem('tmdb_api_key');
             if (!tmdbKey) { container.innerHTML = `Provide TMDB API key to reveal episodes.`; return; }
@@ -418,7 +489,7 @@
                 const data = await res.json();
 
                 if (!data.episodes || data.episodes.length === 0) {
-                    container.innerHTML = `No episodes logged inside this file grid.`;
+                    container.innerHTML = `No episodes logged inside this file directory.`;
                     return;
                 }
 
@@ -427,18 +498,18 @@
                     const isChecked = watchedEpisodesLog[logKey] ? 'checked' : '';
                     return `
                         <div class="episode-row-item">
-                            <input type="checkbox" ${isChecked} onchange="window.toggleEpisodeWatchStatus('${logKey}', this.checked)">
+                            <input type="checkbox" id="chk-${logKey}" ${isChecked} onchange="window.toggleEpisodeWatchStatus('${logKey}', this.checked)">
                             <div style="flex-grow:1;">
-                                <div style="display:flex; justify-content:between; font-weight:bold; color:#fff;">
+                                <div style="display:flex; justify-content:space-between; font-weight:bold; color:#fff;">
                                     <span>Ep ${ep.episode_number}: ${ep.name}</span>
-                                    <span style="opacity:0.6; font-size:0.7rem;">⭐ ${ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A'}</span>
+                                    <span style="color:var(--text-color); font-size:0.75rem;">⭐ ${ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A'}</span>
                                 </div>
-                                <p style="font-size:0.72rem; opacity:0.75; margin-top:2px;">${ep.overview || 'No log synopsis stored.'}</p>
+                                <p style="font-size:0.78rem; opacity:0.8; margin-top:4px; line-height:1.4;">${ep.overview || 'No description summary logged.'}</p>
                             </div>
                         </div>
                     `;
                 }).join('');
-            } catch(e) { container.innerHTML = `Handshake failed pulling episodes.`; }
+            } catch(e) { container.innerHTML = `Handshake failed pulling season episode arrays.`; }
         };
 
         window.toggleEpisodeWatchStatus = function(logKey, isWatched) {
@@ -447,7 +518,38 @@
             localStorage.setItem('vault_watched_episodes', JSON.stringify(watchedEpisodesLog));
         };
 
-        // --- SUB SECTION D: MODAL DETAILED CUSTOM OVERHAUL ---
+        // ⚡ BULK ACTION TOGGLE FOR ENTIRE SEASONS AT ONCE
+        window.bulkToggleSeasonEpisodes = async function(btn, tmdbId, seasonNum, index) {
+            event.stopPropagation();
+            const tmdbKey = localStorage.getItem('tmdb_api_key');
+            if (!tmdbKey) return alert("Please configure TMDB API Key first!");
+
+            const currentState = btn.getAttribute('data-state') || 'none';
+            const nextState = currentState === 'all' ? 'none' : 'all';
+            btn.setAttribute('data-state', nextState);
+            btn.innerText = nextState === 'all' ? '✕ Unmark All' : '✓ Mark Season';
+
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}/season/${seasonNum}?api_key=${tmdbKey}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.episodes) {
+                        data.episodes.forEach(ep => {
+                            const logKey = `${tmdbId}-${seasonNum}-${ep.episode_number}`;
+                            if (nextState === 'all') watchedEpisodesLog[logKey] = true;
+                            else delete watchedEpisodesLog[logKey];
+                            
+                            // Contextually sync local dynamic DOM checkboxes if open
+                            const domChk = document.getElementById(`chk-${logKey}`);
+                            if (domChk) domChk.checked = (nextState === 'all');
+                        });
+                        localStorage.setItem('vault_watched_episodes', JSON.stringify(watchedEpisodesLog));
+                    }
+                }
+            } catch(e) {}
+        };
+
+        // --- SUB SECTION D: MODAL CONTROLLER OVERHAUL ---
         function openModal(id, itemType = 'media') {
             activeItemId = id;
             const select = document.getElementById('modalFolderSelect');
@@ -458,10 +560,10 @@
                 if (!book) return;
                 document.getElementById('modalTitle').innerText = book.title;
                 metaContainer.innerHTML = `
-                    <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
-                        <img src="https://covers.openlibrary.org/b/title/${encodeURIComponent(book.title)}-M.jpg" style="width: 140px; border-radius: 8px; object-fit: cover; aspect-ratio: 2/3; box-shadow: 0 6px 16px rgba(0,0,0,0.6);">
+                    <div style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
+                        <img src="https://covers.openlibrary.org/b/title/${encodeURIComponent(book.title)}-M.jpg" style="width: 150px; border-radius: 8px; object-fit: cover; aspect-ratio: 2/3; box-shadow: 0 6px 16px rgba(0,0,0,0.6);">
                         <div style="flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 8px;">
-                            <div style="display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 0.88rem; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 0.92rem; background: rgba(255,255,255,0.03); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                                 <div>✍️ Author/Creator: <strong style="color:var(--accent-color);">${book.author}</strong></div>
                                 <div>📖 Edition Format: <strong style="text-transform: uppercase; color:#fff;">${book.format}</strong></div>
                                 <div>📚 Book Series Index: <strong style="color:var(--text-color);">${book.series || 'Stand-Alone Novel'}</strong></div>
@@ -479,31 +581,32 @@
                 const imgSrc = item.posterPath ? `https://image.tmdb.org/t/p/w500${item.posterPath}` : '';
                 const studioLabel = item.type === 'Movie' ? 'Production Studio' : 'Network/Platform';
 
-                // Rich graphic actor scroll row with real headshots
-                let castHtml = '<div style="opacity:0.5; font-size:0.8rem;">No actor details populated. Run Meta Scraping Repair.</div>';
+                let castHtml = '<div style="opacity:0.5; font-size:0.85rem;">No actor headshots loaded. Run Meta Scraping Repair.</div>';
                 if (item.actorsData) {
                     try {
                         const cast = JSON.parse(item.actorsData);
                         castHtml = `<div class="cast-horizontal-row">` + cast.map(c => `
                             <div class="cast-pill-card" onclick="window.lookupActorProfile('${c.name.replace(/'/g, "\\'")}')">
-                                ${c.profile ? `<img class="cast-avatar" src="https://image.tmdb.org/t/p/w185${c.profile}">` : `<div class="cast-avatar" style="background:#333; display:flex; align-items:center; justify-content:center;">👤</div>`}
-                                <span style="font-size:0.76rem; font-weight:bold; color:#fff; text-wrap:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100px;">${c.name}</span>
+                                ${c.profile ? `<img class="cast-avatar" src="https://image.tmdb.org/t/p/w185${c.profile}">` : `<div class="cast-avatar" style="background:#222; display:flex; align-items:center; justify-content:center;">👤</div>`}
+                                <span style="font-size:0.82rem; font-weight:bold; color:#fff; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${c.name}</span>
                             </div>
                         `).join('') + `</div>`;
                     } catch(e) {}
                 }
 
-                // Interactive episode selection block list
                 let extensionsHtml = '';
                 if (item.type === 'TV' && item.seasonsData) {
                     try {
                         const seasons = JSON.parse(item.seasonsData);
-                        extensionsHtml = `<div style="margin-top:12px;"><h4 style="font-size:0.9rem; color:var(--accent-color); margin-bottom:6px;">Season Track Matrix (Tap to Open Episodes)</h4><div class="season-vertical-list">` +
+                        extensionsHtml = `<div style="margin-top:12px;"><h4 style="font-size:0.95rem; color:var(--accent-color); margin-bottom:8px;">Season Tracker Grid (Tap Rows to Drilldown Episodes)</h4><div class="season-vertical-list">` +
                             seasons.map((s, idx) => `
                                 <div style="display:flex; flex-direction:column;">
-                                    <div class="season-list-header" onclick="window.toggleEpisodeContainer(${idx}, ${item.tmdbId || 0}, ${s.season_number})">
-                                        <span>${s.name}</span>
-                                        <span style="opacity:0.7; font-weight:normal;">${s.episode_count} Episodes</span>
+                                    <div class="season-list-header">
+                                        <div class="season-click-shelf" onclick="window.toggleEpisodeContainer(${idx}, ${item.tmdbId || 0}, ${s.season_number})">
+                                            <span>${s.name}</span>
+                                            <span style="opacity:0.7; font-weight:normal;">${s.episode_count} Episodes</span>
+                                        </div>
+                                        <button class="sub-btn" style="padding:4px 10px; font-size:0.75rem; border-color:var(--accent-color); margin:0;" onclick="window.bulkToggleSeasonEpisodes(this, ${item.tmdbId || 0}, ${s.season_number}, ${idx})">✓ Mark Season</button>
                                     </div>
                                     <div id="episode-block-${idx}" class="episode-container-block"></div>
                                 </div>
@@ -512,20 +615,20 @@
                 }
 
                 metaContainer.innerHTML = `
-                    <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
-                        ${imgSrc ? `<img src="${imgSrc}" style="width: 140px; border-radius: 8px; object-fit: cover; aspect-ratio: 2/3; box-shadow: 0 6px 16px rgba(0,0,0,0.6);">` : '🎬'}
-                        <div style="flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 8px;">
-                            <div style="display: grid; grid-template-columns: 1fr; gap: 4px; font-size: 0.82rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
+                        ${imgSrc ? `<img src="${imgSrc}" style="width: 160px; border-radius: 8px; object-fit: cover; aspect-ratio: 2/3; box-shadow: 0 6px 18px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1);">` : '🎬'}
+                        <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 4px; font-size: 0.85rem; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                                 <div>🎬 Classification Type: <strong style="color:#fff;">${item.type}</strong></div>
                                 <div>📅 Release Year: <strong>${item.year || 'N/A'}</strong></div>
                                 <div>🏢 ${studioLabel}: <strong style="color:var(--text-color);">${item.network || 'Not Indexed'}</strong></div>
                                 <div>🎬 Director/Creator: <strong style="color:var(--accent-color);">${item.director || 'Not Indexed'}</strong></div>
                             </div>
-                            <p style="font-size: 0.84rem; line-height: 1.4; opacity: 0.9; max-height: 110px; overflow-y:auto;">${item.overview || 'No summary overview text.'}</p>
+                            <p style="font-size: 0.88rem; line-height: 1.5; opacity: 0.9; max-height: 120px; overflow-y:auto; padding-right:4px;">${item.overview || 'No description cataloged.'}</p>
                         </div>
                     </div>
-                    <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
-                        <h4 style="font-size: 0.88rem; color: var(--text-color); margin-bottom: 2px;">Starring Cast (Tap for Bio Portfolio)</h4>
+                    <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                        <h4 style="font-size: 0.92rem; color: var(--text-color); margin-bottom: 4px;">Starring Cast (Tap Headshots for Details)</h4>
                         ${castHtml}
                     </div>
                     ${extensionsHtml}
@@ -544,7 +647,7 @@
             renderGrid(); renderTvGrid(); renderMovieGrid(); renderBookGrid();
         }
 
-        // --- GRID CONTROLLERS ---
+        // --- RENDER DRIVERS ---
         function renderGrid() {
             const grid = document.getElementById('cinemaDatabaseGrid'); if (!grid) return; grid.innerHTML = '';
             const searchVal = document.getElementById('searchBar')?.value.toLowerCase() || '';
@@ -601,75 +704,34 @@
             });
         }
 
-        function importStoryGraphData(input) {
-            const file = input.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const text = e.target.result; const rows = []; let currentRow = []; let currentCell = ''; let insideQuotes = false;
-                for (let i = 0; i < text.length; i++) {
-                    const char = text[i];
-                    if (char === '"') { insideQuotes = !insideQuotes; }
-                    else if (char === ',' && !insideQuotes) { currentRow.push(currentCell.trim()); currentCell = ''; }
-                    else if ((char === '\r' || char === '\n') && !insideQuotes) { currentRow.push(currentCell.trim()); if (currentRow.join('').length > 0) rows.push(currentRow); currentRow = []; currentCell = ''; }
-                    else { currentCell += char; }
-                }
-                const headers = rows[0].map(h => h.toLowerCase());
-                const titleIdx = headers.indexOf('title'), authorIdx = headers.findIndex(h => h.includes('author')), formatIdx = headers.indexOf('format'), statusIdx = headers.indexOf('status'), seriesIdx = headers.findIndex(h => h.includes('series')), publisherIdx = headers.findIndex(h => h.includes('publisher'));
-                let newBooks = [];
-                for (let i = 1; i < rows.length; i++) {
-                    const cells = rows[i]; if (!cells[titleIdx]) continue;
-                    newBooks.push({ id: Date.now() + Math.random(), title: cells[titleIdx], author: authorIdx !== -1 && cells[authorIdx] ? cells[authorIdx] : 'Unknown Author', format: formatIdx !== -1 && cells[formatIdx] ? cells[formatIdx].toLowerCase() : 'print', status: statusIdx !== -1 && cells[statusIdx] ? cells[statusIdx].toLowerCase() : 'read', series: seriesIdx !== -1 && cells[seriesIdx] ? cells[seriesIdx] : '', publisher: publisherIdx !== -1 && cells[publisherIdx] ? cells[publisherIdx] : '' });
-                }
-                bookDatabase = newBooks; localStorage.setItem('vault_book_db', JSON.stringify(bookDatabase)); renderBookGrid();
-            };
-            reader.readAsText(file);
-        }
-
-        // --- EXHAUSTIVE DEEP CLOUD SYNC ENGINE WITH TMDB ACTOR DATA PACK CORES ---
         window.pullTraktUserHistoryStream = async function() {
-            const statusLog = document.getElementById('traktStatusLog');
-            if (!traktAccessToken) { statusLog.innerText = "Error: Please link Trakt first!"; return; }
+            const statusLog = document.getElementById('traktStatusLog'); if (!traktAccessToken) { statusLog.innerText = "Error: Please link Trakt first!"; return; }
             statusLog.innerText = "Synchronizing deep media stream...";
-            const tmdbKey = localStorage.getItem('tmdb_api_key') || '';
-            let updatedEntries = [...mediaDatabase];
-
+            const tmdbKey = localStorage.getItem('tmdb_api_key') || ''; let updatedEntries = [...mediaDatabase];
             try {
-                let page = 1; let keepScanning = true; const limitPerPage = 50;
+                let page = 1; let keepScanning = true;
                 while (keepScanning) {
                     statusLog.innerText = `Ingesting logs: Page ${page}`;
-                    const response = await fetch(`https://api.trakt.tv/sync/history?limit=${limitPerPage}&page=${page}`, {
+                    const response = await fetch(`https://api.trakt.tv/sync/history?limit=50&page=${page}`, {
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${traktAccessToken}`, 'trakt-api-version': '2', 'trakt-api-key': document.getElementById('traktClientIdInput').value.trim() }
                     });
-                    if (!response.ok) break;
-                    const data = await response.json();
-                    if (!data || data.length === 0) break;
-
+                    if (!response.ok) break; const data = await response.json(); if (!data || data.length === 0) break;
                     let changes = false;
                     for (const record of data) {
-                        const type = record.type;
-                        let name = type === 'movie' ? record.movie.title : record.show.title;
-                        let year = type === 'movie' ? record.movie.year : record.show.year;
-                        let tmdbId = type === 'movie' ? record.movie.ids.tmdb : record.show.ids.tmdb;
-                        
+                        const type = record.type; let name = type === 'movie' ? record.movie.title : record.show.title;
+                        let year = type === 'movie' ? record.movie.year : record.show.year; let tmdbId = type === 'movie' ? record.movie.ids.tmdb : record.show.ids.tmdb;
                         if (!name) continue;
                         if (!updatedEntries.some(m => m.name.toLowerCase() === name.toLowerCase())) {
-                            let posterPath = '', overview = '', network = '', director = '', actors = '', actorsData = '', seasonsData = '';
-                            
+                            let posterPath = '', overview = '', network = '', director = '', actorsData = '', seasonsData = '';
                             if (tmdbKey && tmdbId) {
                                 try {
                                     const tmdbType = type === 'movie' ? 'movie' : 'tv';
                                     const detailsRes = await fetch(`https://api.themoviedb.org/3/${tmdbType}/${tmdbId}?api_key=${tmdbKey}&append_to_response=credits`);
                                     if (detailsRes.ok) {
-                                        const t = await detailsRes.json();
-                                        posterPath = t.poster_path || ''; overview = t.overview || '';
+                                        const t = await detailsRes.json(); posterPath = t.poster_path || ''; overview = t.overview || '';
                                         network = type === 'movie' ? (t.production_companies?.[0]?.name || '') : (t.networks?.[0]?.name || '');
-                                        
-                                        if (t.seasons) {
-                                            seasonsData = JSON.stringify(t.seasons.map(s => ({ name: s.name, episode_count: s.episode_count, season_number: s.season_number, air_year: s.air_date ? s.air_date.split('-')[0] : '' })));
-                                        }
-                                        if (t.credits) {
-                                            actorsData = JSON.stringify(t.credits.cast?.slice(0, 10).map(c => ({ name: c.name, profile: c.profile_path })));
-                                        }
+                                        if (t.seasons) seasonsData = JSON.stringify(t.seasons.map(s => ({ name: s.name, episode_count: s.episode_count, season_number: s.season_number, air_year: s.air_date ? s.air_date.split('-')[0] : '' })));
+                                        if (t.credits) actorsData = JSON.stringify(t.credits.cast?.slice(0, 10).map(c => ({ name: c.name, profile: c.profile_path })));
                                     }
                                 } catch (e) {}
                             }
@@ -678,44 +740,33 @@
                         }
                     }
                     if (changes) { mediaDatabase = updatedEntries; localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); }
-                    if (data.length < limitPerPage) keepScanning = false; else page++;
+                    if (data.length < 50) keepScanning = false; else page++;
                 }
                 statusLog.innerText = "Sync Complete!"; renderGrid(); renderTvGrid(); renderMovieGrid();
             } catch (err) { console.error(err); }
         };
 
-        // --- RETROACTIVE ADAPTER PARSER ENGINE FOR IMAGES AND INTERACTIVE PROFILES ---
         window.repairExistingMediaMetadata = async function() {
-            const statusLog = document.getElementById('traktStatusLog');
-            const tmdbKey = localStorage.getItem('tmdb_api_key');
+            const statusLog = document.getElementById('traktStatusLog'); const tmdbKey = localStorage.getItem('tmdb_api_key');
             if (!tmdbKey) return alert("Please input your TMDB API Key first, Marcus!");
-
-            statusLog.innerText = "Running full visual cast metadata scrap repair loop...";
+            statusLog.innerText = "Running full interactive cast repair loops...";
             let changesMade = false;
-
             for (let item of mediaDatabase) {
                 if (!item.actorsData || !item.tmdbId || !item.seasonsData) {
                     try {
-                        statusLog.innerText = `Scraping Cast Assets: ${item.name}...`;
+                        statusLog.innerText = `Scraping: ${item.name}...`;
                         const searchType = item.type === 'Movie' ? 'movie' : 'tv';
                         const searchRes = await fetch(`https://api.themoviedb.org/3/search/${searchType}?api_key=${tmdbKey}&query=${encodeURIComponent(item.name)}`);
-                        
                         if (searchRes.ok) {
                             const searchData = await searchRes.json();
                             if (searchData.results && searchData.results.length > 0) {
-                                const tmdbId = searchData.results[0].id;
-                                item.tmdbId = tmdbId;
+                                const tmdbId = searchData.results[0].id; item.tmdbId = tmdbId;
                                 const detailsRes = await fetch(`https://api.themoviedb.org/3/${searchType}/${tmdbId}?api_key=${tmdbKey}&append_to_response=credits`);
-                                
                                 if (detailsRes.ok) {
                                     const t = await detailsRes.json();
                                     item.network = item.type === 'Movie' ? (t.production_companies?.[0]?.name || '') : (t.networks?.[0]?.name || '');
-                                    if (t.overview) item.overview = t.overview;
-                                    if (t.poster_path) item.posterPath = t.poster_path;
-                                    
-                                    if (t.seasons) {
-                                        item.seasonsData = JSON.stringify(t.seasons.map(s => ({ name: s.name, episode_count: s.episode_count, season_number: s.season_number, air_year: s.air_date ? s.air_date.split('-')[0] : '' })));
-                                    }
+                                    if (t.overview) item.overview = t.overview; if (t.poster_path) item.posterPath = t.poster_path;
+                                    if (t.seasons) item.seasonsData = JSON.stringify(t.seasons.map(s => ({ name: s.name, episode_count: s.episode_count, season_number: s.season_number, air_year: s.air_date ? s.air_date.split('-')[0] : '' })));
                                     if (t.credits) {
                                         item.director = item.type === 'Movie' ? (t.credits.crew?.find(c => c.job === 'Director')?.name || '') : (t.created_by?.[0]?.name || '');
                                         item.actorsData = JSON.stringify(t.credits.cast?.slice(0, 10).map(c => ({ name: c.name, profile: c.profile_path })));
@@ -728,9 +779,9 @@
                     } catch (err) {}
                 }
             }
-            if (changesMade) { localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); renderGrid(); renderTvGrid(); renderMovieGrid(); alert("Handshake complete: Visual actor nodes and episodes synced successfully!"); }
-            else { alert("All library assets fully optimized, Marcus!"); }
-            statusLog.innerText = "Status: Standby (Connected)";
+            if (changesMade) { localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); renderGrid(); renderTvGrid(); renderMovieGrid(); alert("Handshake complete: Widescreen headshots and bulk season selectors fully updated, Marcus!"); }
+            else { alert("All local files completely optimized, Sweetie!"); }
+            statusLog.innerText = "Status: Connected Mode";
         };
 
         window.initializeTraktDeviceAuth = function() {
@@ -753,7 +804,7 @@
             if (localStorage.getItem('vault_book_db')) bookDatabase = JSON.parse(localStorage.getItem('vault_book_db'));
             if (localStorage.getItem('trakt_access_token')) traktAccessToken = localStorage.getItem('trakt_access_token');
             if (localStorage.getItem('tmdb_api_key')) document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdb_api_key');
-            renderGrid(); renderTvGrid(); renderMovieGrid(); renderBookGrid();
+            renderGrid(); renderTvGrid(); renderMovieGrid();
         });
     </script>
 </body>
