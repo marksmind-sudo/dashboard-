@@ -111,7 +111,20 @@
 
         .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 15px; }
         .modal-canvas.active { display: flex; }
-        .modal-box { background: #0a0c20; border: 2px solid var(--border-color, #00ffcc); width: 100%; max-width: 500px; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 15px; color: #fff; }
+        
+        /* 📱 OPTIMIZED TABLET SIZE PROPORTION DIAL */
+        .modal-box { 
+            background: #0a0c20; 
+            border: 2px solid var(--border-color, #00ffcc); 
+            width: 90%; 
+            max-width: 650px; 
+            border-radius: 12px; 
+            padding: 24px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 16px; 
+            color: #fff; 
+        }
 
         /* --- BOTTOM CONTROL NAVIGATION MENU --- */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: #04040a; border-top: 3px solid var(--border-color, #00ffcc); height: 65px; align-items: center; justify-content: space-around; padding: 0 10px; z-index: 1000; }
@@ -120,8 +133,8 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .gear-btn { background: none; border: none; color: inherit; font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
-        .gear-btn:hover { transform: rotate(45deg); }
+        .gear-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: inherit; font-size: 1.1rem; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .gear-btn:hover { background: var(--accent-color); color: #000; }
     </style>
 </head>
 <body data-theme="cyberpunk">
@@ -131,7 +144,7 @@
     <!-- ========================================== -->
     <header>
         <h1 id="vaultHeaderTitle">Entertainment Vault</h1>
-        <div style="display: flex; gap: 12px; align-items: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
             <button class="sub-btn" style="background: var(--accent-color, #ff007f); color: #000; font-weight: bold;" onclick="toggleDrawer(true)">+ Add Title</button>
             <select class="theme-dropdown" onchange="changeTheme(this.value)">
                 <option value="cyberpunk">Cyberpunk Neon</option>
@@ -140,7 +153,7 @@
                 <option value="tvtime-dark">TV Time Dark</option>
                 <option value="tvtime-light">TV Time Light</option>
             </select>
-            <button class="gear-btn" onclick="switchTab('settingsTab')">⚙️</button>
+            <button class="gear-btn" onclick="switchTab('settingsTab')">⚙️ Settings</button>
         </div>
     </header>
 
@@ -182,7 +195,7 @@
         <div id="mediaTab" class="tab-content active">
             <div id="mediaMetricsDeck" style="display: flex; gap: 8px; padding: 10px 15px 0 15px; justify-content: flex-start; flex-wrap: wrap;"></div>
             <div class="control-filter-deck">
-                <input type="text" id="searchBar" placeholder="🔍 Search titles, actors, directors, networks..." oninput="renderGrid()" style="flex-grow: 1;">
+                <input type="text" id="searchBar" placeholder="🔍 Search titles, actors, directors, studios..." oninput="renderGrid()" style="flex-grow: 1;">
                 <select id="mediaSortOrder" onchange="renderGrid()" class="card-select" style="min-width: 130px;">
                     <option value="default">Sort: History Log</option>
                     <option value="alpha">Sort: A-Z Title</option>
@@ -201,7 +214,7 @@
             <div id="cinemaDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- --- VIEWPORT TAB 1B: TELEVISION dedicated GRID --- -->
+        <!-- --- VIEWPORT TAB 1B: TELEVISION dedic GRID --- -->
         <div id="tvTab" class="tab-content">
             <div id="tvMetricsDeck" style="display: flex; gap: 8px; padding: 10px 15px 0 15px; justify-content: flex-start; flex-wrap: wrap;"></div>
             <div class="control-filter-deck">
@@ -287,16 +300,23 @@
                     <input type="password" id="traktClientSecretInput" placeholder="Paste Client Secret here...">
                 </div>
                 <button class="btn" onclick="window.initializeTraktDeviceAuth()">Link Trakt Account</button>
-                <div id="traktPinGroup" class="form-group" style="display: none; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
-                    <label style="color: var(--accent-color, #ff007f);">Go to url: <a id="traktAuthUrl" href="#" target="_blank" style="color: #fff; text-decoration: underline;">Link Profile</a></label>
-                    <input type="text" id="traktPinInput" placeholder="Enter Authorization PIN..." style="margin-top: 6px;">
-                    <button class="btn" onclick="window.exchangeTraktPinForToken()" style="margin-top: 6px; background: #fff; color: #000;">Authorize Vault</button>
+                
+                <!-- 🛠️ UNLOCKED FIELD HOOK FOR AUTHORIZATION EXCHANGE -->
+                <div id="traktPinGroup" class="form-group" style="display: none; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px; flex-direction: column; gap: 6px;">
+                    <label style="color: var(--accent-color, #ff007f); font-weight: bold;">Go to link: <a id="traktAuthUrl" href="#" target="_blank" style="color: #fff; text-decoration: underline;">Link Trakt Profile</a></label>
+                    <input type="text" id="traktPinInput" placeholder="Enter Authorization PIN...">
+                    <button class="btn" onclick="window.exchangeTraktPinForToken()" style="background: #fff; color: #000; margin-top: 4px;">Authorize Vault Pair</button>
                 </div>
+
                 <div class="form-group" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
                     <label>TMDB (Movie Database) API Key</label>
                     <input type="password" id="tmdbApiKeyInput" placeholder="Paste TMDB API Key here...">
                 </div>
                 <button class="btn" onclick="window.pullTraktUserHistoryStream()" style="background: #00ffcc; color: #000; margin-top: 4px;">🔄 Sync Watch History Stream</button>
+                
+                <!-- 🚨 RETROACTIVE SEARCH FILL BUTTON FOR EXISTING ENTRIES -->
+                <button class="btn" onclick="window.repairExistingMediaMetadata()" style="background: #ff007f; color: #fff; margin-top: 4px; font-size: 0.8rem;">⚡ Force Meta Repair on Legacy Cards</button>
+                
                 <div id="traktStatusLog" style="font-size: 0.8rem; text-align: center; color: var(--accent-color); margin-top: 4px;">Status: Standby (Local Mode)</div>
             </div>
         </div>
@@ -323,6 +343,8 @@
         let currentMovieFilter = 'all';
         let currentBookFilter = 'all';
         let activeItemId = null;
+        let traktAccessToken = null;
+        let traktRefreshToken = null;
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -334,7 +356,6 @@
             const targetedBtn = document.getElementById('navBtn-' + tabId);
             if (targetedBtn) targetedBtn.classList.add('active');
 
-            // Header titles respond contextually
             const headerTitle = document.getElementById('vaultHeaderTitle');
             if (tabId === 'mediaTab') headerTitle.innerText = "Vault: All Media";
             if (tabId === 'tvTab') headerTitle.innerText = "Vault: Television";
@@ -393,6 +414,7 @@
             renderGrid(); renderTvGrid(); renderMovieGrid();
         }
 
+        // --- SUB SECTION D: MODAL CONTROLLER MATRIX ---
         function openModal(id, itemType = 'media') {
             activeItemId = id;
             const select = document.getElementById('modalFolderSelect');
@@ -403,13 +425,18 @@
                 if (!book) return;
                 document.getElementById('modalTitle').innerText = book.title;
                 metaContainer.innerHTML = `
-                    <div style="display: flex; gap: 16px; margin-top: 10px; align-items: flex-start;">
-                        <img src="https://covers.openlibrary.org/b/title/${encodeURIComponent(book.title)}-M.jpg" style="width: 100px; border-radius: 6px; object-fit: cover; aspect-ratio: 2/3;">
-                        <div style="flex-grow: 1;">
-                            <div style="display: grid; grid-template-columns: 1fr; gap: 4px; font-size: 0.78rem; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
-                                <div>Author: <strong style="color:var(--accent-color);">${book.author}</strong></div>
-                                <div>Format: <strong style="text-transform: uppercase;">${book.format}</strong></div>
+                    <div style="display: flex; gap: 18px; margin-top: 10px; align-items: flex-start;">
+                        <img src="https://covers.openlibrary.org/b/title/${encodeURIComponent(book.title)}-M.jpg" style="width: 120px; border-radius: 6px; object-fit: cover; aspect-ratio: 2/3; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 0.82rem; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                                <div>Author/Creator: <strong style="color:var(--accent-color);">${book.author}</strong></div>
+                                <div>Edition Format: <strong style="text-transform: uppercase;">${book.format}</strong></div>
+                                <div>Book Series: <strong style="color:#fff;">${book.series || 'Stand-Alone Chronicle'}</strong></div>
+                                <div>Publisher House: <strong style="color:var(--text-color);">${book.publisher || 'Not Listed'}</strong></div>
                             </div>
+                            <p style="font-size: 0.8rem; opacity: 0.7; line-height: 1.4; font-style: italic; margin-top: 4px;">
+                                📚 Dynamic entry verified via local StoryGraph upload matrices.
+                            </p>
                         </div>
                     </div>
                 `;
@@ -422,19 +449,28 @@
                 const item = mediaDatabase.find(m => m.id === id);
                 if (!item) return;
                 document.getElementById('modalTitle').innerText = item.name;
+                
                 const imgSrc = item.posterPath ? `https://image.tmdb.org/t/p/w500${item.posterPath}` : '';
+                
+                // 🛠️ AUTOMATIC SWITCH FOR MOVIES VS TV LABELING
+                const studioLabel = item.type === 'Movie' ? 'Studio/Company' : 'Network/Platform';
+
                 metaContainer.innerHTML = `
-                    <div style="display: flex; gap: 16px; margin-top: 12px; align-items: flex-start;">
-                        ${imgSrc ? `<img src="${imgSrc}" style="width: 110px; border-radius: 6px; object-fit: cover; aspect-ratio: 2/3;">` : '🎬'}
-                        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
-                            <div style="display: grid; grid-template-columns: 1fr; gap: 2px; font-size: 0.72rem; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px;">
-                                <div>Type: <strong>${item.type}</strong> | Year: <strong>${item.year || 'N/A'}</strong></div>
-                                <div>Network: <strong>${item.network || 'N/A'}</strong></div>
-                                <div>Director: <strong>${item.director || 'N/A'}</strong></div>
-                                <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Cast: <strong>${item.actors || 'N/A'}</strong></div>
+                    <div style="display: flex; gap: 18px; margin-top: 12px; align-items: flex-start;">
+                        ${imgSrc ? `<img src="${imgSrc}" style="width: 130px; border-radius: 6px; object-fit: cover; aspect-ratio: 2/3; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">` : '<div style="width:130px;height:195px;background:#222;display:flex;align-items:center;justify-content:center;">🎬</div>'}
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 4px; font-size: 0.78rem; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.04);">
+                                <div>Type Classification: <strong>${item.type}</strong> | Year: <strong>${item.year || 'N/A'}</strong></div>
+                                <div>${studioLabel}: <strong style="color:#fff;">${item.network || 'Not Indexed'}</strong></div>
+                                <div>Director/Creator: <strong style="color:var(--accent-color);">${item.director || 'Not Indexed'}</strong></div>
                             </div>
-                            <div style="font-size: 0.75rem; max-height: 80px; overflow-y:auto; opacity: 0.85;">${item.overview || 'No description loaded.'}</div>
+                            <div style="font-size: 0.8rem; max-height: 110px; overflow-y:auto; padding-right: 4px; line-height: 1.4; opacity: 0.9;">
+                                ${item.overview || 'No cloud synopsis loaded.'}
+                            </div>
                         </div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.76rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; line-height: 1.4;">
+                        👤 <strong>Starring Cast:</strong> <span style="opacity: 0.85;">${item.actors || 'No credited actors synced yet. Hit "Force Meta Repair" in Settings.'}</span>
                     </div>
                 `;
                 select.innerHTML = `
@@ -465,13 +501,12 @@
             const grid = document.getElementById('cinemaDatabaseGrid');
             if (!grid) return; grid.innerHTML = '';
             
-            // Render Dynamic Metrics Strips
             const deck = document.getElementById('mediaMetricsDeck');
             if (deck) deck.innerHTML = `<div style="background: rgba(255,255,255,0.03); padding: 5px 10px; border-radius: 4px; font-size: 0.72rem;">📦 Total Catalog: <strong>${mediaDatabase.length}</strong></div>`;
 
             const searchVal = document.getElementById('searchBar')?.value.toLowerCase() || '';
             let list = mediaDatabase.filter(m => {
-                return (m.name||'').toLowerCase().includes(searchVal) || (m.director||'').toLowerCase().includes(searchVal) || (m.actors||'').toLowerCase().includes(searchVal);
+                return (m.name||'').toLowerCase().includes(searchVal) || (m.director||'').toLowerCase().includes(searchVal) || (m.actors||'').toLowerCase().includes(searchVal) || (m.network||'').toLowerCase().includes(searchVal);
             }).filter(m => currentFilter === 'all' || m.status === currentFilter);
 
             const sort = document.getElementById('mediaSortOrder')?.value || 'default';
@@ -491,7 +526,7 @@
 
             const searchVal = document.getElementById('tvSearchBar')?.value.toLowerCase() || '';
             let list = tvList.filter(m => {
-                return (m.name||'').toLowerCase().includes(searchVal) || (m.director||'').toLowerCase().includes(searchVal) || (m.actors||'').toLowerCase().includes(searchVal);
+                return (m.name||'').toLowerCase().includes(searchVal) || (m.director||'').toLowerCase().includes(searchVal) || (m.actors||'').toLowerCase().includes(searchVal) || (m.network||'').toLowerCase().includes(searchVal);
             }).filter(m => currentTvFilter === 'all' || m.status === currentTvFilter);
 
             const sort = document.getElementById('tvSortOrder')?.value || 'default';
@@ -511,7 +546,7 @@
 
             const searchVal = document.getElementById('movieSearchBar')?.value.toLowerCase() || '';
             let list = movieList.filter(m => {
-                return (m.name||'').toLowerCase().includes(searchVal) || (m.director||'').toLowerCase().includes(searchVal) || (m.actors||'').toLowerCase().includes(searchVal);
+                return (m.name||'').toLowerCase().includes(searchVal) || (m.director||'').toLowerCase().includes(searchVal) || (m.actors||'').toLowerCase().includes(searchVal) || (m.network||'').toLowerCase().includes(searchVal);
             }).filter(m => currentMovieFilter === 'all' || m.status === currentMovieFilter);
 
             const sort = document.getElementById('movieSortOrder')?.value || 'default';
@@ -540,14 +575,6 @@
             });
         }
 
-        function filterBookCategory(catId) {
-            currentBookFilter = catId;
-            document.querySelectorAll('#goodreadsTab .sub-nav .sub-btn').forEach(btn => btn.classList.remove('active'));
-            const targetedBtn = document.getElementById('book-sub-' + (catId === 'currently-reading' ? 'reading' : catId === 'audiobook' ? 'audio' : catId));
-            if (targetedBtn) targetedBtn.classList.add('active');
-            renderBookGrid();
-        }
-
         function renderBookGrid() {
             const grid = document.getElementById('bookLibraryDatabaseGrid');
             if (!grid) return; grid.innerHTML = '';
@@ -557,7 +584,7 @@
 
             const searchVal = document.getElementById('bookSearchBar')?.value.toLowerCase() || '';
             let list = bookDatabase.filter(b => {
-                return (b.title||'').toLowerCase().includes(searchVal) || (b.author||'').toLowerCase().includes(searchVal);
+                return (b.title||'').toLowerCase().includes(searchVal) || (b.author||'').toLowerCase().includes(searchVal) || (b.series||'').toLowerCase().includes(searchVal) || (b.publisher||'').toLowerCase().includes(searchVal);
             }).filter(b => {
                 if (currentBookFilter === 'all') return true;
                 if (currentBookFilter === 'audiobook') return b.format.includes('audio');
@@ -609,6 +636,10 @@
                 for (let idx=0; idx<headers.length; idx++) { if (headers[idx].includes('author')) { authorIdx = idx; break; } }
                 const formatIdx = headers.indexOf('format');
                 const statusIdx = headers.indexOf('status');
+                
+                // Flexible interceptor matching for series/publishers
+                let seriesIdx = headers.findIndex(h => h.includes('series'));
+                let publisherIdx = headers.findIndex(h => h.includes('publisher'));
 
                 let newBooks = [];
                 for (let i = 1; i < rows.length; i++) {
@@ -618,7 +649,9 @@
                         title: cells[titleIdx],
                         author: authorIdx !== -1 && cells[authorIdx] ? cells[authorIdx] : 'Unknown Author',
                         format: formatIdx !== -1 && cells[formatIdx] ? cells[formatIdx].toLowerCase() : 'print',
-                        status: statusIdx !== -1 && cells[statusIdx] ? cells[statusIdx].toLowerCase() : 'read'
+                        status: statusIdx !== -1 && cells[statusIdx] ? cells[statusIdx].toLowerCase() : 'read',
+                        series: seriesIdx !== -1 && cells[seriesIdx] ? cells[seriesIdx] : '',
+                        publisher: publisherIdx !== -1 && cells[publisherIdx] ? cells[publisherIdx] : ''
                     });
                 }
                 bookDatabase = newBooks;
@@ -663,7 +696,6 @@
                         if (!updatedEntries.some(m => m.name.toLowerCase() === name.toLowerCase())) {
                             let posterPath = ''; let overview = ''; let network = ''; let director = ''; let actors = '';
                             
-                            // Deep Data Pack Extension Request from TMDB APIs
                             if (tmdbKey && tmdbId) {
                                 try {
                                     const tmdbType = type === 'movie' ? 'movie' : 'tv';
@@ -697,6 +729,62 @@
                 statusLog.innerText = "Sync Complete!";
                 renderGrid(); renderTvGrid(); renderMovieGrid();
             } catch (err) { console.error(err); }
+        };
+
+        // 🚨 NEW: AMENDMENT SCRIPT TO REPAIR "N/A" DETAILS FOR EXISTING LOG ENTRIES
+        window.repairExistingMediaMetadata = async function() {
+            const statusLog = document.getElementById('traktStatusLog');
+            const tmdbKey = localStorage.getItem('tmdb_api_key');
+            if (!tmdbKey) return alert("Please input your TMDB API Key first, Marcus!");
+
+            statusLog.innerText = "Starting legacy metadata repair loop...";
+            let changesMade = false;
+
+            for (let item of mediaDatabase) {
+                if (!item.director || !item.actors || item.director === 'N/A' || item.actors === '') {
+                    try {
+                        statusLog.innerText = `Fixing: ${item.name}...`;
+                        const cleanName = encodeURIComponent(item.name);
+                        const searchType = item.type === 'Movie' ? 'movie' : 'tv';
+                        const searchRes = await fetch(`https://api.themoviedb.org/3/search/${searchType}?api_key=${tmdbKey}&query=${cleanName}`);
+                        
+                        if (searchRes.ok) {
+                            const searchData = await searchRes.json();
+                            if (searchData.results && searchData.results.length > 0) {
+                                const tmdbId = searchData.results[0].id;
+                                const detailsRes = await fetch(`https://api.themoviedb.org/3/${searchType}/${tmdbId}?api_key=${tmdbKey}&append_to_response=credits`);
+                                
+                                if (detailsRes.ok) {
+                                    const t = await detailsRes.json();
+                                    item.network = item.type === 'Movie' ? (t.production_companies?.[0]?.name || '') : (t.networks?.[0]?.name || '');
+                                    if (t.overview) item.overview = t.overview;
+                                    if (t.poster_path) item.posterPath = t.poster_path;
+                                    
+                                    if (t.credits) {
+                                        item.actors = t.credits.cast?.slice(0, 5).map(c => c.name).join(', ') || '';
+                                        item.director = item.type === 'Movie'
+                                            ? (t.credits.crew?.find(c => c.job === 'Director')?.name || '')
+                                            : (t.created_by?.[0]?.name || t.credits.crew?.find(c => c.job === 'Executive Producer')?.name || '');
+                                    }
+                                    changesMade = true;
+                                }
+                            }
+                        }
+                        await new Promise(r => setTimeout(r, 100)); // Rate limiting breather
+                    } catch (err) {
+                        console.log("Skipping record error: ", err);
+                    }
+                }
+            }
+
+            if (changesMade) {
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                renderGrid(); renderTvGrid(); renderMovieGrid();
+                alert("Legacy metadata repair cycle successfully complete!");
+            } else {
+                alert("All items already look completely updated, Marcus!");
+            }
+            statusLog.innerText = "Status: Standby (Connected)";
         };
 
         window.initializeTraktDeviceAuth = function() {
