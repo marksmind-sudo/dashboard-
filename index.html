@@ -61,71 +61,72 @@
         .sub-nav { display: flex; gap: 8px; white-space: nowrap; }
         .sub-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color, #00ffcc); color: inherit; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
         .sub-btn.active { background: var(--accent-color, #ff007f); color: #000; font-weight: bold; }
-/* --- COMPACT SCANNABLE GRID MATRIX --- */
-.cinema-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important; /* Forces smaller, denser columns */
-    gap: 12px !important;
-    padding: 12px !important;
-}
 
-/* --- COMPACT CARD RESIZING BLOCK --- */
-.media-card {
-    background: rgba(20, 20, 35, 0.65);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    height: 270px !important; /* Constrains total card height strictly */
-    transition: transform 0.2s ease;
-}
+        /* --- COMPACT SCANNABLE GRID MATRIX --- */
+        .cinema-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+            gap: 12px !important;
+            padding: 12px !important;
+        }
 
-.media-card:hover {
-    transform: translateY(-4px);
-}
+        /* --- COMPACT CARD RESIZING BLOCK --- */
+        .media-card {
+            background: rgba(20, 20, 35, 0.65);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 270px !important;
+            transition: transform 0.2s ease;
+        }
 
-/* --- SLEEK IMAGE PROFILE BOUNDARY --- */
-.poster-frame {
-    width: 100% !important;
-    height: 190px !important; /* Clamps the cover art window down perfectly */
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-}
+        .media-card:hover {
+            transform: translateY(-4px);
+        }
 
-.poster-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Crops image correctly without distortion */
-}
+        /* --- SLEEK IMAGE PROFILE BOUNDARY --- */
+        .poster-frame {
+            width: 100% !important;
+            height: 190px !important;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
 
-/* --- COMPRESSED TEXT RAILS --- */
-.card-details-pane {
-    padding: 6px 8px !important;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex-grow: 1;
-}
+        .poster-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-.media-title {
-    font-size: 0.8rem !important;
-    font-weight: bold;
-    color: #fff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* Keeps long titles clean on a single line */
-}
+        /* --- COMPRESSED TEXT RAILS --- */
+        .card-details-pane {
+            padding: 6px 8px !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
 
-.media-meta {
-    font-size: 0.68rem !important;
-    opacity: 0.7;
-    margin-bottom: 2px;
-}
+        .media-title {
+            font-size: 0.8rem !important;
+            font-weight: bold;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .media-meta {
+            font-size: 0.68rem !important;
+            opacity: 0.7;
+            margin-bottom: 2px;
+        }
 
         /* --- TRACKING METERS --- */
         .progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
@@ -203,21 +204,20 @@
     <!-- SECTION 7: CORE VIEWPORT MAIN WORKSPACE     -->
     <!-- ========================================== -->
     <main>
-                <!-- --- VIEWPORT TAB 1: CINEMA STREAM GRID --- -->
+        <!-- --- VIEWPORT TAB 1: CINEMA STREAM GRID --- -->
         <div id="mediaTab" class="tab-content active">
-            <!-- 📊 NEW: DYNAMIC MEDIA COUNTER MATRIX CONTAINER -->
+            <!-- 📊 DYNAMIC MEDIA COUNTER MATRIX CONTAINER -->
             <div id="mediaMetricsDeck" style="display: flex; gap: 8px; padding: 10px 15px 0 15px; justify-content: flex-start; flex-wrap: wrap;"></div>
             
             <div class="control-filter-deck">
                 <input type="text" id="searchBar" placeholder="🔍 Search vault grid..." oninput="renderGrid()" style="flex-grow: 1;">
-                <!-- 🔃 NEW: TRACKER ALPHABETICAL/RELEASE YEAR SORT SELECTOR -->
+                <!-- 🔃 TRACKER ALPHABETICAL/RELEASE YEAR SORT SELECTOR -->
                 <select id="mediaSortOrder" onchange="renderGrid()" class="card-select" style="min-width: 130px;">
                     <option value="default">Sort: History Log</option>
                     <option value="alpha">Sort: A-Z Title</option>
                     <option value="year">Sort: Release Year</option>
                 </select>
             </div>
-
 
             <!-- SUB NAVIGATION ARCHITECTURE RAILS -->
             <div class="sub-nav-wrapper">
@@ -233,25 +233,23 @@
             <div id="cinemaDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-                   <!-- --- VIEWPORT TAB 2: BOOK LIBRARY DATABASE GRID --- -->
+        <!-- --- VIEWPORT TAB 2: BOOK LIBRARY DATABASE GRID --- -->
         <div id="goodreadsTab" class="tab-content">
-            <!-- 📊 NEW: DYNAMIC BOOK COUNTER MATRIX CONTAINER -->
+            <!-- 📊 DYNAMIC BOOK COUNTER MATRIX CONTAINER -->
             <div id="bookMetricsDeck" style="display: flex; gap: 8px; padding: 10px 15px 0 15px; justify-content: flex-start; flex-wrap: wrap;"></div>
 
             <!-- BOOK SEARCH RAILS -->
             <div class="control-filter-deck" style="padding-bottom: 10px;">
                 <input type="text" id="bookSearchBar" placeholder="🔍 Search book title or author..." oninput="renderBookGrid()" style="flex-grow: 1;">
-                <!-- 🔃 NEW: LITERARY ALPHABETICAL SORT SELECTOR -->
+                <!-- 🔃 LITERARY ALPHABETICAL SORT SELECTOR -->
                 <select id="bookSortOrder" onchange="renderBookGrid()" class="card-select" style="min-width: 130px;">
                     <option value="default">Sort: Default Log</option>
                     <option value="alpha">Sort: A-Z Title</option>
                 </select>
             </div>
 
-
             <!-- FILE UPLOAD CONTROL DECK -->
             <div class="control-filter-deck" style="justify-content: space-between; background: rgba(0,0,0,0.2); padding: 12px; margin: 0 15px 15px 15px; border-radius: 6px; border: 1px dashed var(--border-color);">
-
                 <div style="display: flex; flex-direction: column; gap: 4px;">
                     <span style="font-size: 0.85rem; font-weight: bold;">Sync StoryGraph History</span>
                     <span style="font-size: 0.7rem; opacity: 0.7;">Upload your exported CSV file to populate the matrix.</span>
@@ -277,7 +275,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- --- VIEWPORT TAB 3: SYSTEM SETTINGS RACK --- -->
         <div id="settingsTab" class="tab-content">
@@ -335,7 +332,7 @@
         </div>
     </main>
 
-   <    <!-- ========================================== -->
+    <!-- ========================================== -->
     <!-- SECTION 8: PRIMARY COMMAND DOCK BAR BAR    -->
     <!-- ========================================== -->
     <nav class="bottom-nav">
@@ -343,8 +340,6 @@
         <div id="navBtn-goodreadsTab" class="nav-item" onclick="switchTab('goodreadsTab')">📚 Book Library</div>
         <div id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab')">⚙️ Settings</div>
     </nav>
-
-
 
     <!-- ========================================== -->
     <!-- SECTION 9: APPLICATION FUNCTION LOGIC SCRIPT-->
@@ -356,7 +351,6 @@
         let activeItemId = null;
 
         // --- SUB SECTION A: NAV & TAB SWAPPING LOGIC ---
-        // Location: Under database array initializers (Line ~448)
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -373,7 +367,6 @@
         }
 
         // --- SUB SECTION B: UI WINDOW DRAWERS CONTROLLER ---
-        // Location: Below Theme Swapper functions (Line ~464)
         function toggleDrawer(openState) {
             const drawer = document.getElementById('addMediaDrawer');
             if (openState) drawer.classList.add('open');
@@ -388,7 +381,6 @@
         }
 
         // --- SUB SECTION C: DATA ENTRY MANAGERS ---
-        // Location: Directly above Detail Profile Modal logic (Line ~478)
         function addNewItem() {
             const titleInput = document.getElementById('addTitle');
             if (!titleInput.value.trim()) return alert("Please type a title name!");
@@ -409,8 +401,8 @@
             renderGrid();
         }
 
-              // --- SUB SECTION D: MODAL CONTROLLER MATRIX ---
-                    function openModal(id, itemType = 'media') {
+        // --- SUB SECTION D: MODAL CONTROLLER MATRIX ---
+        function openModal(id, itemType = 'media') {
             activeItemId = id;
             const select = document.getElementById('modalFolderSelect');
             const metaContainer = document.getElementById('modalMeta');
@@ -480,10 +472,6 @@
             document.getElementById('detailModal').classList.add('active');
         }
 
-
-
-
-
         function closeModal() {
             document.getElementById('detailModal').classList.remove('active');
             activeItemId = null;
@@ -498,14 +486,12 @@
             }
         }
 
-             // --- SUB SECTION E: GRAPHICAL CARD STREAM RENDERER ---
-        // Location: Directly above DOMContentLoaded listener (Line ~539)
-                function renderGrid() {
+        // --- SUB SECTION E: GRAPHICAL CARD STREAM RENDERER ---
+        function renderGrid() {
             const grid = document.getElementById('cinemaDatabaseGrid');
             if (!grid) return;
             grid.innerHTML = '';
 
-            // Calculate metrics dynamically in real-time
             const totalMedia = mediaDatabase.length;
             const totalTV = mediaDatabase.filter(m => m.type === 'TV').length;
             const totalMovies = mediaDatabase.filter(m => m.type === 'Movie').length;
@@ -527,7 +513,6 @@
                 return matchesSearch && matchesFilter;
             });
 
-            // Apply custom selector sorting rules
             const sortOrder = document.getElementById('mediaSortOrder')?.value || 'default';
             if (sortOrder === 'alpha') {
                 list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
@@ -535,17 +520,15 @@
                 list.sort((a, b) => parseInt(b.year || 0) - parseInt(a.year || 0));
             }
 
-
             if (list.length === 0) {
                 grid.innerHTML = '<div style="text-align:center; padding:30px; opacity:0.5; grid-column:1/-1;">Vault stream empty.</div>';
                 return;
             }
 
-                       list.forEach(item => {
+            list.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'media-card';
                 
-                // If the item has a TMDB poster path saved, use it. Otherwise, use the fallback emoji.
                 const posterHtml = item.posterPath 
                     ? `<img class="poster-img" src="https://image.tmdb.org/t/p/w500${item.posterPath}" alt="${item.name}" onclick="openModal(${item.id})">`
                     : `<div class="poster-frame" onclick="openModal(${item.id})">🎬</div>`;
@@ -560,11 +543,9 @@
                 `;
                 grid.appendChild(card);
             });
-
         }   
 
         // --- SUB SECTION F: SYSTEM LAUNCH BOOT MATRIX ---
-        // Location: Base level runtime configuration container (Line ~576)
         window.addEventListener('DOMContentLoaded', () => {
             const localData = localStorage.getItem('vault_media_db');
             if (localData) {
@@ -579,13 +560,10 @@
             renderGrid();
         });
 
-
-
         // --- SUB SECTION F-2: BOOK LIBRARY DATABASE CONTROLLERS ---
         let bookDatabase = [];
         let currentBookFilter = 'all';
 
-                // 1. The StoryGraph CSV Parser Engine
         function importStoryGraphData(input) {
             const file = input.files[0];
             if (!file) return;
@@ -593,8 +571,6 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const text = e.target.result;
-                
-                // Robust CSV row splitter that respects newlines inside quotes
                 const rows = [];
                 let currentRow = [];
                 let currentCell = '';
@@ -606,10 +582,10 @@
 
                     if (char === '"') {
                         if (insideQuotes && nextChar === '"') {
-                            currentCell += '"'; // Handle escaped quotes
+                            currentCell += '"';
                             i++;
                         } else {
-                            insideQuotes = !insideQuotes; // Toggle quote state
+                            insideQuotes = !insideQuotes;
                         }
                     } else if (char === ',' && !insideQuotes) {
                         currentRow.push(currentCell.trim());
@@ -630,11 +606,10 @@
                 }
 
                 if (rows.length <= 1) return alert("The selected CSV file appears to be empty, Sweetie!");
-                               // Standardize headers
+
                 const headers = rows[0].map(h => h.toLowerCase());
                 const titleIdx = headers.indexOf('title');
                 
-                // Smart header catch-all scanner
                 let authorIdx = -1;
                 for (let idx = 0; idx < headers.length; idx++) {
                     if (headers[idx].includes('author')) {
@@ -645,7 +620,6 @@
                 
                 const formatIdx = headers.indexOf('format');
                 const statusIdx = headers.indexOf('status');
-
 
                 if (titleIdx === -1) {
                     return alert("Matrix Sync Error: Could not find a 'Title' column in this StoryGraph sheet.");
@@ -681,7 +655,6 @@
             reader.readAsText(file);
         }
 
-             // 2. Filter Rail Switcher
         function filterBookCategory(catId) {
             currentBookFilter = catId;
             document.querySelectorAll('#goodreadsTab .sub-nav .sub-btn').forEach(btn => btn.classList.remove('active'));
@@ -691,13 +664,12 @@
             
             renderBookGrid();
         }
-               // 3. StoryGraph-Inspired Renderer (Upgraded with Open Library Cover Matrix)
+
         function renderBookGrid() {
             const grid = document.getElementById('bookLibraryDatabaseGrid');
             if (!grid) return;
             grid.innerHTML = '';
 
-            // Calculate book stats dynamically in real-time
             const totalBooks = bookDatabase.length;
             const readBooks = bookDatabase.filter(b => b.status === 'read').length;
             const readingBooks = bookDatabase.filter(b => b.status === 'currently-reading').length;
@@ -723,25 +695,12 @@
                 return matchesSearch && (currentBookFilter === 'all' || b.status === currentBookFilter);
             });
 
-            // Apply book selector sorting rules
             const sortOrder = document.getElementById('bookSortOrder')?.value || 'default';
             if (sortOrder === 'alpha') {
                 list.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
             }
 
-                const matchesSearch = (b.title && b.title.toLowerCase().includes(searchVal)) || 
-                                      (b.author && b.author.toLowerCase().includes(searchVal));
-                const matchesFilter = (currentBookFilter === 'all' || b.format.includes('audio') && currentBookFilter === 'audiobook' || b.status === currentBookFilter);
-                
-                // If filtering audiobooks specifically, ensure structural alignment
-                if (currentBookFilter === 'audiobook') {
-                    return matchesSearch && b.format.includes('audio');
-                }
-                return matchesSearch && (currentBookFilter === 'all' || b.status === currentBookFilter);
-            });
-
             if (list.length === 0) {
-
                 grid.innerHTML = '<div style="text-align:center; padding:40px; opacity:0.5; grid-column:1/-1;">No books match this category layout, Marcus.</div>';
                 return;
             }
@@ -749,8 +708,6 @@
             list.forEach(book => {
                 const isAudio = book.format.includes('audio');
                 const fallbackIcon = isAudio ? '🎧' : '📖';
-                
-                // Encode the title text string safely so the URL doesn't shatter on spaces or special characters
                 const encodedTitle = encodeURIComponent(book.title);
 
                 const card = document.createElement('div');
@@ -762,7 +719,7 @@
                     </div>
                     <div class="card-details-pane">
                         <div class="media-title" onclick="openModal(${book.id}, 'book')" style="cursor: pointer;">${book.title}</div>
-                        <div class="media-meta" style="text-transform: capitalize;">By ${book.author} | ${book.format}</div>
+                        <div class="media-meta" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">By ${book.author || 'Unknown Author'} | ${book.format}</div>
                         <div class="progress-container" style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px;">
                             <div class="progress-bar" style="width: ${book.status === 'read' ? '100%' : '45%'}; background: var(--accent-color); border-radius: 4px;"></div>
                         </div>
@@ -778,10 +735,7 @@
         let traktAccessToken = null;
         let traktRefreshToken = null;
 
-               // --- SYNCHRONIZER ELEMENT 1: CLIENT ACCESS HANDSHAKE ---
-        // Location: Under global Trakt token declarations (Line ~602)
         window.initializeTraktDeviceAuth = function() {
-            // Force the app to fetch the elements directly at the exact moment of the click
             const idField = document.getElementById('traktClientIdInput');
             const secretField = document.getElementById('traktClientSecretInput');
             const statusLog = document.getElementById('traktStatusLog');
@@ -797,7 +751,6 @@
                 return alert("Please enter both your Trakt Client ID and Client Secret, Sweetie!");
             }
 
-            // Lock the credentials into permanent device storage immediately
             localStorage.setItem('trakt_client_id', clientId);
             localStorage.setItem('trakt_client_secret', clientSecret);
 
@@ -806,13 +759,11 @@
                 statusLog.style.color = "#ffcc00";
             }
             
-            // Build the absolute direct authorization URI link
             const authUrl = "https://trakt.tv/oauth/authorize?response_type=code&client_id=" + clientId + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob";
             
             const pinGroup = document.getElementById('traktPinGroup');
             const urlAnchor = document.getElementById('traktAuthUrl');
             
-            // Instantly force the elements to reveal themselves layout-side
             if (urlAnchor) urlAnchor.href = authUrl;
             if (pinGroup) {
                 pinGroup.style.setProperty('display', 'flex', 'important');
@@ -824,9 +775,6 @@
             }
         };
 
-
-        // --- SYNCHRONIZER ELEMENT 2: PRIVACY PIN HANDSHAKE TOKENS ---
-        // Location: 34 Lines below initializeTraktDeviceAuth anchor (Line ~628)
         window.exchangeTraktPinForToken = function() {
             const clientId = localStorage.getItem('trakt_client_id');
             const clientSecret = localStorage.getItem('trakt_client_secret');
@@ -871,9 +819,7 @@
             });
         };
 
-        // --- SYNCHRONIZER ELEMENT 3: HISTORY DATABASE DATA PACKS PULLER ---
-        // Location: Located directly between token exchanger and boot matrix listeners (Line ~676)
-                   window.pullTraktUserHistoryStream = async function() {
+        window.pullTraktUserHistoryStream = async function() {
             const statusLog = document.getElementById('traktStatusLog');
             if (!traktAccessToken) {
                 statusLog.innerText = "Error: Please link your Trakt account first!";
@@ -887,7 +833,6 @@
             const tmdbKey = localStorage.getItem('tmdb_api_key') || '';
             let updatedEntries = [...mediaDatabase];
 
-            // --- PHASE 1: RETROACTIVE TEXT SEARCH PATCH FOR OLD BLANK CARDS ---
             if (tmdbKey) {
                 statusLog.innerText = "Repairing legacy placeholders...";
                 let legacyChanges = false;
@@ -919,7 +864,6 @@
                 }
             }
 
-            // --- PHASE 2: TOTAL EXHAUSTIVE INCREMENTAL SYNC ENGINE ---
             try {
                 let page = 1;
                 let keepScanning = true;
@@ -1004,7 +948,6 @@
                         }
                     }
 
-                    // ⚡️ REAL-TIME RENDERING INITIALIZATION: Push to UI immediately after each page finishes
                     if (pageChangesMade) {
                         mediaDatabase = updatedEntries;
                         localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
@@ -1015,7 +958,6 @@
                         keepScanning = false;
                     } else {
                         page++;
-                        // Add a tiny breather millisecond break so your tablet browser stays completely fluid
                         await new Promise(resolve => setTimeout(resolve, 50));
                     }
                 }
@@ -1030,29 +972,26 @@
             }
         };
 
-
-
-               // --- SYNCHRONIZER ELEMENT 4: AUTOMATED LOCAL CACHE RE-BOOT ENGINE ---
+        // --- SYNCHRONIZER ELEMENT 4: AUTOMATED LOCAL CACHE RE-BOOT ENGINE ---
         window.addEventListener('load', () => {
             const storedId = localStorage.getItem('trakt_client_id');
             const storedSecret = localStorage.getItem('trakt_client_secret');
             const storedToken = localStorage.getItem('trakt_access_token');
-            const storedTmdb = localStorage.getItem('tmdb_api_key'); // 👈 Grab TMDB
+            const storedTmdb = localStorage.getItem('tmdb_api_key');
 
             if (storedId) document.getElementById('traktClientIdInput').value = storedId;
             if (storedSecret) document.getElementById('traktClientSecretInput').value = storedSecret;
-                // Load and draw cached book library database if it exists
-             const localBooks = localStorage.getItem('vault_book_db');
+            
+            const localBooks = localStorage.getItem('vault_book_db');
             if (localBooks) {
-             bookDatabase = JSON.parse(localBooks);
-             if (typeof renderBookGrid === 'function') {
-            renderBookGrid();
-        }
-    }
+                bookDatabase = JSON.parse(localBooks);
+                if (typeof renderBookGrid === 'function') {
+                    renderBookGrid();
+                }
+            }
             
-            if (storedTmdb) document.getElementById('tmdbApiKeyInput').value = storedTmdb; // 👈 Populate input
+            if (storedTmdb) document.getElementById('tmdbApiKeyInput').value = storedTmdb;
             
-            // Save the TMDB key whenever the user changes focus or tabs away
             document.getElementById('tmdbApiKeyInput').addEventListener('change', (e) => {
                 localStorage.setItem('tmdb_api_key', e.target.value.trim());
             });
@@ -1064,7 +1003,6 @@
                 document.getElementById('traktStatusLog').style.color = "#00ffcc";
             }
         });
-
     </script>
 </body>
 </html>
