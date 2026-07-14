@@ -779,7 +779,18 @@
                 grid.appendChild(card);
             });
         }
+        // [PASTE YOUR NEW GOOGLE CONFIG BLOCK HERE]
+// --- SECTION 1: GOOGLE CLOUD CONFIGURATION ---
+const CONFIG = {
+    clientId: '426181048463-7s62u8n6fjblektf4kcf8erkbvah0oe8.apps.googleusercontent.com',
+    clientSecret: 'ASK_USER_FOR_SECRET', // We will make the app ask for this!
+    scopes: 'https://www.googleapis.com/auth/drive.appdata'
+};
 
+
+// --- 9. EXTERNAL CLOUD SYNCING & METADATA ENGINES ---
+// This function handles the deep Trakt history pull...
+        
         // --- 9. EXTERNAL CLOUD SYNCING & METADATA ENGINES ---
         // This function handles the deep Trakt history pull. 
         // It connects to the API, paginates through history, and parses out new titles into your database.
