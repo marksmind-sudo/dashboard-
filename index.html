@@ -322,14 +322,21 @@ window.addNewItem = function() {
             localStorage.setItem('googleClientSecret', document.getElementById('googleClientSecretInput').value);
         };
 
-        // C. LOAD ENGINE: Automatically fills fields from local storage on launch
+               // C. LOAD ENGINE: Automatically fills fields and loads data on launch
         window.onload = () => {
+            // 1. Fill in the keys from storage
             document.getElementById('traktClientIdInput').value = localStorage.getItem('traktClientId') || '';
             document.getElementById('traktClientSecretInput').value = localStorage.getItem('traktClientSecret') || '';
             document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdbApiKey') || '';
             document.getElementById('googleClientSecretInput').value = localStorage.getItem('googleClientSecret') || '';
             
-            // Re-render UI upon startup
+            // 2. Load the actual database from memory FIRST
+            const savedData = localStorage.getItem('vault_media_db');
+            if (savedData) {
+                mediaDatabase = JSON.parse(savedData);
+            }
+            
+            // 3. Now draw the grid with the loaded data
             renderGrid();
         };
 
