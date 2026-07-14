@@ -199,55 +199,61 @@
         </div>
 
         <!-- SETTINGS & CONTROL DECK TAB: The Heart of the Vault -->
-        <div id="settingsTab" class="tab-content">
-            <div style="background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 0 auto; box-shadow: 0 6px 20px rgba(0,0,0,0.4);">
-                <h3 style="color: var(--text-color, #00ffcc); border-bottom: 1px solid var(--border-color, #00ffcc); padding-bottom: 10px;">Vault Engine Control Deck</h3>
-                
-               <!-- Trakt Section with Checkboxes -->
-<div class="form-group">
-    <label>Trakt Client ID</label>
-    <div style="display:flex; gap:8px; align-items:center;">
-        <input type="password" id="traktClientIdInput" oninput="saveSettings()" placeholder="Paste Client ID..." style="flex-grow:1;">
-        <label style="font-size:0.8rem; white-space:nowrap; cursor:pointer;"><input type="checkbox" onchange="document.getElementById('traktClientIdInput').type = this.checked ? 'text' : 'password'"> Show</label>
-    </div>
-</div>
-<div class="form-group">
-    <label>Trakt Client Secret</label>
-    <div style="display:flex; gap:8px; align-items:center;">
-        <input type="password" id="traktClientSecretInput" oninput="saveSettings()" placeholder="Paste Client Secret..." style="flex-grow:1;">
-        <label style="font-size:0.8rem; white-space:nowrap; cursor:pointer;"><input type="checkbox" onchange="document.getElementById('traktClientSecretInput').type = this.checked ? 'text' : 'password'"> Show</label>
-    </div>
-</div>
-<button class="btn" onclick="window.initializeTraktDeviceAuth()">Link Trakt Account</button>
-
-<!-- Add this invisible PIN group back, or the link process will fail! -->
-<div id="traktPinGroup" style="display: none; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 14px; flex-direction: column; gap: 10px;">
-    <label style="color: var(--accent-color); font-weight: bold; font-size:0.85rem;">Go here: <a id="traktAuthUrl" href="#" target="_blank" style="color: #fff; text-decoration: underline;">Link Profile</a></label>
-    <input type="text" id="traktPinInput" placeholder="Enter PIN..." class="card-select">
-    <button class="btn" onclick="window.exchangeTraktPinForToken()" style="background: #fff; color: #000;">Authorize Vault Token</button>
-</div>
-
-                <!-- TMDB Keys Section -->
-                <div class="form-group" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 14px;">
-                    <label>TMDB API Key</label>
-                    <input type="password" id="tmdbApiKeyInput" oninput="saveSettings()" placeholder="Paste TMDB Key..." style="width:100%;">
-                </div>
-
-                <!-- GOOGLE DRIVE SYNC SECTION -->
-                <div class="form-group" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 14px;">
-                    <label>Google Drive Client ID</label>
-                    <input type="text" value="426181048463-7s62u8n6fjblektf4kcf8erkbvah0oe8.apps.googleusercontent.com" readonly style="width:100%; background:rgba(0,0,0,0.3); color:#888; padding:8px;">
-                </div>
-                <div class="form-group">
-                    <label>Google Drive Client Secret</label>
-                    <input type="password" id="googleClientSecretInput" oninput="saveSettings()" placeholder="Paste Secret..." style="width:100%;">
-                </div>
-                <button class="btn" onclick="window.initializeGoogleDrive()" style="background: #4285F4; color: #fff;">💾 Connect Google Drive</button>
-                
-                <!-- Status Logging -->
-                <div id="traktStatusLog" style="font-size: 0.85rem; text-align: center; color: var(--accent-color); font-weight: bold;">Status: Standby (Local Mode)</div>
+<div id="settingsTab" class="tab-content">
+    <div style="background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 0 auto; box-shadow: 0 6px 20px rgba(0,0,0,0.4);">
+        <h3 style="color: var(--text-color, #00ffcc); border-bottom: 1px solid var(--border-color, #00ffcc); padding-bottom: 10px;">Vault Engine Control Deck</h3>
+        
+        <!-- Trakt Section -->
+        <div class="form-group">
+            <label>Trakt Client ID</label>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input type="password" id="traktClientIdInput" oninput="saveSettings()" placeholder="Paste ID..." style="flex-grow:1;">
+                <label style="font-size:0.8rem; cursor:pointer;"><input type="checkbox" onchange="document.getElementById('traktClientIdInput').type = this.checked ? 'text' : 'password'"> Show</label>
             </div>
         </div>
+        <div class="form-group">
+            <label>Trakt Client Secret</label>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input type="password" id="traktClientSecretInput" oninput="saveSettings()" placeholder="Paste Secret..." style="flex-grow:1;">
+                <label style="font-size:0.8rem; cursor:pointer;"><input type="checkbox" onchange="document.getElementById('traktClientSecretInput').type = this.checked ? 'text' : 'password'"> Show</label>
+            </div>
+        </div>
+        <button class="btn" onclick="window.initializeTraktDeviceAuth()">Link Trakt Account</button>
+        <div id="traktPinGroup" style="display: none; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 14px; flex-direction: column; gap: 10px;">
+            <label style="color: var(--accent-color); font-weight: bold; font-size:0.85rem;">Go to: <a id="traktAuthUrl" href="#" target="_blank" style="color: #fff;">Link Profile</a></label>
+            <input type="text" id="traktPinInput" placeholder="Enter PIN..." class="card-select">
+            <button class="btn" onclick="window.exchangeTraktPinForToken()" style="background: #fff; color: #000;">Authorize Vault Token</button>
+        </div>
+
+        <!-- TMDB Section -->
+        <div class="form-group" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 14px;">
+            <label>TMDB API Key</label>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input type="password" id="tmdbApiKeyInput" oninput="saveSettings()" placeholder="Paste TMDB Key..." style="flex-grow:1;">
+                <label style="font-size:0.8rem; cursor:pointer;"><input type="checkbox" onchange="document.getElementById('tmdbApiKeyInput').type = this.checked ? 'text' : 'password'"> Show</label>
+            </div>
+        </div>
+        <button class="btn" onclick="window.pullTraktUserHistoryStream()" style="background: #00ffcc; color: #000;">🔄 Sync Watch History Stream</button>
+        <button class="btn" onclick="window.repairExistingMediaMetadata()" style="background: #ff007f; color: #fff;">⚡ Force Full Meta Scraping Repair</button>
+
+        <!-- Google Drive Section -->
+        <div class="form-group" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 14px;">
+            <label>Google Drive Client ID</label>
+            <input type="text" value="426181048463-7s62u8n6fjblektf4kcf8erkbvah0oe8.apps.googleusercontent.com" readonly style="width:100%; background:rgba(0,0,0,0.3); color:#888; padding:8px;">
+        </div>
+        <div class="form-group">
+            <label>Google Drive Client Secret</label>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input type="password" id="googleClientSecretInput" oninput="saveSettings()" placeholder="Paste Secret..." style="flex-grow:1;">
+                <label style="font-size:0.8rem; cursor:pointer;"><input type="checkbox" onchange="document.getElementById('googleClientSecretInput').type = this.checked ? 'text' : 'password'"> Show</label>
+            </div>
+        </div>
+        <button class="btn" onclick="window.initializeGoogleDrive()" style="background: #4285F4; color: #fff;">💾 Connect Google Drive</button>
+        
+        <div id="traktStatusLog" style="font-size: 0.85rem; text-align: center; color: var(--accent-color); font-weight: bold;">Status: Connected!</div>
+    </div>
+</div>
+
     </main>
 
     <nav class="bottom-nav">
