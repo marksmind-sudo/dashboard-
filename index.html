@@ -265,6 +265,12 @@
   
     <!-- SECTION 9: APPLICATION FUNCTION LOGIC SCRIPT -->
     <script>
+    // --- KILL SWITCH: Force reset connection on refresh ---
+    localStorage.removeItem('trakt_access_token'); 
+    // -----------------------------------------------------
+
+    // ... rest of your code ...
+
         // A. GLOBAL STATE: Stores media objects locally
         let mediaDatabase = [];
         let bookDatabase = [];
