@@ -104,7 +104,6 @@
         .modal-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
         .modal-canvas.active { display: flex; }
         
-        /* 📱 CINEMATIC SCALE UP FOR RICH DATA ACCOMMODATION */
         .modal-box { 
             background: #090b1e; 
             border: 2px solid var(--border-color, #00ffcc); 
@@ -152,7 +151,6 @@
             color: #000;
         }
 
-        /* --- ACTOR PICTURES SIZE DIAL INCREASE --- */
         .cast-horizontal-row { display: flex; gap: 16px; overflow-x: auto; padding: 10px 0; }
         .cast-pill-card { 
             background: rgba(255,255,255,0.03); 
@@ -169,7 +167,6 @@
         .cast-pill-card:hover { background: rgba(255, 0, 127, 0.12); border-color: var(--accent-color); }
         .cast-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.15); }
 
-        /* --- BULK SEASON AND INTERACTIVE EPISODE VIEWS --- */
         .season-vertical-list { display: flex; flex-direction: column; gap: 8px; }
         .season-list-header { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 12px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; }
         .season-click-shelf { flex-grow: 1; cursor: pointer; display: flex; justify-content: space-between; padding-right: 20px; }
@@ -179,7 +176,6 @@
         
         .rating-inline-selector { background: rgba(0,0,0,0.6); color: var(--text-color); border: 1px solid var(--border-color); padding: 6px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
 
-        /* --- SETTINGS PADDING FIX FOR EASY PRESS --- */
         .side-drawer { position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: #0a0c20; border-left: 2px solid var(--border-color); z-index: 9999; transition: right 0.3s ease; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; color: #fff; }
         .side-drawer.open { right: 0; }
         .form-group { display: flex; flex-direction: column; gap: 6px; }
@@ -200,9 +196,6 @@
 </head>
 <body data-theme="cyberpunk">
 
-    <!-- ========================================== -->
-    <!-- SECTION 4: GLOBAL HEADER SHELF              -->
-    <!-- ========================================== -->
     <header>
         <h1 id="vaultHeaderTitle">Entertainment Vault</h1>
         <div class="header-controls">
@@ -218,9 +211,6 @@
         </div>
     </header>
 
-    <!-- ========================================== -->
-    <!-- SECTION 5: INGESTION SIDE DRAWER FRAMEWORK -->
-    <!-- ========================================== -->
     <div id="addMediaDrawer" class="side-drawer">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <h3>Add New Media Entry</h3>
@@ -233,9 +223,7 @@
         <button class="btn" onclick="addNewItem()" style="margin-top: 10px;">Ingest Entry</button>
     </div>
 
-    <!-- ========================================== -->
-    <!-- SECTION 6: PROFILE POP-UP DETAILED MODAL   -->
-    <!-- ========================================== -->
+    <!-- MAIN MEDIA DOSSIER OVERLAY -->
     <div id="detailModal" class="modal-canvas" onclick="if(event.target === this) closeModal()">
         <div class="modal-box">
             <div class="modal-header-shelf">
@@ -245,7 +233,6 @@
             <div class="modal-scroll-body">
                 <div id="modalMeta"></div>
                 
-                <!-- 🎯 CORE INTERACTIVE MAIN SCORE DECK -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: rgba(255,255,255,0.02); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                     <div class="form-group">
                         <label style="color: var(--text-color);">Update Status Folder</label>
@@ -272,7 +259,7 @@
         </div>
     </div>
 
-    <!-- 👤 NESTED ACTOR BIOGRAPHY MODAL PORTAL -->
+    <!-- ACTOR BIO MODAL OVERLAY -->
     <div id="actorModal" class="modal-canvas" onclick="if(event.target === this) document.getElementById('actorModal').classList.remove('active')">
         <div class="modal-box" style="max-width: 900px; background: #090b1e; border-color: var(--text-color);">
             <div class="modal-header-shelf">
@@ -285,11 +272,7 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- SECTION 7: CORE VIEWPORT MAIN WORKSPACE     -->
-    <!-- ========================================== -->
     <main>
-        <!-- --- VIEWPORT TAB 1: ALL MEDIA STREAM GRID --- -->
         <div id="mediaTab" class="tab-content active">
             <div id="mediaMetricsDeck" style="display: flex; gap: 8px; padding: 10px 15px 0 15px; justify-content: flex-start; flex-wrap: wrap;"></div>
             <div class="control-filter-deck">
@@ -312,7 +295,6 @@
             <div id="cinemaDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- --- VIEWPORT TAB 1B: TELEVISION dedicated GRID --- -->
         <div id="tvTab" class="tab-content">
             <div id="tvMetricsDeck" style="display: flex; gap: 8px; padding: 10px 15px 0 15px; justify-content: flex-start; flex-wrap: wrap;"></div>
             <div class="control-filter-deck">
@@ -335,7 +317,6 @@
             <div id="tvDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- --- VIEWPORT TAB 1C: MOVIES dedicated GRID --- -->
         <div id="moviesTab" class="tab-content">
             <div id="movieMetricsDeck" style="display: flex; gap: 8px; padding: 10px 15px 0 15px; justify-content: flex-start; flex-wrap: wrap;"></div>
             <div class="control-filter-deck">
@@ -356,7 +337,6 @@
             <div id="moviesDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- --- VIEWPORT TAB 2: BOOK LIBRARY DATABASE GRID --- -->
         <div id="goodreadsTab" class="tab-content">
             <div id="bookMetricsDeck" style="display: flex; gap: 8px; padding: 10px 15px 0 15px; justify-content: flex-start; flex-wrap: wrap;"></div>
             <div class="control-filter-deck">
@@ -370,7 +350,7 @@
             <div id="bookLibraryDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- --- VIEWPORT TAB 3: SYSTEM SETTINGS RACK --- -->
+        <!-- SETTINGS & CONTROL DECK TAB -->
         <div id="settingsTab" class="tab-content">
             <div style="background: var(--card-bg, rgba(16, 20, 48, 0.92)); border: 1px solid var(--border-color, #00ffcc); padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 0 auto; box-shadow: 0 6px 20px rgba(0,0,0,0.4);">
                 <h3 style="color: var(--text-color, #00ffcc); border-bottom: 1px solid var(--border-color, #00ffcc); padding-bottom: 10px;">Vault Engine Control Deck</h3>
@@ -423,16 +403,24 @@
     <!-- SECTION 9: APPLICATION FUNCTION LOGIC SCRIPT-->
     <!-- ========================================== -->
     <script>
+        // --- 1. GLOBAL STATE & DATABASE INITIALIZATION ---
+        // These arrays hold your media and book data during the active session.
         let mediaDatabase = [];
         let bookDatabase = [];
+        
+        // Retrieve saved logs from the browser's local storage (if they exist).
+        // This holds your specific episode watch markers and ratings across sessions.
         let watchedEpisodesLog = JSON.parse(localStorage.getItem('vault_watched_episodes') || '{}');
         let episodeRatingsLog = JSON.parse(localStorage.getItem('vault_episode_ratings') || '{}');
         
+        // --- 2. ACTIVE VIEWPORT TRACKING VARIABLES ---
         let currentFilter = 'all', currentTvFilter = 'all', currentMovieFilter = 'all', currentBookFilter = 'all';
         let activeItemId = null;
         let activeItemType = 'media';
         let traktAccessToken = null;
 
+        // --- 3. UI NAVIGATION FUNCTIONS ---
+        // Handles swapping between the visual grids and setting active CSS styles.
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -446,17 +434,22 @@
             if (tabId === 'goodreadsTab') headerTitle.innerText = "Vault: Book Library";
             if (tabId === 'settingsTab') headerTitle.innerText = "Vault: Settings Rack";
 
+            // Force a re-render to ensure grids map correctly when swapping views.
             renderGrid(); renderTvGrid(); renderMovieGrid(); renderBookGrid();
         }
 
+        // Swaps the active CSS color theme via HTML data attributes.
         function changeTheme(themeValue) { document.body.setAttribute('data-theme', themeValue); }
+        // Slides the "Add Media" drawer in and out of the viewport.
         function toggleDrawer(openState) { document.getElementById('addMediaDrawer').classList.toggle('open', openState); }
 
+        // --- 4. CATEGORY FILTER CONTROLS ---
         function filterCategory(catId) { currentFilter = catId; document.querySelectorAll('#mediaTab .sub-nav .sub-btn').forEach(btn => btn.classList.toggle('active', btn.id==='sub-'+catId)); renderGrid(); }
         function filterTvCategory(catId) { currentTvFilter = catId; document.querySelectorAll('#tvTab .sub-nav .sub-btn').forEach(btn => btn.classList.toggle('active', btn.id==='tv-sub-'+catId)); renderTvGrid(); }
         function filterMovieCategory(catId) { currentMovieFilter = catId; document.querySelectorAll('#moviesTab .sub-nav .sub-btn').forEach(btn => btn.classList.toggle('active', btn.id==='movie-sub-'+catId)); renderMovieGrid(); }
 
-        // --- INTERACTIVE ACTOR PROFILE LOOKUP ENGINE ---
+        // --- 5. INTERACTIVE TMDB API ACTOR LOOKUP ---
+        // Fires when you tap a cast photo. Pulls fresh biography data from TMDB in real time.
         window.lookupActorProfile = async function(actorName) {
             const content = document.getElementById('actorModalContent');
             document.getElementById('actorModalName').innerText = actorName;
@@ -467,11 +460,13 @@
             if (!tmdbKey) { content.innerHTML = `Provide TMDB API key in Control Deck to inspect casting files.`; return; }
 
             try {
+                // Initial search call maps the actor's string name to their TMDB ID number.
                 const searchRes = await fetch(`https://api.themoviedb.org/3/search/person?api_key=${tmdbKey}&query=${encodeURIComponent(actorName)}`);
                 if (!searchRes.ok) throw new Error();
                 const sData = await searchRes.json();
                 if (!sData.results || sData.results.length === 0) { content.innerHTML = `No verified records found on TMDB network.`; return; }
 
+                // Follow-up API call pulls down specific biographical data for that ID.
                 const personId = sData.results[0].id;
                 const bioRes = await fetch(`https://api.themoviedb.org/3/person/${personId}?api_key=${tmdbKey}&append_to_response=combined_credits`);
                 const bData = await bioRes.json();
@@ -479,7 +474,7 @@
                 const avatar = bData.profile_path ? `https://image.tmdb.org/t/p/w300${bData.profile_path}` : '';
                 const bio = bData.biography || 'No biographical overview text filed.';
                 
-                // Enhanced Career Appearances Layout Mapping
+                // Maps and sorts the actor's highest-rated historical roles.
                 const credits = bData.combined_credits?.cast
                     ?.sort((a,b) => b.vote_count - a.vote_count)
                     ?.slice(0, 12)
@@ -490,6 +485,7 @@
                         </div>
                     `).join('') || 'None logged.';
 
+                // Injects the final HTML build directly into the open pop-up.
                 content.innerHTML = `
                     ${avatar ? `<img src="${avatar}" style="width:250px; border-radius:12px; aspect-ratio:2/3; object-fit:cover; box-shadow:0 6px 16px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1);">` : ''}
                     <div style="flex:1; min-width:360px; display:flex; flex-direction:column; gap:12px; font-size:0.92rem; line-height:1.5;">
@@ -504,9 +500,11 @@
             } catch(e) { content.innerHTML = `Matrix failure collecting actor file indices.`; }
         };
 
-        // --- INTERACTIVE TV SEASON & BULK EPISODE TOGGLE CORE ---
+        // --- 6. TV EPISODE DRILLDOWN & RATINGS ENGINE ---
+        // Dynamically loads the specific episode descriptions when you tap a TV Season row.
         window.toggleEpisodeContainer = async function(index, tmdbId, seasonNum) {
             const container = document.getElementById(`episode-block-${index}`);
+            // If the panel is already open, toggle it completely shut.
             if (container.style.display === 'flex') {
                 container.style.display = 'none';
                 return;
@@ -518,6 +516,7 @@
             if (!tmdbKey) { container.innerHTML = `Provide TMDB API key to reveal episodes.`; return; }
 
             try {
+                // Fetch the massive season array specifically from TMDB network.
                 const res = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}/season/${seasonNum}?api_key=${tmdbKey}`);
                 if (!res.ok) throw new Error();
                 const data = await res.json();
@@ -527,6 +526,7 @@
                     return;
                 }
 
+                // Map through every episode in the array and generate the HTML checkboxes and layout.
                 container.innerHTML = data.episodes.map(ep => {
                     const logKey = `${tmdbId}-${seasonNum}-${ep.episode_number}`;
                     const isChecked = watchedEpisodesLog[logKey] ? 'checked' : '';
@@ -536,7 +536,7 @@
                         <div class="episode-row-item">
                             <input type="checkbox" id="chk-${logKey}" ${isChecked} onchange="window.toggleEpisodeWatchStatus('${logKey}', this.checked)">
                             <div style="flex-grow:1;">
-                                <div style="display:flex; justify-content:between; align-items:center; font-weight:bold; color:#fff; width:100%; gap:12px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:#fff; width:100%; gap:12px;">
                                     <span>Ep ${ep.episode_number}: ${ep.name}</span>
                                     <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
                                         <span style="color:#aaa; font-size:0.75rem; font-weight:normal;">TMDB: ⭐ ${ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A'}</span>
@@ -554,18 +554,21 @@
             } catch(e) { container.innerHTML = `Handshake failed pulling season episode arrays.`; }
         };
 
+        // Instantly saves episode watch checkboxes to your local browser storage file.
         window.toggleEpisodeWatchStatus = function(logKey, isWatched) {
             if (isWatched) watchedEpisodesLog[logKey] = true;
             else delete watchedEpisodesLog[logKey];
             localStorage.setItem('vault_watched_episodes', JSON.stringify(watchedEpisodesLog));
         };
 
+        // Instantly saves your 1-10 episode ratings to your local browser storage file.
         window.updateEpisodeRating = function(logKey, ratingScore) {
             if (ratingScore) episodeRatingsLog[logKey] = ratingScore;
             else delete episodeRatingsLog[logKey];
             localStorage.setItem('vault_episode_ratings', JSON.stringify(episodeRatingsLog));
         };
 
+        // A custom bulk engine function allowing you to mark an entire season as watched in one click.
         window.bulkToggleSeasonEpisodes = async function(btn, tmdbId, seasonNum, index) {
             event.stopPropagation();
             const tmdbKey = localStorage.getItem('tmdb_api_key');
@@ -586,6 +589,7 @@
                             if (nextState === 'all') watchedEpisodesLog[logKey] = true;
                             else delete watchedEpisodesLog[logKey];
                             
+                            // Synchronizes the visual DOM checkbox checkmarks instantly.
                             const domChk = document.getElementById(`chk-${logKey}`);
                             if (domChk) domChk.checked = (nextState === 'all');
                         });
@@ -595,7 +599,7 @@
             } catch(e) {}
         };
 
-        // --- GLOBAL ITEM RATING AND DATA PERSISTENCE HANDLERS ---
+        // Submits global item scores (for entire Shows, Books, or Movies) directly to storage.
         window.updateGlobalItemRating = function(ratingVal) {
             if (activeItemType === 'book') {
                 let book = bookDatabase.find(b => b.id === activeItemId);
@@ -608,7 +612,8 @@
             }
         };
 
-        // --- SUB SECTION D: MODAL CONTROLLER OVERHAUL ---
+        // --- 7. MASTER MODAL DATA POPULATOR ---
+        // Responsible for taking the data array properties and injecting them into the primary item pop-up sheet.
         function openModal(id, itemType = 'media') {
             activeItemId = id;
             activeItemType = itemType;
@@ -617,6 +622,7 @@
             const metaContainer = document.getElementById('modalMeta');
             
             if (itemType === 'book') {
+                // Book processing logic.
                 const book = bookDatabase.find(b => b.id === id);
                 if (!book) return;
                 document.getElementById('modalTitle').innerText = book.title;
@@ -637,6 +643,7 @@
                 `;
                 select.innerHTML = `<option value="to-read" ${book.status === 'to-read' ? 'selected' : ''}>To Read</option><option value="currently-reading" ${book.status === 'currently-reading' ? 'selected' : ''}>Currently Reading</option><option value="read" ${book.status === 'read' ? 'selected' : ''}>Completed Log</option>`;
             } else {
+                // TV and Movie processing logic.
                 const item = mediaDatabase.find(m => m.id === id);
                 if (!item) return;
                 document.getElementById('modalTitle').innerText = item.name;
@@ -702,7 +709,10 @@
             document.getElementById('detailModal').classList.add('active');
         }
 
+        // Standard function resets active status when closing the large UI panel.
         function closeModal() { document.getElementById('detailModal').classList.remove('active'); activeItemId = null; }
+        
+        // Triggers instantly whenever you select a new internal folder option (e.g., 'Watching' -> 'Completed').
         function updateItemStatus(newStatus) {
             let item = mediaDatabase.find(m => m.id === activeItemId); if (item) item.status = newStatus;
             let book = bookDatabase.find(b => b.id === activeItemId); if (book) book.status = newStatus;
@@ -711,7 +721,8 @@
             renderGrid(); renderTvGrid(); renderMovieGrid(); renderBookGrid();
         }
 
-        // --- RENDER DRIVERS ---
+        // --- 8. VISUAL GRID RENDER DRIVERS ---
+        // Cleans the screen and redraws the cards whenever a filter or database state updates.
         function renderGrid() {
             const grid = document.getElementById('cinemaDatabaseGrid'); if (!grid) return; grid.innerHTML = '';
             const searchVal = document.getElementById('searchBar')?.value.toLowerCase() || '';
@@ -737,6 +748,7 @@
             if (sortVal === 'year') list.sort((a,b) => parseInt(b.year||0) - parseInt(a.year||0));
         }
 
+        // Helper function that dynamically injects the HTML layout for the primary movie and show posters.
         function injectCardMatrix(list, element) {
             if (list.length === 0) { element.innerHTML = '<div style="padding:20px; opacity:0.5;">Empty folder slot.</div>'; return; }
             list.forEach(item => {
@@ -768,23 +780,46 @@
             });
         }
 
+        // --- 9. EXTERNAL CLOUD SYNCING & METADATA ENGINES ---
+        // This function handles the deep Trakt history pull. 
+        // It connects to the API, paginates through history, and parses out new titles into your database.
         window.pullTraktUserHistoryStream = async function() {
-            const statusLog = document.getElementById('traktStatusLog'); if (!traktAccessToken) { statusLog.innerText = "Error: Please link Trakt first!"; return; }
+            const statusLog = document.getElementById('traktStatusLog'); 
+            if (!traktAccessToken) { statusLog.innerText = "Error: Please link Trakt first!"; return; }
+            
             statusLog.innerText = "Synchronizing deep media stream...";
-            const tmdbKey = localStorage.getItem('tmdb_api_key') || ''; let updatedEntries = [...mediaDatabase];
+            const tmdbKey = localStorage.getItem('tmdb_api_key') || ''; 
+            let updatedEntries = [...mediaDatabase];
+            
             try {
                 let page = 1; let keepScanning = true;
                 while (keepScanning) {
                     statusLog.innerText = `Ingesting logs: Page ${page}`;
+                    
+                    // Securely requests history from Trakt.
                     const response = await fetch(`https://api.trakt.tv/sync/history?limit=50&page=${page}`, {
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${traktAccessToken}`, 'trakt-api-version': '2', 'trakt-api-key': document.getElementById('traktClientIdInput').value.trim() }
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Authorization': `Bearer ${traktAccessToken}`, 
+                            'trakt-api-version': '2', 
+                            'trakt-api-key': document.getElementById('traktClientIdInput').value.trim() 
+                        }
                     });
-                    if (!response.ok) break; const data = await response.json(); if (!data || data.length === 0) break;
+                    
+                    if (!response.ok) break; 
+                    const data = await response.json(); 
+                    if (!data || data.length === 0) break;
+                    
                     let changes = false;
                     for (const record of data) {
-                        const type = record.type; let name = type === 'movie' ? record.movie.title : record.show.title;
-                        let year = type === 'movie' ? record.movie.year : record.show.year; let tmdbId = type === 'movie' ? record.movie.ids.tmdb : record.show.ids.tmdb;
+                        const type = record.type; 
+                        let name = type === 'movie' ? record.movie.title : record.show.title;
+                        let year = type === 'movie' ? record.movie.year : record.show.year; 
+                        let tmdbId = type === 'movie' ? record.movie.ids.tmdb : record.show.ids.tmdb;
+                        
                         if (!name) continue;
+                        
+                        // Prevents duplicates. If a title is entirely new, the engine contacts TMDB for artwork files.
                         if (!updatedEntries.some(m => m.name.toLowerCase() === name.toLowerCase())) {
                             let posterPath = '', overview = '', network = '', director = '', actorsData = '', seasonsData = '';
                             if (tmdbKey && tmdbId) {
@@ -792,30 +827,41 @@
                                     const tmdbType = type === 'movie' ? 'movie' : 'tv';
                                     const detailsRes = await fetch(`https://api.themoviedb.org/3/${tmdbType}/${tmdbId}?api_key=${tmdbKey}&append_to_response=credits`);
                                     if (detailsRes.ok) {
-                                        const t = await detailsRes.json(); posterPath = t.poster_path || ''; overview = t.overview || '';
+                                        const t = await detailsRes.json(); 
+                                        posterPath = t.poster_path || ''; 
+                                        overview = t.overview || '';
                                         network = type === 'movie' ? (t.production_companies?.[0]?.name || '') : (t.networks?.[0]?.name || '');
+                                        
+                                        // Package raw TMDB JSON into compact arrays for localized caching.
                                         if (t.seasons) seasonsData = JSON.stringify(t.seasons.map(s => ({ name: s.name, episode_count: s.episode_count, season_number: s.season_number, air_year: s.air_date ? s.air_date.split('-')[0] : '' })));
                                         if (t.credits) actorsData = JSON.stringify(t.credits.cast?.slice(0, 10).map(c => ({ name: c.name, profile: c.profile_path })));
                                     }
                                 } catch (e) {}
                             }
+                            // Store the finished entry locally in the database wrapper block.
                             updatedEntries.push({ id: Date.now() + Math.random(), name, year, tmdbId, type: type==='movie'?'Movie':'TV', status: 'all', posterPath, overview, network, director, actorsData, seasonsData });
                             changes = true;
                         }
                     }
                     if (changes) { mediaDatabase = updatedEntries; localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); }
+                    
+                    // Break loop if all pages have been parsed completely.
                     if (data.length < 50) keepScanning = false; else page++;
                 }
                 statusLog.innerText = "Sync Complete!"; renderGrid(); renderTvGrid(); renderMovieGrid();
             } catch (err) { console.error(err); }
         };
 
+        // Retroactive script mapping legacy files to the new extended data structure parameters.
         window.repairExistingMediaMetadata = async function() {
             const statusLog = document.getElementById('traktStatusLog'); const tmdbKey = localStorage.getItem('tmdb_api_key');
             if (!tmdbKey) return alert("Please input your TMDB API Key first, Marcus!");
+            
             statusLog.innerText = "Running full interactive cast repair loops...";
             let changesMade = false;
+            
             for (let item of mediaDatabase) {
+                // Skips processing for items that are already perfectly optimized to save resources.
                 if (!item.actorsData || !item.tmdbId || !item.seasonsData) {
                     try {
                         statusLog.innerText = `Scraping: ${item.name}...`;
@@ -839,15 +885,22 @@
                                 }
                             }
                         }
+                        // Throttles rapid API calls to stay under TMDB's rate limit caps.
                         await new Promise(r => setTimeout(r, 120));
                     } catch (err) {}
                 }
             }
-            if (changesMade) { localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); renderGrid(); renderTvGrid(); renderMovieGrid(); alert("Handshake complete: Extended layouts, episode selectors, and ratings ready!"); }
-            else { alert("All local library configurations completely optimized, Marcus!"); }
+            if (changesMade) { 
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase)); 
+                renderGrid(); renderTvGrid(); renderMovieGrid(); 
+                alert("Handshake complete: Extended layouts, episode selectors, and ratings ready!"); 
+            } else { 
+                alert("All local library configurations completely optimized, Marcus!"); 
+            }
             statusLog.innerText = "Status: Connected Mode";
         };
 
+        // --- 10. TRAKT SECURE AUTHORIZATION PROTOCOLS ---
         window.initializeTraktDeviceAuth = function() {
             const clientId = document.getElementById('traktClientIdInput').value.trim();
             const clientSecret = document.getElementById('traktClientSecretInput').value.trim();
@@ -863,12 +916,33 @@
             }).then(r => r.json()).then(data => { traktAccessToken = data.access_token; localStorage.setItem('trakt_access_token', traktAccessToken); document.getElementById('traktStatusLog').innerText = "Status: Connected!"; document.getElementById('traktPinGroup').style.display = 'none'; });
         };
 
+        // --- 11. BROWSER LIFECYCLE EVENT CONTROLLERS ---
+        // Functions bundled here trigger the exact moment the active web DOM completes its visual build array.
         window.addEventListener('load', () => {
+            // Unpacks local storage JSON strings back into operational memory structures.
             if (localStorage.getItem('vault_media_db')) mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db'));
             if (localStorage.getItem('vault_book_db')) bookDatabase = JSON.parse(localStorage.getItem('vault_book_db'));
             if (localStorage.getItem('trakt_access_token')) traktAccessToken = localStorage.getItem('trakt_access_token');
             if (localStorage.getItem('tmdb_api_key')) document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdb_api_key');
+            
+            // Instantiates initial UI renders.
             renderGrid(); renderTvGrid(); renderMovieGrid();
+            
+            // 🚀 AUTOMATIC ON-LAUNCH SYNC
+            // If the user has linked their Trakt account, trigger a silent pull immediately upon open.
+            if (traktAccessToken && document.getElementById('traktClientIdInput').value.trim()) {
+                document.getElementById('traktStatusLog').innerText = "Running Automatic Launch Sync...";
+                window.pullTraktUserHistoryStream();
+            }
+
+            // ⏱️ TIME-INTERVAL BACKGROUND POLLING
+            // Automatically execute a history pull every 15 minutes while the app remains open.
+            setInterval(() => {
+                if (traktAccessToken && document.getElementById('traktClientIdInput').value.trim()) {
+                    console.log("Vault Engine: Running scheduled background history sync...");
+                    window.pullTraktUserHistoryStream();
+                }
+            }, 15 * 60 * 1000); // Calculates exactly 15 minutes in milliseconds.
         });
     </script>
 </body>
