@@ -282,6 +282,38 @@
         let episodeRatingsLog = JSON.parse(localStorage.getItem('vault_episode_ratings') || '{}');
         let currentFilter = 'all';
 
+        // --- ADD NEW MEDIA ENTRY ENGINE ---
+window.addNewItem = function() {
+    const name = document.getElementById('addTitle').value;
+    const type = document.getElementById('addType').value;
+    const genre = document.getElementById('addGenre').value;
+    const status = document.getElementById('addStatus').value;
+
+    if (!name) return alert("Please enter a title!");
+
+    const newItem = {
+        id: Date.now(),
+        name: name,
+        type: type,
+        genre: genre,
+        status: status,
+        posterPath: '', // Will be filled by repair function
+        tmdbId: null
+    };
+
+    mediaDatabase.push(newItem);
+    localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+    
+    // Clear form and close drawer
+    document.getElementById('addTitle').value = '';
+    toggleDrawer(false);
+    
+    // Refresh the grid
+    renderGrid();
+    alert("Ingested: " + name);
+};
+
+
         // B. MEMORY ENGINE: Persists API keys so they stick on refresh
         window.saveSettings = () => {
             localStorage.setItem('traktClientId', document.getElementById('traktClientIdInput').value);
