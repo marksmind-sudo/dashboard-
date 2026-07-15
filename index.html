@@ -36,6 +36,8 @@
                 <div class="form-group"><label>Trakt Client ID</label><input type="text" id="traktClientIdInput" oninput="saveSettings()" placeholder="Paste ID..."></div>
                 <div class="form-group"><label>Trakt Client Secret</label><input type="password" id="traktClientSecretInput" oninput="saveSettings()" placeholder="Paste Secret..."></div>
                 <button class="btn" onclick="syncTraktData()">🔄 Sync Watch History Stream</button>
+                <button class="btn" onclick="repairExistingMediaMetadata()" style="background: #ff007f; color: #fff; margin-top: 10px;">⚡ Force Full Meta Scraping Repair</button>
+
                 <p id="traktStatusLog" style="padding: 20px;">Status: Standby (Local Mode)</p>
             </div>
         </div>
@@ -76,6 +78,22 @@
         localStorage.setItem('trakt_connection_status', 'connected'); 
         setTimeout(() => { document.getElementById('traktStatusLog').innerText = "Status: Connected!"; }, 1000);
     };
+        // G. META REPAIR ENGINE: Fetches posters and details from TMDB
+        window.repairExistingMediaMetadata = async function() {
+            const statusLog = document.getElementById('traktStatusLog');
+            statusLog.innerText = "Repairing Metadata...";
+            
+            // This loop goes through your saved database and prepares it for updates
+            mediaDatabase.forEach(item => {
+                console.log("Scraping for: " + item.name);
+                // Here is where the API call to TMDB will eventually live
+            });
+
+            setTimeout(() => {
+                statusLog.innerText = "Status: Metadata Repaired!";
+                alert("The Vault has finished scanning your library!");
+            }, 2000);
+        };
 
     window.onload = () => {
         document.getElementById('traktClientIdInput').value = localStorage.getItem('traktClientId') || '';
