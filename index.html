@@ -155,13 +155,17 @@
         // GLOBAL DATA: Accesses your local storage database
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
 
-        // NAVIGATION LOGIC: Swaps visible content
+               // NAVIGATION LOGIC: Swaps visible content and saves state
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             el.classList.add('active');
+            
+            // Save the current tab ID so it stays put when refreshing!
+            localStorage.setItem('vault_active_tab', tabId);
         }
+
 
         // VISIBILITY TOGGLE: Allows you to show/hide API keys
         function toggleVisibility(inputId, isVisible) {
@@ -469,7 +473,7 @@
         };
 
 
-        // LAUNCH SEQUENCE: Restores UI state and loaded keys on refresh
+               // LAUNCH SEQUENCE: Restores UI state and loaded keys on refresh
         window.onload = () => {
             document.getElementById('traktClientIdInput').value = localStorage.getItem('traktClientId') || '';
             document.getElementById('traktClientSecretInput').value = localStorage.getItem('traktClientSecret') || '';
@@ -478,8 +482,19 @@
             if (localStorage.getItem('trakt_connection_status') === 'connected') {
                 document.getElementById('traktStatusLog').innerText = "Status: Connected!";
             }
+            
+            // Draw all grids on launch
             renderAllGrids();
+            renderBooks(); // <-- ADD THIS LINE HERE TO RESTORE YOUR BOOKS ON REFRESH!
+            
+            // Restore last active tab if it exists
+            const lastTab = localStorage.getItem('vault_active_tab');
+            if (lastTab) {
+                const targetBtn = document.getElementById('navBtn-' + lastTab);
+                if (targetBtn) switchTab(lastTab, targetBtn);
+            }
         };
+
     </script>
 
 
