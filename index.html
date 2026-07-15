@@ -46,12 +46,12 @@
         <!-- TAB 3: MOVIES - Filtered Movie view -->
         <div id="moviesTab" class="tab-content"><div id="moviesDatabaseGrid" class="cinema-grid"></div></div>
         
-        <!-- TAB 4: SETTINGS - Engine management and API controls -->
+              <!-- TAB 4: SETTINGS - Engine management and API controls -->
         <div id="settingsTab" class="tab-content">
             <div style="padding: 20px;">
                 <h3>Vault Engine Control Deck</h3>
                 
-                <!-- TRAKT ID INPUT: With visibility toggle -->
+                <!-- TRAKT ID & SECRET INPUTS -->
                 <div class="form-group">
                     <label>Trakt Client ID</label>
                     <div class="input-row">
@@ -59,8 +59,6 @@
                         <label style="font-size: 0.7rem;"><input type="checkbox" onchange="toggleVisibility('traktClientIdInput', this.checked)"> Show</label>
                     </div>
                 </div>
-                
-                <!-- TRAKT SECRET INPUT: With visibility toggle -->
                 <div class="form-group">
                     <label>Trakt Client Secret</label>
                     <div class="input-row">
@@ -69,11 +67,24 @@
                     </div>
                 </div>
                 
+                <!-- TRAKT CONNECTION BUTTON -->
+                <button class="btn" onclick="initializeTraktDeviceAuth()">🔗 Link Trakt Account</button>
+                
+                <!-- TMDB KEY INPUT -->
+                <div class="form-group">
+                    <label>TMDB API Key</label>
+                    <div class="input-row">
+                        <input type="password" id="tmdbApiKeyInput" oninput="saveSettings()" placeholder="Paste TMDB Key...">
+                        <label style="font-size: 0.7rem;"><input type="checkbox" onchange="toggleVisibility('tmdbApiKeyInput', this.checked)"> Show</label>
+                    </div>
+                </div>
+                
                 <button class="btn" onclick="syncTraktData()">🔄 Sync Watch History Stream</button>
                 <button class="btn" onclick="repairExistingMediaMetadata()">⚡ Force Full Meta Scraping Repair</button>
                 <p id="traktStatusLog" style="padding: 20px;">Status: Standby (Local Mode)</p>
             </div>
         </div>
+
     </main>
 
     <!-- NAVIGATION BAR -->
@@ -84,47 +95,35 @@
         <div id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab', this)">⚙️ Settings</div>
     </nav>
 
-    <script>
-        // GLOBAL DATA: Accesses your local storage database
+       <script>
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
 
-        // NAVIGATION LOGIC: Swaps visible content
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            el.classList.add('active');
-        }
+        // TRAKT AUTHENTICATION: This triggers the connection process
+        window.initializeTraktDeviceAuth = function() {
+            const clientId = document.getElementById('traktClientIdInput').value.trim();
+            if (!clientId) { alert("Please enter your Client ID first!"); return; }
+            alert("Redirecting to Trakt for device authorization...");
+            // Logic for OAuth handshake will go here
+        };
 
-        // VISIBILITY TOGGLE: Allows you to show/hide API keys
-        function toggleVisibility(inputId, isVisible) {
-            document.getElementById(inputId).type = isVisible ? 'text' : 'password';
-        }
+        // ... (Keep your existing switchTab, toggleVisibility, and renderAllGrids functions) ...
 
-        // DATA PERSISTENCE: Saves keys to your browser
+        // SAVE SETTINGS: Now includes TMDB Key
         function saveSettings() {
             localStorage.setItem('traktClientId', document.getElementById('traktClientIdInput').value);
             localStorage.setItem('traktClientSecret', document.getElementById('traktClientSecretInput').value);
+            localStorage.setItem('tmdbApiKey', document.getElementById('tmdbApiKeyInput').value);
         }
 
-        // GRID ENGINE: Filters and renders cards for each tab
-        function renderAllGrids() {
-            const uniqueMedia = [...new Map(mediaDatabase.map(item => [item.name, item])).values()];
-            document.getElementById('cinemaDatabaseGrid').innerHTML = uniqueMedia.map(i => `<div class="media-card"><p>${i.name}</p></div>`).join('');
-            document.getElementById('tvDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'TV').map(i => `<div class="media-card">${i.name}</div>`).join('');
-            document.getElementById('moviesDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'Movie').map(i => `<div class="media-card">${i.name}</div>`).join('');
-        }
-
-        // SYNC ENGINE: Placeholder for Trakt API connectivity
-        window.syncTraktData = async function() {
-            document.getElementById('traktStatusLog').innerText = "Syncing...";
-            setTimeout(() => { document.getElementById('traktStatusLog').innerText = "Status: Connected!"; }, 1000);
-        };
-
-        // LAUNCH SEQUENCE: Restores UI state on refresh
+        // LAUNCH: Load all keys including the new TMDB key
         window.onload = () => {
             document.getElementById('traktClientIdInput').value = localStorage.getItem('traktClientId') || '';
             document.getElementById('traktClientSecretInput').value = localStorage.getItem('traktClientSecret') || '';
+            document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdbApiKey') || '';
+            
+            if (localStorage.getItem('trakt_connection_status') === 'connected') {
+                document.getElementById('traktStatusLog').innerText = "Status: Connected!";
+            }
             renderAllGrids();
         };
     </script>
