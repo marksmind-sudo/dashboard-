@@ -4,59 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entertainment Vault</title>
-    <!-- CSS styles omitted for brevity, but I am keeping your full structure -->
+    <style>
+        /* CORE RESET: Ensures the page doesn't fall apart */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #020208; color: #00ffcc; font-family: sans-serif; min-height: 100vh; }
+        
+        /* LAYOUT: Rebuilding the header and grid structure */
+        header { display: flex; justify-content: space-between; padding: 20px; border-bottom: 1px solid #00ffcc; }
+        .cinema-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 20px; }
+        .media-card { background: rgba(20, 20, 35, 0.8); border: 1px solid #00ffcc; border-radius: 8px; padding: 10px; height: 250px; }
+        
+        /* NAVIGATION: Keeping the footer visible */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #04040a; border-top: 2px solid #00ffcc; }
+        .nav-item { padding: 15px; flex: 1; text-align: center; cursor: pointer; color: #00ffcc; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
 </head>
 <body>
 
-    <!-- NAV BAR: Your tabs for different media types -->
-    <nav class="bottom-nav">
-        <div id="navBtn-mediaTab" class="nav-item active" onclick="switchTab('mediaTab')">📺 All Media</div>
-        <div id="navBtn-tvTab" class="nav-item" onclick="switchTab('tvTab')">📡 Television</div>
-        <div id="navBtn-moviesTab" class="nav-item" onclick="switchTab('moviesTab')">🎬 Movies</div>
-        <div id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab')">⚙️ Settings</div>
-    </nav>
+    <header>
+        <h1>Entertainment Vault</h1>
+    </header>
 
     <main>
-        <!-- TV TAB: Dedicated grid for Television shows -->
-        <div id="tvTab" class="tab-content">
-            <div id="tvDatabaseGrid" class="cinema-grid"></div>
-        </div>
-
-        <!-- MOVIES TAB: Dedicated grid for Films -->
-        <div id="moviesTab" class="tab-content">
-            <div id="moviesDatabaseGrid" class="cinema-grid"></div>
+        <!-- ALL MEDIA TAB -->
+        <div id="mediaTab" class="tab-content active">
+            <div id="cinemaDatabaseGrid" class="cinema-grid"></div>
         </div>
         
-        <!-- ... (Other tabs follow same structure) ... -->
+        <!-- SETTINGS TAB -->
+        <div id="settingsTab" class="tab-content">
+            <div style="padding: 20px;">
+                <h3>Vault Engine Control Deck</h3>
+                <p>Status: Standby (Local Mode)</p>
+            </div>
+        </div>
     </main>
 
-    <script>
-        // GLOBAL STORAGE: The arrays that hold your different collections
-        let tvDatabase = JSON.parse(localStorage.getItem('vault_tv_db') || '[]');
-        let movieDatabase = JSON.parse(localStorage.getItem('vault_movie_db') || '[]');
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('mediaTab')">📺 All Media</div>
+        <div class="nav-item" onclick="switchTab('settingsTab')">⚙️ Settings</div>
+    </nav>
 
-        // TAB NAVIGATION LOGIC: Controls which view is visible
+    <script>
+        // DATABASE: Loading your existing media from the tablet's memory
+        let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
         }
 
-        // RENDER ENGINES: These functions draw the specific grids
-        function renderTvGrid() {
-            const grid = document.getElementById('tvDatabaseGrid');
-            grid.innerHTML = tvDatabase.map(item => `<div class="media-card">${item.name}</div>`).join('');
+        // RENDER: Drawing the cards onto the grid
+        function renderGrid() {
+            const grid = document.getElementById('cinemaDatabaseGrid');
+            grid.innerHTML = mediaDatabase.map(item => `
+                <div class="media-card">
+                    <p>${item.name}</p>
+                    <small>${item.type}</small>
+                </div>
+            `).join('');
         }
 
-        function renderMovieGrid() {
-            const grid = document.getElementById('moviesDatabaseGrid');
-            grid.innerHTML = movieDatabase.map(item => `<div class="media-card">${item.name}</div>`).join('');
-        }
-
-        // INITIALIZATION: Runs when the page loads to fill the grids
-        window.onload = () => {
-            renderTvGrid();
-            renderMovieGrid();
-        };
+        window.onload = () => { renderGrid(); };
     </script>
 </body>
 </html>
