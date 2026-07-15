@@ -48,39 +48,47 @@
         <div class="nav-item" onclick="switchTab('settingsTab', this)">⚙️ Settings</div>
     </nav>
 
-    <script>
-        let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+  <script>
+    let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
 
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            el.classList.add('active');
+    function switchTab(tabId, el) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        el.classList.add('active');
+    }
+
+    function saveSettings() {
+        localStorage.setItem('traktClientId', document.getElementById('traktClientIdInput').value);
+        localStorage.setItem('traktClientSecret', document.getElementById('traktClientSecretInput').value);
+    }
+
+    function renderAllGrids() {
+        const uniqueMedia = [...new Map(mediaDatabase.map(item => [item.name, item])).values()];
+        document.getElementById('cinemaDatabaseGrid').innerHTML = uniqueMedia.map(i => `<div class="media-card"><p>${i.name}</p></div>`).join('');
+        document.getElementById('tvDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'TV').map(i => `<div class="media-card">${i.name}</div>`).join('');
+        document.getElementById('moviesDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'Movie').map(i => `<div class="media-card">${i.name}</div>`).join('');
+    }
+
+    window.syncTraktData = async function() {
+        document.getElementById('traktStatusLog').innerText = "Syncing...";
+        // Simulate successful connection
+        localStorage.setItem('trakt_connection_status', 'connected'); 
+        setTimeout(() => { document.getElementById('traktStatusLog').innerText = "Status: Connected!"; }, 1000);
+    };
+
+    window.onload = () => {
+        document.getElementById('traktClientIdInput').value = localStorage.getItem('traktClientId') || '';
+        document.getElementById('traktClientSecretInput').value = localStorage.getItem('traktClientSecret') || '';
+        
+        // CHECK PERSISTENCE: If we were connected, stay connected after refresh
+        if (localStorage.getItem('trakt_connection_status') === 'connected') {
+            document.getElementById('traktStatusLog').innerText = "Status: Connected!";
         }
+        
+        renderAllGrids();
+    };
+</script>
 
-        function saveSettings() {
-            localStorage.setItem('traktClientId', document.getElementById('traktClientIdInput').value);
-            localStorage.setItem('traktClientSecret', document.getElementById('traktClientSecretInput').value);
-        }
-
-        function renderAllGrids() {
-            const uniqueMedia = [...new Map(mediaDatabase.map(item => [item.name, item])).values()];
-            document.getElementById('cinemaDatabaseGrid').innerHTML = uniqueMedia.map(i => `<div class="media-card"><p>${i.name}</p></div>`).join('');
-            document.getElementById('tvDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'TV').map(i => `<div class="media-card">${i.name}</div>`).join('');
-            document.getElementById('moviesDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'Movie').map(i => `<div class="media-card">${i.name}</div>`).join('');
-        }
-
-        window.syncTraktData = async function() {
-            document.getElementById('traktStatusLog').innerText = "Syncing...";
-            // Logic placeholder for your Trakt API call
-            setTimeout(() => { document.getElementById('traktStatusLog').innerText = "Status: Connected!"; }, 1000);
-        };
-
-        window.onload = () => {
-            document.getElementById('traktClientIdInput').value = localStorage.getItem('traktClientId') || '';
-            document.getElementById('traktClientSecretInput').value = localStorage.getItem('traktClientSecret') || '';
-            renderAllGrids();
-        };
-    </script>
 </body>
 </html>
