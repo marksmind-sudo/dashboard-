@@ -224,8 +224,7 @@
             document.getElementById('cinemaDatabaseGrid').innerHTML = uniqueMedia.map(createCard).join('');
             document.getElementById('tvDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'TV').map(createCard).join('');
             document.getElementById('moviesDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'Movie').map(createCard).join('');
-        }       
-                  // DETAIL ENGINE: Deep Dive into Cast and Crew
+        }               // DETAIL ENGINE: Enhanced to search by name if ID is missing
         window.openDetails = async function(name) {
             const item = mediaDatabase.find(i => i.name === name);
             const detailContent = document.getElementById('detailContent');
@@ -233,25 +232,47 @@
             const apiKey = localStorage.getItem('tmdbApiKey');
 
             overlay.style.display = 'block';
-            detailContent.innerHTML = `<h2>${item.name}</h2><p>Loading deep data...</p>`;
+            detailContent.innerHTML = `<h2>${item.name}</h2><p>Loading...</p>`;
 
             try {
                 const typeEndpoint = item.type === 'Movie' ? 'movie' : 'tv';
-                // Fetch basic info and credits
-                const res = await fetch(`https://api.themoviedb.org/3/${typeEndpoint}/${item.id}?api_key=${apiKey}&append_to_response=credits`);
+                
+                // If we have an ID, we go "Deep" (fetch details directly)
+                // If we DON'T have an ID, we search by name (fallback)
+                let url = item.id ? 
+                    `https://api.tmdb.org/3/${typeEndpoint}/${item.id}?api_key=${apiKey}&append_to_response=credits` : 
+                    `https://api.tmdb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`;
+
+                const res = await fetch(url);
                 const info = await res.json();
                 
-                const cast = info.credits.cast.slice(0, 5).map(c => c.name).join(', ');
+                let htmlOutput = `<h2>${item.name}</h2>`;
                 
-                detailContent.innerHTML = `
-                    <h2>${item.name}</h2>
-                    <p><strong>Rating:</strong> ${info.vote_average.toFixed(1)}/10</p>
-                    <p><strong>Cast:</strong> ${cast}...</p>
-                    <p style="margin-top:15px;">${info.overview}</p>
-                    <button class="close-btn" onclick="closeDetails()">Close</button>
-                `;
+                // Handle different response structures
+                const data = item.id ? info : (info.results && info.results[0]);
+                
+                if (data) {
+                    const rating = data.vote_average ? data.vote_average.toFixed(1) : "N/A";
+                    const overview = data.overview || "No summary available.";
+                    
+                    htmlOutput += `<p><strong>Rating:</strong> ${rating}/10</p>`;
+                    htmlOutput += `<p style="margin-top:15px;">${overview}</p>`;
+                    
+                    // Show Cast if we have a deep request
+                    if (data.credits && data.credits.cast) {
+                        const cast = data.credits.cast.slice(0, 5).map(c => c.name).join(', ');
+                        htmlOutput += `<p style="margin-top:15px;"><strong>Cast:</strong> ${cast}...</p>`;
+                    }
+                } else {
+                    htmlOutput += `<p>Could not find details for this title.</p>`;
+                }
+                
+                htmlOutput += `<button class="close-btn" onclick="closeDetails()">Close</button>`;
+                detailContent.innerHTML = htmlOutput;
+                
             } catch (e) {
-                detailContent.innerHTML = `<h2>${item.name}</h2><p>Could not load deep details.</p><button class="close-btn" onclick="closeDetails()">Close</button>`;
+                console.error(e);
+                detailContent.innerHTML = `<h2>${item.name}</h2><p>Network Error.</p><button class="close-btn" onclick="closeDetails()">Close</button>`;
             }
         };
 
