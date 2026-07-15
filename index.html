@@ -201,22 +201,37 @@
             document.getElementById('tvDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'TV').map(createCard).join('');
             document.getElementById('moviesDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'Movie').map(createCard).join('');
         }
-
-        // DETAIL ENGINE: Opens the overlay and shows the info
-        window.openDetails = function(name) {
+        // DETAIL ENGINE: Fetches real data from TMDB when you tap a card
+        window.openDetails = async function(name) {
             const item = mediaDatabase.find(i => i.name === name);
             const detailContent = document.getElementById('detailContent');
-            detailContent.innerHTML = `
-                <h2>${item.name}</h2>
-                <p>Type: ${item.type}</p>
-                <div style="margin-top:20px;">More details coming soon, Sweetie!</div>
-            `;
+            const apiKey = localStorage.getItem('tmdbApiKey');
+
+            // Show loading state
+            detailContent.innerHTML = `<h2>${item.name}</h2><p>Loading details...</p>`;
             document.getElementById('detailOverlay').style.display = 'block';
+
+            try {
+                // Fetch details from TMDB
+                const typeEndpoint = item.type === 'Movie' ? 'movie' : 'tv';
+                const searchUrl = `https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`;
+                const response = await fetch(searchUrl);
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    const info = data.results[0];
+                    detailContent.innerHTML = `
+                        <h2>${item.name}</h2>
+                        <p><strong>Rating:</strong> ${info.vote_average}/10</p>
+                        <p style="margin-top:15px;">${info.overview || "No summary available."}</p>
+                        <button onclick="closeDetails()" style="margin-top:20px; background:#ff007f; border:none; padding:10px; border-radius:4px; color:#fff;">Close</button>
+                    `;
+                }
+            } catch (e) {
+                detailContent.innerHTML = `<h2>${item.name}</h2><p>Could not load details.</p><button onclick="closeDetails()">Close</button>`;
+            }
         };
 
-        window.closeDetails = function() {
-            document.getElementById('detailOverlay').style.display = 'none';
-        };
 
 
         // SYNC ENGINE: Pulls down your watch history stream from Trakt
