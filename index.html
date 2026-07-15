@@ -79,15 +79,46 @@
         setTimeout(() => { document.getElementById('traktStatusLog').innerText = "Status: Connected!"; }, 1000);
     };
         // G. META REPAIR ENGINE: Fetches posters and details from TMDB
-        window.repairExistingMediaMetadata = async function() {
+               window.repairExistingMediaMetadata = async function() {
             const statusLog = document.getElementById('traktStatusLog');
+            const tmdbKey = localStorage.getItem('tmdbApiKey');
+            
+            if (!tmdbKey) {
+                alert("Please enter your TMDB API Key in the settings first!");
+                return;
+            }
+
             statusLog.innerText = "Repairing Metadata...";
             
-            // This loop goes through your saved database and prepares it for updates
-            mediaDatabase.forEach(item => {
-                console.log("Scraping for: " + item.name);
-                // Here is where the API call to TMDB will eventually live
-            });
+            // Loop through each item in your database
+            for (let item of mediaDatabase) {
+                // This is the "GPS" search query to TMDB
+                const url = `https://api.themoviedb.org/3/search/tv?api_key=${tmdbKey}&query=${encodeURIComponent(item.name)}`;
+                
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    
+                    if (data.results && data.results.length > 0) {
+                        // Found it! Update the item with the poster path
+                        item.posterPath = data.results[0].poster_path;
+                        item.tmdbId = data.results[0].id;
+                    }
+                } catch (e) {
+                    console.log("Error finding poster for: " + item.name);
+                }
+            }
+
+            // Save the newly found poster info to your tablet's memory
+            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            
+            // Re-render the grid so the posters appear
+            renderAllGrids();
+            
+            statusLog.innerText = "Status: Metadata Repaired!";
+            alert("The Vault has finished updating your library with new artwork!");
+        };
+
 
             setTimeout(() => {
                 statusLog.innerText = "Status: Metadata Repaired!";
