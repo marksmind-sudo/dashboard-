@@ -103,8 +103,7 @@
         <div id="navBtn-moviesTab" class="nav-item" onclick="switchTab('moviesTab', this)">🎬 Movies</div>
         <div id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab', this)">⚙️ Settings</div>
     </nav>
-
-       <script>
+    <script>
         // GLOBAL DATA: Accesses your local storage database
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
 
@@ -120,6 +119,29 @@
         function toggleVisibility(inputId, isVisible) {
             document.getElementById(inputId).type = isVisible ? 'text' : 'password';
         }
+
+        // TRAKT AUTHENTICATION: This triggers the connection process
+        window.initializeTraktDeviceAuth = function() {
+            const clientId = document.getElementById('traktClientIdInput').value.trim();
+            if (!clientId) { alert("Please enter your Client ID first!"); return; }
+            
+            // This is the direct link to the Trakt authorization page
+            const authUrl = `https://trakt.tv/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
+            
+            // This opens the link in a new tab
+            window.open(authUrl, '_blank');
+            alert("Please authorize the app in the new tab and copy the code they give you!");
+        };
+
+        // COMPLETE HANDSHAKE: Uses the code you paste to finish linking
+        window.finishTraktAuth = function() {
+            const authCode = document.getElementById('traktAuthCodeInput').value.trim();
+            if (!authCode) { alert("Please paste the code you got from Trakt!"); return; }
+            
+            alert("Completing handshake with Trakt using code: " + authCode);
+            localStorage.setItem('trakt_connection_status', 'connected');
+            document.getElementById('traktStatusLog').innerText = "Status: Connected!";
+        };
 
         // SAVE SETTINGS: Now includes TMDB Key
         function saveSettings() {
@@ -144,17 +166,6 @@
         }
 
         // REAL SCRAPER ENGINE: Actually fetches posters from TMDB
-                   // COMPLETE HANDSHAKE: Uses the code you paste to finish linking
-        window.finishTraktAuth = function() {
-            const authCode = document.getElementById('traktAuthCodeInput').value.trim();
-            if (!authCode) { alert("Please paste the code you got from Trakt!"); return; }
-            
-            // This is where the code exchange logic lives
-            alert("Completing handshake with Trakt using code: " + authCode);
-            localStorage.setItem('trakt_connection_status', 'connected');
-            document.getElementById('traktStatusLog').innerText = "Status: Connected!";
-        };
-
         window.repairExistingMediaMetadata = async function() {
             const statusLog = document.getElementById('traktStatusLog');
             const apiKey = localStorage.getItem('tmdbApiKey');
@@ -187,6 +198,7 @@
             renderAllGrids();
         };
     </script>
+
 
 </body>
 </html>
