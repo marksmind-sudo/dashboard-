@@ -5,6 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entertainment Vault</title>
     <style>
+                /* DETAIL OVERLAY: Ensure the close button is clickable */
+        #detailOverlay {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.95); 
+            z-index: 9999; /* Make sure it's on top of everything */
+            padding: 20px; 
+            overflow-y: auto;
+        }
+        .close-btn {
+            background: #ff007f; 
+            border: none; 
+            padding: 15px 30px; 
+            border-radius: 8px; 
+            color: #fff; 
+            cursor: pointer; 
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
         /* SECTION 1: CORE RESET - Ensures layout remains consistent */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: #020208; color: #00ffcc; font-family: sans-serif; padding-bottom: 90px; min-height: 100vh; }
@@ -200,37 +224,41 @@
             document.getElementById('cinemaDatabaseGrid').innerHTML = uniqueMedia.map(createCard).join('');
             document.getElementById('tvDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'TV').map(createCard).join('');
             document.getElementById('moviesDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'Movie').map(createCard).join('');
-        }
-               // DETAIL ENGINE: Fetches real data and adds a working close button
+        }        // DETAIL ENGINE: Opens the overlay
         window.openDetails = async function(name) {
             const item = mediaDatabase.find(i => i.name === name);
             const detailContent = document.getElementById('detailContent');
+            const overlay = document.getElementById('detailOverlay');
             const apiKey = localStorage.getItem('tmdbApiKey');
 
-            // Show loading state
-            detailContent.innerHTML = `<h2>${item.name}</h2><p>Loading details...</p>`;
-            document.getElementById('detailOverlay').style.display = 'block';
+            detailContent.innerHTML = `<h2>${item.name}</h2><p>Loading...</p>`;
+            overlay.style.display = 'block'; // Ensure it appears
 
             try {
                 const typeEndpoint = item.type === 'Movie' ? 'movie' : 'tv';
-                const searchUrl = `https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`;
+                const searchUrl = `https://api.tmdb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`;
                 const response = await fetch(searchUrl);
                 const data = await response.json();
                 
                 if (data.results && data.results.length > 0) {
                     const info = data.results[0];
-                    // The "Close" button now correctly calls closeDetails()
                     detailContent.innerHTML = `
                         <h2>${item.name}</h2>
                         <p><strong>Rating:</strong> ${info.vote_average}/10</p>
                         <p style="margin-top:15px;">${info.overview || "No summary available."}</p>
-                        <button onclick="closeDetails()" style="margin-top:20px; background:#ff007f; border:none; padding:10px; border-radius:4px; color:#fff; cursor:pointer;">Close</button>
+                        <button class="close-btn" onclick="closeDetails()">Close</button>
                     `;
                 }
             } catch (e) {
-                detailContent.innerHTML = `<h2>${item.name}</h2><p>Could not load details.</p><button onclick="closeDetails()" style="cursor:pointer;">Close</button>`;
+                detailContent.innerHTML = `<h2>${item.name}</h2><p>Error loading.</p><button class="close-btn" onclick="closeDetails()">Close</button>`;
             }
         };
+
+        // FORCE CLOSE: This is a direct command to hide the overlay
+        window.closeDetails = function() {
+            document.getElementById('detailOverlay').style.display = 'none';
+        };
+
 
 
 
