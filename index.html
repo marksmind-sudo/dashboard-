@@ -165,7 +165,7 @@
             document.getElementById('moviesDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'Movie').map(createCard).join('');
         }
 
-        // REAL SCRAPER ENGINE: Actually fetches posters from TMDB
+               // REAL SCRAPER ENGINE: Actually fetches posters and refreshes the view
         window.repairExistingMediaMetadata = async function() {
             const statusLog = document.getElementById('traktStatusLog');
             const apiKey = localStorage.getItem('tmdbApiKey');
@@ -184,11 +184,17 @@
                 } catch (e) { console.error("Scrape failed", e); }
             }
             
+            // SAVE AND REFRESH: This forces the app to update the database and the UI
             localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            
+            // Force a reload of the database from storage
+            mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+            
             renderAllGrids();
             statusLog.innerText = "Status: Metadata Repaired!";
             alert("Library update complete!");
         };
+
 
         // LAUNCH SEQUENCE
         window.onload = () => {
