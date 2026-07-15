@@ -69,8 +69,20 @@
         
         <!-- TAB 3: MOVIES - Filtered Movie view -->
         <div id="moviesTab" class="tab-content"><div id="moviesDatabaseGrid" class="cinema-grid"></div></div>
-        
-               <!-- TAB 4: SETTINGS - Engine management and API controls -->
+                <!-- TAB 4: BOOKS - Your reading collection -->
+        <div id="booksTab" class="tab-content">
+            <div style="padding: 20px;">
+                <h3>My Reading Collection</h3>
+                <div class="input-row" style="margin-top:15px;">
+                    <input type="text" id="bookTitleInput" placeholder="Enter book title...">
+                    <button class="btn" onclick="addBook()">Add</button>
+                </div>
+                <div id="booksDatabaseGrid" class="cinema-grid" style="margin-top:20px;"></div>
+            </div>
+        </div>
+
+              
+        <!-- TAB 5: SETTINGS - Engine management and API controls -->
         <div id="settingsTab" class="tab-content">
             <div style="padding: 20px;">
                 <h3>Vault Engine Control Deck</h3>
@@ -130,6 +142,8 @@
         <div id="navBtn-mediaTab" class="nav-item active" onclick="switchTab('mediaTab', this)">📺 All</div>
         <div id="navBtn-tvTab" class="nav-item" onclick="switchTab('tvTab', this)">📡 TV</div>
         <div id="navBtn-moviesTab" class="nav-item" onclick="switchTab('moviesTab', this)">🎬 Movies</div>
+        <div id="navBtn-booksTab" class="nav-item" onclick="switchTab('booksTab', this)">📚 Books</div>
+
         <div id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab', this)">⚙️ Settings</div>
     </nav>
        <script>
@@ -281,9 +295,28 @@
         window.closeDetails = function() {
             document.getElementById('detailOverlay').style.display = 'none';
         };
+         // BOOK ENGINE: Simple manual add for your reading list
+        window.addBook = function() {
+            const title = document.getElementById('bookTitleInput').value.trim();
+            if (!title) return;
+            
+            let books = JSON.parse(localStorage.getItem('vault_books_db') || '[]');
+            books.push({ name: title, type: 'Book' });
+            localStorage.setItem('vault_books_db', JSON.stringify(books));
+            
+            document.getElementById('bookTitleInput').value = '';
+            renderBooks();
+        };
 
-
-
+        function renderBooks() {
+            const books = JSON.parse(localStorage.getItem('vault_books_db') || '[]');
+            const grid = document.getElementById('booksDatabaseGrid');
+            grid.innerHTML = books.map(b => `
+                <div class="media-card">
+                    <div style="height:190px; display:flex; align-items:center; justify-content:center; background:#111; color:#00ffcc;">📖</div>
+                    <p>${b.name}</p>
+                </div>`).join('');
+        }
 
 
         // SYNC ENGINE: Pulls down your watch history stream from Trakt
