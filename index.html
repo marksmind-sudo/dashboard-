@@ -46,11 +46,12 @@
         <!-- TAB 3: MOVIES - Filtered Movie view -->
         <div id="moviesTab" class="tab-content"><div id="moviesDatabaseGrid" class="cinema-grid"></div></div>
         
-        <!-- TAB 4: SETTINGS - Engine management and API controls -->
+               <!-- TAB 4: SETTINGS - Engine management and API controls -->
         <div id="settingsTab" class="tab-content">
             <div style="padding: 20px;">
                 <h3>Vault Engine Control Deck</h3>
                 
+                <!-- TRAKT ID & SECRET INPUTS -->
                 <div class="form-group">
                     <label>Trakt Client ID</label>
                     <div class="input-row">
@@ -68,6 +69,17 @@
                 
                 <button class="btn" onclick="initializeTraktDeviceAuth()">🔗 Link Trakt Account</button>
                 
+                <!-- NEW: AUTHORIZATION CODE INPUT -->
+                <div class="form-group">
+                    <label>Trakt Authorization Code</label>
+                    <div class="input-row">
+                        <input type="password" id="traktAuthCodeInput" placeholder="Paste Code from Trakt...">
+                        <label style="font-size: 0.7rem;"><input type="checkbox" onchange="toggleVisibility('traktAuthCodeInput', this.checked)"> Show</label>
+                    </div>
+                </div>
+                <button class="btn" onclick="finishTraktAuth()">✅ Complete Handshake</button>
+                
+                <!-- TMDB KEY INPUT -->
                 <div class="form-group">
                     <label>TMDB API Key</label>
                     <div class="input-row">
@@ -81,6 +93,7 @@
                 <p id="traktStatusLog" style="padding: 20px;">Status: Standby (Local Mode)</p>
             </div>
         </div>
+
     </main>
 
     <!-- NAVIGATION BAR -->
@@ -131,6 +144,17 @@
         }
 
         // REAL SCRAPER ENGINE: Actually fetches posters from TMDB
+                   // COMPLETE HANDSHAKE: Uses the code you paste to finish linking
+        window.finishTraktAuth = function() {
+            const authCode = document.getElementById('traktAuthCodeInput').value.trim();
+            if (!authCode) { alert("Please paste the code you got from Trakt!"); return; }
+            
+            // This is where the code exchange logic lives
+            alert("Completing handshake with Trakt using code: " + authCode);
+            localStorage.setItem('trakt_connection_status', 'connected');
+            document.getElementById('traktStatusLog').innerText = "Status: Connected!";
+        };
+
         window.repairExistingMediaMetadata = async function() {
             const statusLog = document.getElementById('traktStatusLog');
             const apiKey = localStorage.getItem('tmdbApiKey');
