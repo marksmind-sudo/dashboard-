@@ -224,35 +224,37 @@
             document.getElementById('cinemaDatabaseGrid').innerHTML = uniqueMedia.map(createCard).join('');
             document.getElementById('tvDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'TV').map(createCard).join('');
             document.getElementById('moviesDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'Movie').map(createCard).join('');
-        }        // DETAIL ENGINE: Opens the overlay
+        }       
+                  // DETAIL ENGINE: Deep Dive into Cast and Crew
         window.openDetails = async function(name) {
             const item = mediaDatabase.find(i => i.name === name);
             const detailContent = document.getElementById('detailContent');
             const overlay = document.getElementById('detailOverlay');
             const apiKey = localStorage.getItem('tmdbApiKey');
 
-            detailContent.innerHTML = `<h2>${item.name}</h2><p>Loading...</p>`;
-            overlay.style.display = 'block'; // Ensure it appears
+            overlay.style.display = 'block';
+            detailContent.innerHTML = `<h2>${item.name}</h2><p>Loading deep data...</p>`;
 
             try {
                 const typeEndpoint = item.type === 'Movie' ? 'movie' : 'tv';
-                const searchUrl = `https://api.tmdb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`;
-                const response = await fetch(searchUrl);
-                const data = await response.json();
+                // Fetch basic info and credits
+                const res = await fetch(`https://api.themoviedb.org/3/${typeEndpoint}/${item.id}?api_key=${apiKey}&append_to_response=credits`);
+                const info = await res.json();
                 
-                if (data.results && data.results.length > 0) {
-                    const info = data.results[0];
-                    detailContent.innerHTML = `
-                        <h2>${item.name}</h2>
-                        <p><strong>Rating:</strong> ${info.vote_average}/10</p>
-                        <p style="margin-top:15px;">${info.overview || "No summary available."}</p>
-                        <button class="close-btn" onclick="closeDetails()">Close</button>
-                    `;
-                }
+                const cast = info.credits.cast.slice(0, 5).map(c => c.name).join(', ');
+                
+                detailContent.innerHTML = `
+                    <h2>${item.name}</h2>
+                    <p><strong>Rating:</strong> ${info.vote_average.toFixed(1)}/10</p>
+                    <p><strong>Cast:</strong> ${cast}...</p>
+                    <p style="margin-top:15px;">${info.overview}</p>
+                    <button class="close-btn" onclick="closeDetails()">Close</button>
+                `;
             } catch (e) {
-                detailContent.innerHTML = `<h2>${item.name}</h2><p>Error loading.</p><button class="close-btn" onclick="closeDetails()">Close</button>`;
+                detailContent.innerHTML = `<h2>${item.name}</h2><p>Could not load deep details.</p><button class="close-btn" onclick="closeDetails()">Close</button>`;
             }
         };
+
 
         // FORCE CLOSE: This is a direct command to hide the overlay
         window.closeDetails = function() {
@@ -329,7 +331,7 @@
             }
         };
 
-        // REAL SCRAPER ENGINE: Fetches posters dynamically based on Movie or TV type
+               // REAL SCRAPER ENGINE: Now fetches AND SAVES the TMDB ID
         window.repairExistingMediaMetadata = async function() {
             const statusLog = document.getElementById('traktStatusLog');
             const apiKey = localStorage.getItem('tmdbApiKey');
@@ -338,13 +340,16 @@
             statusLog.innerText = "Repairing Metadata (Please Wait)...";
             
             for (let item of mediaDatabase) {
-                if (item.posterPath) continue; 
+                // Only scrape if we don't already have the ID
+                if (item.id && item.posterPath) continue; 
+                
                 try {
                     const typeEndpoint = item.type === 'Movie' ? 'movie' : 'tv';
                     const searchUrl = `https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`;
                     const response = await fetch(searchUrl);
                     const data = await response.json();
                     if (data.results && data.results.length > 0) {
+                        item.id = data.results[0].id; // Saving the ID!
                         item.posterPath = data.results[0].poster_path;
                     }
                 } catch (e) { console.error("Scrape failed for " + item.name, e); }
@@ -353,8 +358,9 @@
             localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
             renderAllGrids();
             statusLog.innerText = "Status: Metadata Repaired!";
-            alert("Library update complete!");
+            alert("Library IDs and metadata updated!");
         };
+
 
         // LAUNCH SEQUENCE: Restores UI state and loaded keys on refresh
         window.onload = () => {
