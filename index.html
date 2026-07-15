@@ -243,7 +243,8 @@
             document.getElementById('cinemaDatabaseGrid').innerHTML = uniqueMedia.map(createCard).join('');
             document.getElementById('tvDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'TV').map(createCard).join('');
             document.getElementById('moviesDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'Movie').map(createCard).join('');
-        }               // DETAIL ENGINE: Enhanced to search by name if ID is missing
+        }              
+           // DETAIL ENGINE: Enhanced to search by name if ID is missing
         window.openDetails = async function(name) {
             const item = mediaDatabase.find(i => i.name === name);
             const detailContent = document.getElementById('detailContent');
@@ -336,18 +337,29 @@
     reader.readAsText(file);
 };
 
-
-        window.addBook = function() {
+        // BOOK ENGINE: Now with Google Books "Deep Dive"
+        window.addBook = async function() {
             const title = document.getElementById('bookTitleInput').value.trim();
             if (!title) return;
-            
+
+            // Fetch from Google Books
+            const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(title)}`);
+            const data = await res.json();
+            const bookInfo = data.items[0].volumeInfo;
+
             let books = JSON.parse(localStorage.getItem('vault_books_db') || '[]');
-            books.push({ name: title, type: 'Book' });
+            books.push({ 
+                name: title, 
+                type: 'Book', 
+                cover: bookInfo.imageLinks?.thumbnail || '',
+                description: bookInfo.description || 'No description available.'
+            });
             localStorage.setItem('vault_books_db', JSON.stringify(books));
             
             document.getElementById('bookTitleInput').value = '';
             renderBooks();
         };
+
 
         function renderBooks() {
             const books = JSON.parse(localStorage.getItem('vault_books_db') || '[]');
