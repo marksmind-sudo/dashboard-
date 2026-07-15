@@ -130,7 +130,7 @@
              <!-- Goodreads library import -->
             <div style="margin-top:20px;">
     <h4>Import Goodreads Library</h4>
-    <input type="file" id="goodreadsImport" accept=".csv" onchange="importGoodreads(event)">
+   <input type="file" id="goodreadsImport" accept=".csv, .txt, text/csv" onchange="importGoodreads(event)">
 </div>
 
         </div>
@@ -302,28 +302,40 @@
         };
     
          // BOOK ENGINE: Goodreads import function and Simple manual add for your reading list
-           window.importGoodreads = function(event) {
+         window.importGoodreads = function(event) {
     const file = event.target.files[0];
+    if (!file) return;
+
+    // Debugging: Let's see what the browser thinks the file is
+    console.log("Attempting to import:", file.name, file.type);
+    
     const reader = new FileReader();
+    reader.onerror = () => alert("Oops, I couldn't read that file, Sweetie. Try a different format?");
     reader.onload = function(e) {
         const text = e.target.result;
-        // Simple CSV parser for Goodreads "Title" column
+        if (!text || text.length === 0) {
+            alert("The file seems to be empty!");
+            return;
+        }
+        
         const lines = text.split('\n');
         let importedBooks = JSON.parse(localStorage.getItem('vault_books_db') || '[]');
         
         lines.forEach((line, index) => {
-            if (index === 0) return; // Skip header
+            if (index === 0) return; 
             const cols = line.split(',');
-            if (cols[1]) { // Title is usually the 2nd column
-                importedBooks.push({ name: cols[1].replace(/"/g, ''), type: 'Book' });
+            if (cols[1]) {
+                const bookTitle = cols[1].replace(/"/g, '').trim();
+                if(bookTitle) importedBooks.push({ name: bookTitle, type: 'Book' });
             }
         });
         localStorage.setItem('vault_books_db', JSON.stringify(importedBooks));
-        alert("Goodreads library imported!");
+        alert("Success! Your library is imported, Sweetie.");
         renderBooks();
     };
     reader.readAsText(file);
 };
+
 
         window.addBook = function() {
             const title = document.getElementById('bookTitleInput').value.trim();
