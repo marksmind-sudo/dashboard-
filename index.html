@@ -34,6 +34,17 @@
             font-weight: bold;
             margin-bottom: 20px;
         }
+        .delete-btn {
+            background: #cc0000;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            width: 100%;
+        }
 
         /* HARDWARE CORE LAYOUT RESET */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -114,9 +125,6 @@
 </head>
 <body>
 
-    <!-- ========================================== -->
-    <!-- SECTION 2: GLOBAL CONTROL HEADER SHELF      -->
-    <!-- ========================================== -->
     <header>
         <h1>Entertainment Vault</h1>
         <button id="gearButton" class="gear-btn" onclick="toggleSettingsTab()">⚙️</button>
@@ -298,7 +306,7 @@
             triggerSearchProcessing();
         }
 
-        // --- FILTER PIEPELINE RENDER ENGINES ---
+        // --- FILTER PIPELINE RENDER ENGINES ---
         function renderAllMasterGrids() {
             const query = document.getElementById('globalSearchInput').value.toLowerCase().trim();
             const genre = document.getElementById('genreFilterSelect').value;
@@ -347,6 +355,16 @@
             document.getElementById('booksDatabaseGrid').innerHTML = filteredDataset.filter(i => i.type === 'Book' || i.type === 'Audiobook').map(generateCardTemplate).join('');
         }
 
+        // --- PERMANENT STORAGE ERASURE FUNCTION ---
+        window.deleteAssetFromLibrary = function(name) {
+            if (confirm("Are you absolutely sure you want to permanently delete '" + name + "' from your media vault registry, Sweetie?")) {
+                mediaDatabase = mediaDatabase.filter(m => m.name !== name);
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                closeDetails();
+                renderAllMasterGrids();
+            }
+        };
+
         // --- DEEP INTERACTIVE PROFILE OVERLAYS ENGINE ---
         window.openDetails = async function(name) {
             let item = mediaDatabase.find(i => i.name === name);
@@ -392,6 +410,7 @@
                                     <label style="font-size:0.8rem; color:#00ffcc;">Audio Progress (%):</label>
                                     <input type="number" min="0" max="100" value="${item.progress || 0}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'progress', this.value)" style="padding:6px; margin-top:4px;">
                                 </div>` : ''}
+                                <button class="delete-btn" onclick="deleteAssetFromLibrary('${item.name.replace(/'/g, "\\'")}')">🗑️ Delete From Library</button>
                             </div>
                         </div>
                         <div class="meta-info-shelf">
@@ -415,7 +434,7 @@
             const apiKey = localStorage.getItem('tmdbApiKey');
             try {
                 const typeEndpoint = item.type === 'Movie' ? 'movie' : 'tv';
-                const res = await fetch(`https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=%23%23%23TMDB_KEY%23%23%23&query=${encodeURIComponent(item.name)}`.replace('###TMDB_KEY###', apiKey));
+                const res = await fetch(`https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`);
                 const searchRes = await res.json();
                 const matchedRecord = searchRes.results?.[0];
                 
@@ -484,6 +503,7 @@
                                         <input type="checkbox" ${item.favorite ? 'checked' : ''} onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'favorite', this.checked)">
                                         <span style="color:#ff007f; font-weight:bold;">❤️ Mark Favorite</span>
                                     </div>
+                                    <button class="delete-btn" onclick="deleteAssetFromLibrary('${item.name.replace(/'/g, "\\'")}')">🗑️ Delete From Library</button>
                                 </div>
                             </div>
                             <div class="meta-info-shelf">
@@ -508,7 +528,6 @@
             } catch (e) { console.error(e); }
         };
 
-        // --- SUB SECTION INTERACTION STAR RATING RATIO CONTROLS ---
         function renderStarInterface(name, activeScore) {
             let starDeckText = "";
             for(let score = 1; score <= 5; score++) {
