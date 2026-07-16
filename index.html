@@ -98,7 +98,7 @@
         .input-row { display: flex; gap: 12px; align-items: center; width: 100%; }
         .checkbox-container { display: flex; align-items: center; gap: 6px; min-width: 80px; color: #00ffcc; font-size: 0.85rem; }
         
-        .btn { background: #ff007f; color: #000; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn { background: #ff007f; color: #000; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; text-decoration: none; display: block; }
         .btn-sync { background: #00ffcc; }
         .btn-repair { background: #ffcc00; }
 
@@ -180,7 +180,7 @@
                     <div class="form-group">
                         <label>Trakt Client ID</label>
                         <div class="input-row">
-                            <input type="password" id="traktClientIdInput" oninput="saveSettings()" placeholder="Paste ID...">
+                            <input type="password" id="traktClientIdInput" oninput="saveSettings(); updateTraktAuthLink();" placeholder="Paste ID...">
                             <div class="checkbox-container"><input type="checkbox" onchange="toggleVisibility('traktClientIdInput', this.checked)"> <span>Show</span></div>
                         </div>
                     </div>
@@ -191,7 +191,10 @@
                             <div class="checkbox-container"><input type="checkbox" onchange="toggleVisibility('traktClientSecretInput', this.checked)"> <span>Show</span></div>
                         </div>
                     </div>
-                    <button class="btn" onclick="initializeTraktDeviceAuth()">🔗 Link Trakt Account</button>
+                    
+                    <!-- NATIVE HTMLLINK BINDING: Completely bypasses window.open script issues -->
+                    <a id="nativeTraktLink" href="https://trakt.tv/oauth/authorize" target="_self" class="btn">🔗 Link Trakt Account</a>
+                    
                     <div class="form-group" style="margin-top: 15px;">
                         <label>Trakt Authorization Code</label>
                         <div class="input-row">
@@ -214,7 +217,7 @@
                                 <option value="Book">Book</option>
                                 <option value="Audiobook">Audiobook</option>
                             </select>
-                            <button class="btn" onclick="addNewCustomMediaAsset()" style="width: 80px; margin-top: 0;">Add</button>
+                            <button class="btn" onclick="addNewCustomMediaAsset()" style="width: 80px; margin-top: 0; line-height: 20px;">Add</button>
                         </div>
                     </div>
                     <div class="form-group" style="margin-top: 15px;">
@@ -257,9 +260,6 @@
         <div id="navBtn-booksTab" class="nav-item" onclick="switchTab('booksTab', this)">📚 Books & Audio</div>
     </nav>
 
-    <!-- ========================================== -->
-    <!-- SECTION 6: SYSTEM OPERATING LOGIC ENGINE    -->
-    <!-- ========================================== -->
     <script>
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
         let currentStatusFilter = 'all';
@@ -283,6 +283,7 @@
             document.getElementById('statusFolderBar').style.display = 'none';
             document.getElementById('settingsTab').classList.add('active');
             localStorage.setItem('vault_active_tab', 'settingsTab');
+            updateTraktAuthLink();
         }
 
         function switchStatusFolder(statusType, el) {
@@ -312,6 +313,15 @@
             localStorage.setItem('traktClientId', document.getElementById('traktClientIdInput').value);
             localStorage.setItem('traktClientSecret', document.getElementById('traktClientSecretInput').value);
             localStorage.setItem('tmdbApiKey', document.getElementById('tmdbApiKeyInput').value);
+        }
+
+        // --- ENHANCED DYNAMIC LINK GENERATOR ---
+        function updateTraktAuthLink() {
+            const clientId = document.getElementById('traktClientIdInput').value.trim();
+            const linkElement = document.getElementById('nativeTraktLink');
+            if (clientId && linkElement) {
+                linkElement.href = 'https://trakt.tv/oauth/authorize?response_type=code&client_id=' + clientId + '&redirect_uri=urn:ietf:wg:oauth:2.0:oob';
+            }
         }
 
         function triggerSearchProcessing() {
@@ -391,7 +401,6 @@
             }
         };
 
-        // --- CLASSIFICATION LOOKUP DETAILED ENGINE ---
         window.openDetails = async function(name) {
             let item = mediaDatabase.find(i => i.name === name);
             if(!item) return;
@@ -400,7 +409,7 @@
             const overlay = document.getElementById('detailOverlay');
             
             overlay.style.display = 'block';
-            detailContent.innerHTML = `<h2>${name}</h2><p>Parsing secure deep data nodes...</p>`;
+            detailContent.innerHTML = `<h2>${name}</h2><p>Parsing secure data blocks...</p>`;
 
             const isTextualAsset = item.type === 'Book' || item.type === 'Audiobook';
 
@@ -433,10 +442,10 @@
                                         <option value="pages" ${item.progressMode === 'pages' ? 'selected' : ''}>Pages Count</option>
                                     </select>
                                     <label style="font-size:0.75rem; color:#aaa; margin-top:4px; display:block;">Current Value:</label>
-                                    <input type="number" min="0" value="${item.progressValue || 0}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'progressValue', this.value)" style="padding:6px; width:100%;">
+                                    <input type="number" min="0" value="${item.progressValue || 0}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'progressValue', this.value); renderAllMasterGrids();" style="padding:6px; width:100%;">
                                     ${item.progressMode === 'pages' ? `
                                     <label style="font-size:0.75rem; color:#aaa; margin-top:4px; display:block;">Total Book Pages:</label>
-                                    <input type="number" min="1" value="${item.totalPages || 300}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'totalPages', this.value)" style="padding:6px; width:100%;">` : ''}
+                                    <input type="number" min="1" value="${item.totalPages || 300}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'totalPages', this.value); renderAllMasterGrids();" style="padding:6px; width:100%;">` : ''}
                                 </div>
                                 <div class="checkbox-container">
                                     <input type="checkbox" ${item.favorite ? 'checked' : ''} onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'favorite', this.checked)">
@@ -640,16 +649,6 @@
             reader.readAsText(file);
         };
 
-        // --- HARDLINK EXPLICIT REDIRECT BINDING FOR TRAKT INTEGRATION ---
-       window.initializeTraktDeviceAuth = function() {
-    const clientId = document.getElementById('traktClientIdInput').value.trim();
-    if (!clientId) { alert("Please enter your Client ID first, Sweetie!"); return; }
-    const targetUrl = 'https://trakt.tv/oauth/authorize?response_type=code&client_id=' + clientId + '&redirect_uri=urn:ietf:wg:oauth:2.0:oob';
-        window.open(targetUrl, '_self');
-
-};
-
-
         window.finishTraktAuth = async function() {
             const authCode = document.getElementById('traktAuthCodeInput').value.trim();
             const clientId = document.getElementById('traktClientIdInput').value.trim();
@@ -745,6 +744,7 @@
             const lastTab = localStorage.getItem('vault_active_tab') || 'mediaTab';
             if (lastTab === 'settingsTab') toggleSettingsTab();
             else switchTab(lastTab, document.getElementById('navBtn-' + lastTab));
+            updateTraktAuthLink();
         };
     </script>
 </body>
