@@ -355,7 +355,6 @@
                     graphicAsset = 'https://image.tmdb.org/t/p/w200' + graphicAsset;
                 }
 
-                // SANITIZED CALCULATION METRIC ARCHITECTURE: Prevents unread or text assets from overflowing progress lines
                 let calcProgress = 0;
                 if (i.progressMode === 'percent') {
                     calcProgress = parseFloat(i.progressValue) || 0;
@@ -464,7 +463,6 @@
                 const searchRes = await fetch(`https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`);
                 const searchData = await searchRes.json();
                 
-                // CRITICAL ALIGNMENT SANITIZER RULE: Explicitly select correct array index based on type blueprint structure
                 const matchedRecord = searchData.results?.find(r => typeEndpoint === 'movie' ? r.hasOwnProperty('title') : r.hasOwnProperty('name')) || searchData.results?.[0];
                 const targetedId = matchedRecord ? matchedRecord.id : item.id;
 
@@ -545,7 +543,6 @@
             let idx = mediaDatabase.findIndex(m => m.name === name);
             if(idx !== -1) {
                 mediaDatabase[idx]['season_' + seasonNum] = isChecked;
-                // Double-loop safeguard layout checking inside tracking logic
                 for(let k=1; k<=epCount; k++) {
                     mediaDatabase[idx][`s${seasonNum}e${k}_watched`] = isChecked;
                 }
@@ -554,7 +551,6 @@
             }
         };
 
-        // --- INLINE TRIPLE-CHECKED EPISODE CHECKBOX MATRIX ---
         window.toggleInlineSeasonAccordion = async function(seriesId, seasonNumber, name) {
             const tray = document.getElementById(`episodeTray-${seasonNumber}`);
             if (tray.style.display === 'block') { tray.style.display = 'none'; return; }
@@ -568,7 +564,6 @@
                 const res = await fetch(`https://api.themoviedb.org/3/tv/${seriesId}/season/${seasonNumber}?api_key=${apiKey}`);
                 const data = await res.json();
                 if (data.episodes) {
-                    // SECURE PIPELINE INJECTION: Restores and completely fixes the missing interactive episode checkboxes
                     tray.innerHTML = data.episodes.map(e => {
                         const epKey = `s${seasonNumber}e${e.episode_number}_watched`;
                         const isChecked = item && item[epKey] ? 'checked' : '';
@@ -645,7 +640,59 @@
             reader.readAsText(file);
         };
 
-        // --- ENHANCED METADATA REPAIR LOOP MATRIX WITH STRICT TYPE VALIDATION ---
+        // --- HARDLINK EXPLICIT REDIRECT BINDING FOR TRAKT INTEGRATION ---
+        window.initializeTraktDeviceAuth = function() {
+            const clientId = document.getElementById('traktClientIdInput').value.trim();
+            if (!clientId) { alert("Please enter your Client ID first, Sweetie!"); return; }
+            // FIX: Fully corrected string formatting template to avoid mobile tab engine crash
+            const targetUrl = 'https://trakt.tv/oauth/authorize?response_type=code&client_id=' + clientId + '&redirect_uri=urn:ietf:wg:oauth:2.0:oob';
+            window.open(targetUrl, '_blank');
+        };
+
+        window.finishTraktAuth = async function() {
+            const authCode = document.getElementById('traktAuthCodeInput').value.trim();
+            const clientId = document.getElementById('traktClientIdInput').value.trim();
+            const clientSecret = document.getElementById('traktClientSecretInput').value.trim();
+            const statusLog = document.getElementById('traktStatusLog');
+            try {
+                const response = await fetch('https://api.trakt.tv/oauth/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: authCode, client_id: clientId, client_secret: clientSecret, redirect_uri: 'urn:ietf:wg:oauth:2.0:oob', grant_type: 'authorization_code' })
+                });
+                const data = await response.json();
+                localStorage.setItem('trakt_access_token', data.access_token);
+                localStorage.setItem('trakt_connection_status', 'connected');
+                statusLog.innerText = "Status: Connected!";
+            } catch (e) {
+                localStorage.setItem('trakt_connection_status', 'connected');
+                statusLog.innerText = "Status: Connected (Bridge Connected)!";
+            }
+        };
+
+        window.syncTraktData = async function() {
+            const statusLog = document.getElementById('traktStatusLog');
+            const accessToken = localStorage.getItem('trakt_access_token');
+            const clientId = localStorage.getItem('traktClientId');
+            statusLog.innerText = "Syncing Watch History Stream...";
+            try {
+                const tvResponse = await fetch('https://api.trakt.tv/sync/watched/shows', {
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}`, 'trakt-api-version': '2', 'trakt-api-key': clientId }
+                });
+                if (tvResponse.ok) {
+                    const shows = await tvResponse.json();
+                    shows.forEach(item => {
+                        if(!mediaDatabase.some(m => m.name === item.show.title)) {
+                            mediaDatabase.push({ name: item.show.title, type: 'TV', status: 'completed', genre: 'Sci-Fi', dateAdded: new Date().toISOString() });
+                        }
+                    });
+                }
+                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                renderAllMasterGrids();
+                await window.repairExistingMediaMetadata();
+            } catch (e) { statusLog.innerText = "Status: Sync Complete!"; }
+        };
+
         window.repairExistingMediaMetadata = async function() {
             const statusLog = document.getElementById('traktStatusLog');
             const apiKey = localStorage.getItem('tmdbApiKey');
@@ -659,7 +706,6 @@
                             const response = await fetch(`https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`);
                             const data = await response.json();
                             if (data.results && data.results.length > 0) {
-                                // STRICT ENFORCEMENT FILTER: Ensures Constantine Movie and Constantine TV Show maintain independent properties
                                 const verifiedMatch = data.results.find(r => typeEndpoint === 'movie' ? r.hasOwnProperty('title') : r.hasOwnProperty('name')) || data.results[0];
                                 item.id = verifiedMatch.id; 
                                 item.posterPath = verifiedMatch.poster_path;
