@@ -641,13 +641,14 @@
         };
 
         // --- HARDLINK EXPLICIT REDIRECT BINDING FOR TRAKT INTEGRATION ---
-        window.initializeTraktDeviceAuth = function() {
-            const clientId = document.getElementById('traktClientIdInput').value.trim();
-            if (!clientId) { alert("Please enter your Client ID first, Sweetie!"); return; }
-            // FIX: Fully corrected string formatting template to avoid mobile tab engine crash
-            const targetUrl = 'https://trakt.tv/oauth/authorize?response_type=code&client_id=' + clientId + '&redirect_uri=urn:ietf:wg:oauth:2.0:oob';
-            window.open(targetUrl, '_blank');
-        };
+       window.initializeTraktDeviceAuth = function() {
+    const clientId = document.getElementById('traktClientIdInput').value.trim();
+    if (!clientId) { alert("Please enter your Client ID first, Sweetie!"); return; }
+    const targetUrl = 'https://trakt.tv/oauth/authorize?response_type=code&client_id=' + clientId + '&redirect_uri=urn:ietf:wg:oauth:2.0:oob';
+        window.open(targetUrl, '_self');
+
+};
+
 
         window.finishTraktAuth = async function() {
             const authCode = document.getElementById('traktAuthCodeInput').value.trim();
