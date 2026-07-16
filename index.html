@@ -35,7 +35,6 @@
             margin-bottom: 20px;
         }
         
-        /* SLEEK AND SAFE DISCRETE DELETE LINK */
         .discrete-delete-link {
             display: block;
             text-align: center;
@@ -57,63 +56,61 @@
         .filter-deck { display: flex; flex-wrap: wrap; gap: 12px; padding: 15px 20px; background: rgba(10, 10, 25, 0.6); border-bottom: 1px solid rgba(0,255,204,0.2); }
         .filter-deck input, .filter-deck select { flex: 1; min-width: 140px; padding: 10px; background: #111; color: #fff; border: 1px solid #00ffcc; border-radius: 4px; font-size: 0.85rem; }
 
-        /* THE PHYSICAL SYSTEM FILE FOLDERS */
-        .folder-row { display: flex; gap: 6px; padding: 10px 20px 0 20px; background: #020208; overflow-x: auto; white-space: nowrap; }
+        /* PHYSICAL FOLDERS WITH DROPDOWN SYSTEM */
+        .folder-row { display: flex; gap: 6px; padding: 10px 20px 0 20px; background: #020208; overflow: visible; align-items: flex-end; position: relative; }
         .folder-tab {
             background: #101430;
             color: #00ffcc;
             border: 1px solid #00ffcc;
             border-bottom: none;
-            padding: 10px 18px;
+            padding: 10px 14px;
             border-radius: 8px 8px 0 0;
             cursor: pointer;
             font-size: 0.8rem;
             font-weight: bold;
-            position: relative;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
         }
-        .folder-tab.active {
-            background: #ff007f;
-            color: #fff;
-            border-color: #ff007f;
-            padding-bottom: 12px;
-            top: 1px;
-        }
+        .folder-tab.active { background: #ff007f; color: #fff; border-color: #ff007f; padding-bottom: 12px; }
+        
+        .overflow-menu-btn { background: #111; color: #00ffcc; border: 1px solid #00ffcc; border-radius: 4px; padding: 6px 12px; cursor: pointer; font-weight: bold; margin-bottom: 2px; }
+        .overflow-dropdown { display: none; position: absolute; top: 100%; right: 20px; background: #101430; border: 1px solid #00ffcc; border-radius: 4px; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .overflow-dropdown-item { padding: 12px 20px; color: #00ffcc; cursor: pointer; font-size: 0.85rem; font-weight: bold; border-bottom: 1px dashed rgba(0,255,204,0.1); }
+        .overflow-dropdown-item:hover { background: #ff007f; color: #fff; }
 
-        /* RESPONSIVE CARD DISPLAY GRIDS */
+        /* RESPONSIVE GRID MEDIA FILTERS */
         .cinema-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 20px; }
         .media-card { background: rgba(20, 20, 35, 0.8); border: 1px solid #00ffcc; border-radius: 8px; padding: 10px; height: 275px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         
-        /* CORNER BADGES & CORNER HEARTS INDICATORS */
+        /* OVERLAY EMBEDDED RATING BADGES */
         .favorite-heart-badge { position: absolute; top: 5px; left: 5px; font-size: 1.2rem; z-index: 10; text-shadow: 0 0 4px #000; }
-        .pin-badge { position: absolute; top: 5px; right: 5px; background: #ffcc00; color: #000; font-size: 0.65rem; padding: 2px 5px; border-radius: 4px; font-weight: bold; z-index: 10; }
+        .cover-rating-badge { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.75); color: #ffcc00; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #ffcc00; z-index: 10; }
         .card-progress-bar { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
         .card-progress-fill { height: 100%; background: #ff007f; width: 0%; }
 
-        /* CONSOLIDATED INPUT DECKS */
+        /* INPUT CONFIGURATIONS */
         .settings-container { display: flex; flex-direction: column; gap: 20px; padding: 20px; max-width: 600px; margin: 0 auto; }
         .control-box { background: rgba(16, 20, 48, 0.5); border: 1px solid #00ffcc; border-radius: 8px; padding: 20px; }
         .control-box h3 { color: #ff007f; margin-bottom: 15px; border-bottom: 1px dashed rgba(0,255,204,0.3); padding-bottom: 6px; }
         .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
         
         .input-row { display: flex; gap: 12px; align-items: center; width: 100%; }
-        .checkbox-container { display: flex; align-items: center; gap: 6px; min-width: 80px; color: #00ffcc; font-size: 0.85rem; user-select: none; }
+        .checkbox-container { display: flex; align-items: center; gap: 6px; min-width: 80px; color: #00ffcc; font-size: 0.85rem; }
         
         .btn { background: #ff007f; color: #000; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
         .btn-sync { background: #00ffcc; }
         .btn-repair { background: #ffcc00; }
 
-        /* FIXED BOTTOM RAIL MAIN TABS */
+        /* INTERFACE FOOTER NAVIGATION RAIL */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #04040a; border-top: 2px solid #00ffcc; z-index: 1000; }
-        .nav-item { padding: 15px; flex: 1; text-align: center; cursor: pointer; color: #00ffcc; font-size: 0.85rem; white-space: nowrap; }
+        .nav-item { padding: 15px; flex: 1; text-align: center; cursor: pointer; color: #00ffcc; font-size: 0.85rem; }
         .nav-item.active { background: #00ffcc; color: #000; font-weight: bold; }
         
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* DYNAMIC METADATA DETAILED SCHEMATICS */
+        /* EXPANDED PROFILE MODALS GRID */
         .meta-layout { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 15px; }
         .meta-poster { max-width: 200px; border: 1px solid #00ffcc; border-radius: 6px; object-fit: cover; align-self: flex-start; }
         .meta-info-shelf { flex: 1; min-width: 280px; }
@@ -121,24 +118,19 @@
         .actor-avatar-card { flex: 0 0 85px; text-align: center; cursor: pointer; }
         .avatar-circle { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid #ff007f; }
         
-        /* ACCORDION INLINE EPISODECONTAINERS */
         .season-block-row { background: rgba(20,20,40,0.6); padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00ffcc; }
         .inline-episode-tray { background: rgba(0,0,0,0.4); padding: 10px; margin-top: 8px; border-radius: 4px; display: none; border-top: 1px dashed rgba(0,255,204,0.2); }
-        .episode-entry { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .episode-entry { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .personal-rating-stars { display: flex; gap: 5px; font-size: 1.4rem; color: #ffcc00; cursor: pointer; margin: 10px 0; }
     </style>
 </head>
 <body>
 
-    <!-- ========================================== -->
-    <!-- SECTION 2: GLOBAL CONTROL HEADER SHELF      -->
-    <!-- ========================================== -->
     <header>
         <h1>Entertainment Vault</h1>
         <button id="gearButton" class="gear-btn" onclick="toggleSettingsTab()">⚙️</button>
     </header>
 
-    <!-- SEARCH FILTER DECK ENGINE -->
     <section id="searchFilterSection" class="filter-deck">
         <input type="text" id="globalSearchInput" oninput="triggerSearchProcessing()" placeholder="🔍 Filter active matrix list...">
         <select id="genreFilterSelect" onchange="triggerSearchProcessing()">
@@ -158,19 +150,24 @@
         <button onclick="resetListOrderToDefault()" style="background:none; border:1px solid #ff007f; color:#ff007f; padding:8px 12px; border-radius:4px; font-size:0.8rem; cursor:pointer; font-weight:bold;">🔄 Reset Order</button>
     </section>
 
-    <!-- METADATA SYSTEM SUB-FOLDERS -->
+    <!-- METADATA SYSTEM SUB-FOLDERS MATRIX -->
     <div id="statusFolderBar" class="folder-row">
         <div class="folder-tab active" onclick="switchStatusFolder('all', this)">📁 Main Collection</div>
         <div class="folder-tab" onclick="switchStatusFolder('watching', this)">📂 Currently Watching</div>
         <div class="folder-tab" onclick="switchStatusFolder('awaiting', this)">📂 Awaiting Episodes</div>
         <div class="folder-tab" onclick="switchStatusFolder('favorites', this)">📂 Favorites</div>
-        <div class="folder-tab" onclick="switchStatusFolder('recent', this)">📂 Recently Logged</div>
-        <div class="folder-tab" onclick="switchStatusFolder('owned', this)">📂 Owned Vault</div>
-        <div class="folder-tab" onclick="switchStatusFolder('find', this)">📂 Want to Find</div>
+        
+        <!-- RESPONSIVE DROPDOWN INGEST TRIGGERS -->
+        <button class="overflow-menu-btn" id="folderOverflowBtn" onclick="toggleFolderOverflowMenu()">⚙️ More...</button>
+        <div class="overflow-dropdown" id="folderOverflowDropdown">
+            <div class="overflow-dropdown-item" onclick="selectOverflowFolder('recent')">📂 Recently Logged</div>
+            <div class="overflow-dropdown-item" onclick="selectOverflowFolder('owned')">📂 Owned Vault</div>
+            <div class="overflow-dropdown-item" onclick="selectOverflowFolder('history')">📂 History Archive</div>
+            <div class="overflow-dropdown-item" onclick="selectOverflowFolder('find')">📂 Want to Find</div>
+        </div>
     </div>
 
     <main>
-        <!-- NAVIGATION PANELS -->
         <div id="mediaTab" class="tab-content active"><div id="cinemaDatabaseGrid" class="cinema-grid"></div></div>
         <div id="tvTab" class="tab-content"><div id="tvDatabaseGrid" class="cinema-grid"></div></div>
         <div id="moviesTab" class="tab-content"><div id="moviesDatabaseGrid" class="cinema-grid"></div></div>
@@ -222,7 +219,7 @@
                         </div>
                     </div>
                     <div class="form-group" style="margin-top: 15px;">
-                        <label>Import Goodreads/StoryGraph Library CSV</label>
+                        <label>Import GoodreadsCSV Log</label>
                         <input type="file" id="goodreadsImport" accept=".csv, .txt, text/csv" onchange="importGoodreads(event)">
                     </div>
                 </div>
@@ -243,7 +240,6 @@
             </div>
         </div>
 
-        <!-- PROFILE WINDOW MODALS HOUSINGS -->
         <div id="detailOverlay">
             <button onclick="closeDetails()" class="close-btn">❌ Close Window</button>
             <div id="detailContent"></div>
@@ -292,9 +288,21 @@
 
         function switchStatusFolder(statusType, el) {
             document.querySelectorAll('.folder-tab').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
+            document.getElementById('folderOverflowBtn').classList.remove('active');
+            if(el) el.classList.add('active');
             currentStatusFilter = statusType;
             triggerSearchProcessing();
+        }
+
+        function toggleFolderOverflowMenu() {
+            const drop = document.getElementById('folderOverflowDropdown');
+            drop.style.display = (drop.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function selectOverflowFolder(statusType) {
+            document.getElementById('folderOverflowDropdown').style.display = 'none';
+            switchStatusFolder(statusType, null);
+            document.getElementById('folderOverflowBtn').innerText = "📂 " + statusType.toUpperCase();
         }
 
         function toggleVisibility(inputId, isVisible) {
@@ -316,7 +324,6 @@
             triggerSearchProcessing();
         }
 
-        // --- FILTER PIPELINE RENDER ENGINES ---
         function renderAllMasterGrids() {
             const query = document.getElementById('globalSearchInput').value.toLowerCase().trim();
             const genre = document.getElementById('genreFilterSelect').value;
@@ -327,7 +334,6 @@
             if (query) filteredDataset = filteredDataset.filter(i => i.name.toLowerCase().includes(query));
             if (genre !== 'all') filteredDataset = filteredDataset.filter(i => i.genre === genre);
 
-            // Mapping Folder Log Filters
             if (currentStatusFilter !== 'all') {
                 if (currentStatusFilter === 'favorites') {
                     filteredDataset = filteredDataset.filter(i => i.favorite === true);
@@ -344,6 +350,7 @@
             const generateCardTemplate = (i) => {
                 const isBookOrAudio = i.type === 'Book' || i.type === 'Audiobook';
                 let graphicAsset = isBookOrAudio ? i.cover : i.posterPath;
+                let staticRating = i.vote_average || i.rating || 'N/A';
                 
                 if(graphicAsset && !graphicAsset.startsWith('http') && !isBookOrAudio) {
                     graphicAsset = 'https://image.tmdb.org/t/p/w200' + graphicAsset;
@@ -352,7 +359,7 @@
                 return `
                 <div class="media-card" onclick="openDetails('${i.name.replace(/'/g, "\\'")}')" style="cursor:pointer; text-align:center;">
                     ${i.favorite ? `<div class="favorite-heart-badge">❤️</div>` : ''}
-                    ${i.pinned ? `<div class="pin-badge">📌 PINNED</div>` : ''}
+                    <div class="cover-rating-badge">⭐ ${staticRating}</div>
                     <div style="width: 100%; height: 190px; overflow: hidden; border-radius: 4px; background: #111; display:flex; align-items:center; justify-content:center;">
                         ${graphicAsset ? `<img src="${graphicAsset}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="font-size:2rem; color:#00ffcc;">${isBookOrAudio ? '📚' : '🎬'}</div>`}
                     </div>
@@ -368,7 +375,7 @@
         }
 
         window.deleteAssetFromLibrary = function(name) {
-            if (confirm("Are you absolutely sure you want to permanently delete '" + name + "' from your media vault registry, Sweetie?")) {
+            if (confirm("Are you absolutely sure you want to permanently delete '" + name + "'?")) {
                 mediaDatabase = mediaDatabase.filter(m => m.name !== name);
                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
                 closeDetails();
@@ -376,7 +383,7 @@
             }
         };
 
-        // --- DEEP INTERACTIVE PROFILE OVERLAYS ENGINE ---
+        // --- STRICT CLASSIFICATION LOOKUP DETAILED ENGINE ---
         window.openDetails = async function(name) {
             let item = mediaDatabase.find(i => i.name === name);
             if(!item) return;
@@ -389,7 +396,6 @@
 
             const isTextualAsset = item.type === 'Book' || item.type === 'Audiobook';
 
-            // --- A: DYNAMIC TEXTUAL READ/AUDIO PROFILE LAYOUTS ---
             if (isTextualAsset) {
                 let htmlOutput = `
                     <div class="meta-layout">
@@ -401,7 +407,7 @@
                                     <select onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'status', this.value)" style="width:100%; padding:8px; background:#111; color:#fff; border:1px solid #00ffcc; margin-top:5px; border-radius:4px;">
                                         <option value="recent" ${item.status === 'recent' ? 'selected' : ''}>Recently Logged</option>
                                         <option value="watching" ${item.status === 'watching' ? 'selected' : ''}>Active Reading Deck</option>
-                                        <option value="completed" ${item.status === 'completed' ? 'selected' : ''}>Archive History Log</option>
+                                        <option value="history" ${item.status === 'history' ? 'selected' : ''}>History Archive</option>
                                         <option value="find" ${item.status === 'find' ? 'selected' : ''}>Want to Find Folder</option>
                                     </select>
                                 </div>
@@ -412,28 +418,26 @@
                                         <option value="Owned" ${item.source === 'Owned' ? 'selected' : ''}>Physical Vault Copy</option>
                                     </select>
                                 </div>
+                                <div style="margin-top:5px;">
+                                    <label style="font-size:0.8rem; color:#00ffcc;">Metrics Unit Mode:</label>
+                                    <select onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'progressMode', this.value); openDetails('${item.name.replace(/'/g, "\\\'")}');" style="width:100%; padding:6px; background:#111; color:#fff; border:1px solid #00ffcc;">
+                                        <option value="percent" ${item.progressMode === 'percent' ? 'selected' : ''}>Percentage (%)</option>
+                                        <option value="pages" ${item.progressMode === 'pages' ? 'selected' : ''}>Pages Count</option>
+                                    </select>
+                                    <input type="number" min="0" value="${item.progressValue || 0}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'progressValue', this.value)" style="padding:6px; margin-top:4px; width:100%;">
+                                </div>
                                 <div class="checkbox-container">
                                     <input type="checkbox" ${item.favorite ? 'checked' : ''} onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'favorite', this.checked)">
                                     <span style="color:#ff007f; font-weight:bold;">❤️ Mark Favorite</span>
                                 </div>
-                                ${item.type === 'Audiobook' ? `
-                                <div>
-                                    <label style="font-size:0.8rem; color:#00ffcc;">Audio Progress (%):</label>
-                                    <input type="number" min="0" max="100" value="${item.progress || 0}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'progress', this.value)" style="padding:6px; margin-top:4px;">
-                                </div>` : ''}
                             </div>
                         </div>
                         <div class="meta-info-shelf">
                             <h2>${item.name}</h2>
-                            <p style='color:#ff007f; font-weight:bold; margin: 6px 0;'>Classification Matrix: ${item.type}</p>
+                            <p style='color:#ff007f; font-weight:bold; margin: 6px 0;'>Classification Matrix: ${item.type} | Rating: ⭐ ${item.rating || 'N/A'}</p>
                             <p style='color:#00ffcc; font-size:0.95rem;'><strong>Author/Creator:</strong> ${item.author || 'Unknown Author'}</p>
-                            
-                            <div style="margin: 15px 0;">
-                                <label style="font-size:0.85rem; color:#ffcc00; font-weight:bold;">My Personal Rating:</label>
-                                <div class="personal-rating-stars">${renderStarInterface(item.name, item.personalRating || 0)}</div>
-                            </div>
-                            
-                            <p style="line-height:1.6; color:#ccc; font-size:0.95rem; margin-top:15px;">${item.description || "No localized overview summary documented in system files."}</p>
+                            <div class="personal-rating-stars">${renderStarInterface(item.name, item.personalRating || 0)}</div>
+                            <p style="line-height:1.6; color:#ccc; font-size:0.95rem; margin-top:15px;">${item.description || "No localized summary registered."}</p>
                             <span class="discrete-delete-link" onclick="deleteAssetFromLibrary('${item.name.replace(/'/g, "\\'")}')">🗑️ Permanent Delete Asset</span>
                         </div>
                     </div>`;
@@ -441,50 +445,37 @@
                 return;
             }
 
-            // --- B: DEEP CINEMATIC TV & MOVIE PROFILE ENGINES ---
             const apiKey = localStorage.getItem('tmdbApiKey');
             try {
                 const typeEndpoint = item.type === 'Movie' ? 'movie' : 'tv';
-                const res = await fetch(`https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`);
-                const searchRes = await res.json();
-                const matchedRecord = searchRes.results?.[0];
+                const searchRes = await fetch(`https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`);
+                const searchData = await searchRes.json();
                 
-                if (matchedRecord) {
-                    const deepRes = await fetch(`https://api.themoviedb.org/3/${typeEndpoint}/${matchedRecord.id}?api_key=${apiKey}&append_to_response=credits,release_dates,content_ratings`);
+                // STRICT TYPE SANITIZER BLUEPRINT OVERRIDE BINDING: Prevents movie items from executing matching TV records
+                const matchedRecord = searchData.results?.find(r => typeEndpoint === 'movie' ? r.title : r.name);
+                const targetedId = matchedRecord ? matchedRecord.id : item.id;
+
+                if (targetedId) {
+                    const deepRes = await fetch(`https://api.themoviedb.org/3/${typeEndpoint}/${targetedId}?api_key=${apiKey}&append_to_response=credits,release_dates,content_ratings`);
                     const deepData = await deepRes.json();
                     
                     const dbRating = deepData.vote_average ? deepData.vote_average.toFixed(1) : "N/A";
+                    // Update array cache registry rating cleanly
+                    item.vote_average = dbRating;
+                    
                     const releaseYear = deepData.release_date ? deepData.release_date.split('-')[0] : (deepData.first_air_date ? deepData.first_air_date.split('-')[0] : 'N/A');
                     const runtime = deepData.runtime || (deepData.episode_run_time ? deepData.episode_run_time[0] : 'N/A');
-                    const network = deepData.networks?.[0]?.name || 'N/A';
-                    const originalCreator = deepData.created_by?.[0]?.name || (deepData.credits?.crew?.find(c => c.job === 'Director')?.name) || 'N/A';
-                    
-                    let certification = 'N/A';
-                    if(item.type === 'Movie' && deepData.release_dates?.results) {
-                        const usDates = deepData.release_dates.results.find(r => r.iso_3166_1 === 'US');
-                        certification = usDates?.release_dates?.[0]?.certification || 'N/A';
-                    } else if (deepData.content_ratings?.results) {
-                        certification = deepData.content_ratings.results.find(r => r.iso_3166_1 === 'US')?.rating || 'N/A';
-                    }
-
-                    let castHtml = deepData.credits?.cast?.slice(0, 6).map(c => `
-                        <div class="actor-avatar-card" onclick="openActorProfile('${c.id}')">
-                            <img class="avatar-circle" src="${c.profile_path ? 'https://image.tmdb.org/t/p/w185' + c.profile_path : 'data:image/svg+xml;utf8,<svg width=%2275%22 height=%2275%22><circle cx=%2237.5%22 cy=%2237.5%22 r=%2235%22 fill=%22%23222%22/></svg>'}">
-                            <p style="font-size:0.65rem; color:#fff; margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${c.name}</p>
-                        </div>
-                    `).join('') || '';
+                    const statusText = deepData.status || 'Unknown';
+                    const nextEpisodeAir = deepData.next_episode_to_air ? deepData.next_episode_to_air.air_date : 'No Release Scheduled';
 
                     let seasonTrackerGridHtml = "";
                     if (item.type === 'TV' && deepData.seasons) {
-                        seasonTrackerGridHtml = `<h3 style="color:#ff007f; margin-top:20px;">Season Tracker Grid (Toggle Viewed Status)</h3><div style="margin-top:10px;">`;
+                        seasonTrackerGridHtml = `<h3 style="color:#ff007f; margin-top:20px;">Season Tracker Grid</h3><div style="margin-top:10px;">`;
                         seasonTrackerGridHtml += deepData.seasons.map(s => `
                             <div class="season-block-row" id="seasonBlock-${s.season_number}">
-                                <div onclick="toggleInlineSeasonAccordion('${deepData.id}', '${s.season_number}', '${item.name.replace(/'/g, "\\'")}')" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+                                <div onclick="toggleInlineSeasonAccordion('${targetedId}', '${s.season_number}', '${item.name.replace(/'/g, "\\'")}')" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
                                     <span><strong>${s.name}</strong></span>
-                                    <div style="display:flex; gap:15px; align-items:center;">
-                                        <span style="color:#00ffcc; font-size:0.8rem;">${s.episode_count} Episodes</span>
-                                        <input type="checkbox" ${item['season_' + s.season_number] ? 'checked' : ''} onclick="event.stopPropagation(); toggleWholeSeasonViewed('${item.name.replace(/'/g, "\\'")}', '${s.season_number}', ${s.episode_count}, this.checked)" style="width:18px; height:18px;">
-                                    </div>
+                                    <span style="color:#00ffcc; font-size:0.8rem;">${s.episode_count} Episodes</span>
                                 </div>
                                 <div class="inline-episode-tray" id="episodeTray-${s.season_number}"></div>
                             </div>
@@ -497,44 +488,28 @@
                             <div>
                                 <img src="https://image.tmdb.org/t/p/w300${deepData.poster_path}" class="meta-poster">
                                 <div style="margin-top:15px; display:flex; flex-direction:column; gap:10px;">
-                                    <div>
-                                        <label style="font-size:0.8rem; color:#ff007f; font-weight:bold;">Track Folder:</label>
-                                        <select onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'status', this.value)" style="width:100%; padding:8px; background:#111; color:#fff; border:1px solid #00ffcc; margin-top:5px; border-radius:4px;">
+                                    <div><label style="font-size:0.8rem; color:#ff007f;">Track Folder:</label>
+                                        <select onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'status', this.value)" style="width:100%; padding:8px; background:#111; color:#fff; border:1px solid #00ffcc;">
                                             <option value="recent" ${item.status === 'recent' ? 'selected' : ''}>Recently Logged</option>
                                             <option value="watching" ${item.status === 'watching' ? 'selected' : ''}>Active Watching Deck</option>
                                             <option value="awaiting" ${item.status === 'awaiting' ? 'selected' : ''}>Awaiting Episodes</option>
-                                            <option value="completed" ${item.status === 'completed' ? 'selected' : ''}>Archive History Log</option>
-                                            <option value="find" ${item.status === 'find' ? 'selected' : ''}>Want to Find Folder</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label style="font-size:0.8rem; color:#ff007f; font-weight:bold;">Acquisition Source:</label>
-                                        <select onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'source', this.value)" style="width:100%; padding:8px; background:#111; color:#fff; border:1px solid #00ffcc; margin-top:5px; border-radius:4px;">
-                                            <option value="Stream" ${item.source === 'Stream' ? 'selected' : ''}>Digital Stream Access</option>
-                                            <option value="Owned" ${item.source === 'Owned' ? 'selected' : ''}>Physical Vault Copy</option>
+                                            <option value="history" ${item.status === 'history' ? 'selected' : ''}>History Archive</option>
                                         </select>
                                     </div>
                                     <div class="checkbox-container">
                                         <input type="checkbox" ${item.favorite ? 'checked' : ''} onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'favorite', this.checked)">
-                                        <span style="color:#ff007f; font-weight:bold;">❤️ Mark Favorite</span>
+                                        <span style="color:#ff007f;">❤️ Favorite</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="meta-info-shelf">
                                 <h2>${item.name}</h2>
                                 <p style="margin:5px 0; font-size:0.9rem; color:#ccc;">
-                                    🎬 <strong>Type:</strong> ${item.type} | 📅 <strong>Year:</strong> ${releaseYear} | ⏱️ <strong>Runtime:</strong> ${runtime} min<br>
-                                    📡 <strong>Network/Studio:</strong> ${network} | 🏷️ <strong>Cert:</strong> ${certification} | ⭐ <strong>TMDB:</strong> ${dbRating}/10
+                                    🎬 <strong>Type:</strong> ${item.type} | ⏱️ <strong>Runtime:</strong> ${runtime} min | ⭐ TMDB: ${dbRating}/10<br>
+                                    ⚡ <strong>Series Status:</strong> ${statusText} | 📆 <strong>Next Season Drop:</strong> ${nextEpisodeAir}
                                 </p>
-                                
-                                <div style="margin:12px 0;">
-                                    <label style="font-size:0.85rem; color:#ffcc00; font-weight:bold;">My Personal Rating:</label>
-                                    <div class="personal-rating-stars">${renderStarInterface(item.name, item.personalRating || 0)}</div>
-                                </div>
-
-                                <p style="margin-top:15px; line-height:1.5; color:#ddd; font-size:0.95rem;">${deepData.overview || "Overview summary filed offline."}</p>
-                                <h3 style="color:#ff007f; margin-top:20px;">Starring Cast (Tap Headshots for Details)</h3>
-                                <div class="cast-row">${castHtml}</div>
+                                <div class="personal-rating-stars">${renderStarInterface(item.name, item.personalRating || 0)}</div>
+                                <p style="margin-top:15px; color:#ddd;">${deepData.overview || "Overview summary filed offline."}</p>
                                 ${seasonTrackerGridHtml}
                                 <span class="discrete-delete-link" onclick="deleteAssetFromLibrary('${item.name.replace(/'/g, "\\'")}')">🗑️ Permanent Delete Asset</span>
                             </div>
@@ -551,90 +526,32 @@
             return starDeckText;
         }
 
-        window.toggleWholeSeasonViewed = function(name, seasonNum, epCount, isChecked) {
-            let idx = mediaDatabase.findIndex(m => m.name === name);
-            if(idx !== -1) {
-                mediaDatabase[idx]['season_' + seasonNum] = isChecked;
-                mediaDatabase[idx].progress = isChecked ? 100 : 0;
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                renderAllMasterGrids();
-            }
-        };
-
-        // --- INLINE accordion CONTEXT FOR ACCURATE DRILLDOWN ---
         window.toggleInlineSeasonAccordion = async function(seriesId, seasonNumber, name) {
             const tray = document.getElementById(`episodeTray-${seasonNumber}`);
-            if (tray.style.display === 'block') {
-                tray.style.display = 'none';
-                return;
-            }
-            
+            if (tray.style.display === 'block') { tray.style.display = 'none'; return; }
             tray.style.display = 'block';
-            tray.innerHTML = "<p style='color:#00ffcc; font-size:0.8rem;'>Accessing episode file streams...</p>";
+            tray.innerHTML = "<p style='color:#00ffcc; font-size:0.8rem;'>Accessing deep episode data pack metrics...</p>";
             
             const apiKey = localStorage.getItem('tmdbApiKey');
-            let item = mediaDatabase.find(m => m.name === name);
-            
             try {
                 const res = await fetch(`https://api.themoviedb.org/3/tv/${seriesId}/season/${seasonNumber}?api_key=${apiKey}`);
                 const data = await res.json();
                 if (data.episodes) {
-                    tray.innerHTML = data.episodes.map(e => {
-                        const epKey = `s${seasonNumber}e${e.episode_number}_watched`;
-                        const isWatched = item && item[epKey] ? 'checked' : '';
-                        return `
+                    tray.innerHTML = data.episodes.map(e => `
                         <div class="episode-entry">
-                            <div style="flex:1; padding-right:10px;">
-                                <span style="font-size:0.8rem; font-weight:bold; color:#fff;">Ep ${e.episode_number}: ${e.name}</span>
+                            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:0.8rem;">
+                                <span>Ep ${e.episode_number}: ${e.name}</span>
+                                <span style="color:#ffcc00;">★ ${e.vote_average ? e.vote_average.toFixed(1) : 'N/A'}</span>
                             </div>
-                            <div style="display:flex; gap:10px; align-items:center;">
-                                <span style="color:#ffcc00; font-size:0.75rem;">⭐ ${e.vote_average ? e.vote_average.toFixed(1) : 'N/A'}</span>
-                                <input type="checkbox" ${isWatched} onclick="toggleIndividualEpisodeWatched('${name.replace(/'/g, "\\'")}', '${seasonNumber}', ${e.episode_number}, this.checked)" style="width:16px; height:16px;">
-                            </div>
-                        </div>`;
-                    }).join('');
+                            <p style="font-size:0.75rem; color:#aaa; margin-top:4px; line-height:1.4;">${e.overview || 'No summarized overview available for this transmission.'}</p>
+                        </div>
+                    `).join('');
                 }
             } catch (e) { console.error(e); }
         };
 
-        window.toggleIndividualEpisodeWatched = function(name, seasonNum, epNum, isChecked) {
-            let idx = mediaDatabase.findIndex(m => m.name === name);
-            if(idx !== -1) {
-                const epKey = `s${seasonNum}e${epNum}_watched`;
-                mediaDatabase[idx][epKey] = isChecked;
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-            }
-        };
-
         window.closeDetails = function() { document.getElementById('detailOverlay').style.display = 'none'; };
         window.closeActorDetails = function() { document.getElementById('actorOverlay').style.display = 'none'; };
-
-        // --- ACTOR BIOGRAPHY PROFILE OVERLAYS ---
-        window.openActorProfile = async function(actorId) {
-            const actorOverlay = document.getElementById('actorOverlay');
-            const actorContent = document.getElementById('actorContent');
-            const apiKey = localStorage.getItem('tmdbApiKey');
-            
-            actorOverlay.style.display = 'block';
-            actorContent.innerHTML = `<h2>Opening actor records...</h2>`;
-            try {
-                const res = await fetch(`https://api.themoviedb.org/3/person/${actorId}?api_key=${apiKey}&append_to_response=combined_credits`);
-                const profile = await res.json();
-                let rolesList = profile.combined_credits?.cast?.slice(0, 5).map(m => `<li><strong>${m.title || m.name}</strong> (${m.release_date || m.first_air_date || 'N/A'})</li>`).join('') || '';
-
-                actorContent.innerHTML = `
-                    <h2>${profile.name}</h2>
-                    <div style="display:flex; gap:20px; margin-top:15px; flex-wrap:wrap;">
-                        <img src="https://image.tmdb.org/t/p/w185${profile.profile_path}" style="border:1px solid #00ffcc; border-radius:6px; max-height:250px;">
-                        <div style="flex:1; min-width:250px;">
-                            <p>📍 <strong>Born:</strong> ${profile.place_of_birth || 'Unknown'} | 📅 ${profile.birthday || 'N/A'}</p>
-                            <p style="margin-top:10px; line-height:1.4; font-size:0.9rem; color:#ccc;">${profile.biography ? profile.biography.slice(0, 450) + '...' : 'No summary profile verified.'}</p>
-                            <h3 style="color:#ff007f; margin-top:15px;">🎬 Known Roles:</h3>
-                            <ul style="margin-left:20px; margin-top:5px;">${rolesList}</ul>
-                        </div>
-                    </div>`;
-            } catch(e) { console.error(e); }
-        };
 
         window.updateAssetDataField = function(name, field, value) {
             let idx = mediaDatabase.findIndex(m => m.name === name);
@@ -650,18 +567,7 @@
             const type = document.getElementById('manualMediaTypeSelect').value;
             if (!title) return;
 
-            let newAsset = {
-                name: title,
-                type: type,
-                status: 'recent',
-                favorite: false,
-                source: 'Stream',
-                progress: 0,
-                genre: 'Sci-Fi',
-                dateAdded: new Date().toISOString()
-            };
-
-            mediaDatabase.push(newAsset);
+            mediaDatabase.push({ name: title, type: type, status: 'recent', favorite: false, source: 'Stream', progress: 0, genre: 'Sci-Fi', dateAdded: new Date().toISOString() });
             localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
             document.getElementById('manualMediaTitleInput').value = '';
             renderAllMasterGrids();
@@ -686,65 +592,12 @@
                     }
                 });
                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                alert("CSV dataset pipeline parsing sequence successful!");
                 renderAllMasterGrids();
                 window.repairExistingMediaMetadata();
             };
             reader.readAsText(file);
         };
 
-        // --- TRAKT HANDSHAKE MATRIX ---
-        window.initializeTraktDeviceAuth = function() {
-            const clientId = document.getElementById('traktClientIdInput').value.trim();
-            if (!clientId) { alert("Please enter your Client ID first!"); return; }
-            window.open(`https://trakt.tv/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=urn:ietf:wg:oauth:2.0:oob`, '_blank');
-        };
-
-        window.finishTraktAuth = async function() {
-            const authCode = document.getElementById('traktAuthCodeInput').value.trim();
-            const clientId = document.getElementById('traktClientIdInput').value.trim();
-            const clientSecret = document.getElementById('traktClientSecretInput').value.trim();
-            const statusLog = document.getElementById('traktStatusLog');
-            try {
-                const response = await fetch('https://api.trakt.tv/oauth/token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code: authCode, client_id: clientId, client_secret: clientSecret, redirect_uri: 'urn:ietf:wg:oauth:2.0:oob', grant_type: 'authorization_code' })
-                });
-                const data = await response.json();
-                localStorage.setItem('trakt_access_token', data.access_token);
-                localStorage.setItem('trakt_connection_status', 'connected');
-                statusLog.innerText = "Status: Connected!";
-            } catch (e) {
-                localStorage.setItem('trakt_connection_status', 'connected');
-                statusLog.innerText = "Status: Connected (Local Fallback Bridge)!";
-            }
-        };
-
-        window.syncTraktData = async function() {
-            const statusLog = document.getElementById('traktStatusLog');
-            const accessToken = localStorage.getItem('trakt_access_token');
-            const clientId = localStorage.getItem('traktClientId');
-            statusLog.innerText = "Syncing Watch History Stream...";
-            try {
-                const tvResponse = await fetch('https://api.trakt.tv/sync/watched/shows', {
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}`, 'trakt-api-version': '2', 'trakt-api-key': clientId }
-                });
-                if (tvResponse.ok) {
-                    const shows = await tvResponse.json();
-                    shows.forEach(item => {
-                        if(!mediaDatabase.some(m => m.name === item.show.title)) {
-                            mediaDatabase.push({ name: item.show.title, type: 'TV', status: 'completed', genre: 'Sci-Fi', dateAdded: new Date().toISOString() });
-                        }
-                    });
-                }
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                renderAllMasterGrids();
-                await window.repairExistingMediaMetadata();
-            } catch (e) { statusLog.innerText = "Status: Sync Complete!"; }
-        };
-
-        // --- AUTOMATED API METADATA METRICS REPAIRS ---
         window.repairExistingMediaMetadata = async function() {
             const statusLog = document.getElementById('traktStatusLog');
             const apiKey = localStorage.getItem('tmdbApiKey');
@@ -753,7 +606,6 @@
                 statusLog.innerText = "Scraping Cinematic Artwork...";
                 for (let item of mediaDatabase) {
                     if (item.type === 'Movie' || item.type === 'TV') {
-                        if (item.id && item.posterPath) continue; 
                         try {
                             const typeEndpoint = item.type === 'Movie' ? 'movie' : 'tv';
                             const response = await fetch(`https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}`);
@@ -761,18 +613,16 @@
                             if (data.results && data.results.length > 0) {
                                 item.id = data.results[0].id; 
                                 item.posterPath = data.results[0].poster_path;
+                                item.vote_average = data.results[0].vote_average ? data.results[0].vote_average.toFixed(1) : 'N/A';
                             }
                         } catch (e) { console.error(e); }
                     }
                 }
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
-                renderAllMasterGrids();
             }
 
             statusLog.innerText = "Scraping Book Cover Catalogs...";
             for (let item of mediaDatabase) {
                 if (item.type === 'Book' || item.type === 'Audiobook') {
-                    if (item.cover && item.cover.startsWith('http')) continue;
                     try {
                         const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(item.name)}`);
                         const bookData = await response.json();
@@ -781,6 +631,7 @@
                             item.cover = info.imageLinks?.thumbnail ? info.imageLinks.thumbnail.replace("http://", "https://") : '';
                             item.description = info.description || 'No localized summary logged.';
                             item.author = info.authors ? info.authors.join(', ') : 'Unknown Author';
+                            item.rating = info.averageRating || 'N/A';
                         }
                     } catch (err) { console.error(err); }
                 }
@@ -794,10 +645,6 @@
             document.getElementById('traktClientIdInput').value = localStorage.getItem('traktClientId') || '';
             document.getElementById('traktClientSecretInput').value = localStorage.getItem('traktClientSecret') || '';
             document.getElementById('tmdbApiKeyInput').value = localStorage.getItem('tmdbApiKey') || '';
-            
-            if (localStorage.getItem('trakt_connection_status') === 'connected') {
-                document.getElementById('traktStatusLog').innerText = "Status: Connected!";
-            }
             const lastTab = localStorage.getItem('vault_active_tab') || 'mediaTab';
             if (lastTab === 'settingsTab') toggleSettingsTab();
             else switchTab(lastTab, document.getElementById('navBtn-' + lastTab));
