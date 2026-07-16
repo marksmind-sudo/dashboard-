@@ -32,29 +32,37 @@
             margin-bottom: 20px;
         }
 
-        /* SECTION 2: CORE RESET & BRANDING */
+        /* SECTION 2: CORE RESET & BRANDING SYSTEM */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: #020208; color: #00ffcc; font-family: sans-serif; padding-bottom: 90px; min-height: 100vh; }
-        header { display: flex; justify-content: space-between; padding: 20px; border-bottom: 1px solid #00ffcc; }
         
-        /* SECTION 3: RESPONSIVE CINEMA & BOOK GRIDS */
+        /* HEADER RAILS: Setup space for the title and the Gear button */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #00ffcc; }
+        .gear-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #00ffcc; padding: 5px; transition: transform 0.2s ease; }
+        .gear-btn:hover { transform: rotate(45deg); }
+        
+        /* SECTION 3: RESPONSIVE DISPLAY GRIDS */
         .cinema-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 20px; }
         .media-card { background: rgba(20, 20, 35, 0.8); border: 1px solid #00ffcc; border-radius: 8px; padding: 10px; height: 260px; display: flex; flex-direction: column; justify-content: space-between; }
         
-        /* SECTION 4: CONTROL DECKS & BOXES */
+        /* SECTION 4: CONTROL DECKS & BOX OVERLAYS */
         .settings-container { display: flex; flex-direction: column; gap: 20px; padding: 20px; max-width: 600px; margin: 0 auto; }
         .control-box { background: rgba(16, 20, 48, 0.5); border: 1px solid #00ffcc; border-radius: 8px; padding: 20px; margin-bottom: 15px; }
-        .control-box h3, .control-box h4 { color: #ff007f; margin-bottom: 15px; border-bottom: 1px dashed rgba(0,255,204,0.3); padding-bottom: 6px; }
+        .control-box h3 { color: #ff007f; margin-bottom: 15px; border-bottom: 1px dashed rgba(0,255,204,0.3); padding-bottom: 6px; }
         .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
-        .input-row { display: flex; gap: 8px; align-items: center; }
+        
+        /* FIXED INLINE PLACEMENTS: Prevents the checkboxes from crowding borderlines */
+        .input-row { display: flex; gap: 12px; align-items: center; width: 100%; position: relative; }
+        .checkbox-container { display: flex; align-items: center; gap: 6px; min-width: 65px; padding-right: 5px; color: #00ffcc; }
         input { width: 100%; padding: 10px; background: #111; color: #fff; border: 1px solid #00ffcc; border-radius: 4px; }
+        
         .btn { background: #ff007f; color: #000; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; }
         .btn-sync { background: #00ffcc; color: #000; }
         .btn-repair { background: #ffcc00; color: #000; }
 
         /* SECTION 5: BOTTOM NAVIGATION RAIL SYSTEM */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #04040a; border-top: 2px solid #00ffcc; z-index: 1000; }
-        .nav-item { padding: 15px; flex: 1; text-align: center; cursor: pointer; color: #00ffcc; }
+        .nav-item { padding: 15px; flex: 1; text-align: center; cursor: pointer; color: #00ffcc; font-size: 0.9rem; }
         .nav-item.active { background: #00ffcc; color: #000; font-weight: bold; }
         
         .tab-content { display: none; }
@@ -63,25 +71,34 @@
 </head>
 <body>
 
-    <header><h1>Entertainment Vault</h1></header>
+    <!-- ========================================== -->
+    <!-- SECTION 2: GLOBAL HEADER SHELF WITH ICON    -->
+    <!-- ========================================== -->
+    <header>
+        <h1>Entertainment Vault</h1>
+        <button id="gearButton" class="gear-btn" onclick="toggleSettingsTab()">⚙️</button>
+    </header>
 
     <main>
-        <!-- TAB 1: ALL MEDIA -->
+        <!-- TAB 1: ALL MEDIA - Main grid archive view -->
         <div id="mediaTab" class="tab-content active"><div id="cinemaDatabaseGrid" class="cinema-grid"></div></div>
         
-        <!-- TAB 2: TELEVISION -->
+        <!-- TAB 2: CURRENTLY WATCHING - Actively tracked shows -->
+        <div id="watchingTab" class="tab-content"><div id="watchingDatabaseGrid" class="cinema-grid"></div></div>
+        
+        <!-- TAB 3: TELEVISION -->
         <div id="tvTab" class="tab-content"><div id="tvDatabaseGrid" class="cinema-grid"></div></div>
         
-        <!-- TAB 3: MOVIES -->
+        <!-- TAB 4: MOVIES -->
         <div id="moviesTab" class="tab-content"><div id="moviesDatabaseGrid" class="cinema-grid"></div></div>
         
-        <!-- TAB 4: BOOKS - Cleaned Vault Grid View -->
+        <!-- TAB 5: BOOKS -->
         <div id="booksTab" class="tab-content">
             <div style="padding: 20px 20px 0 20px;"><h3>My Reading Collection</h3></div>
             <div id="booksDatabaseGrid" class="cinema-grid"></div>
         </div>
 
-        <!-- TAB 5: SYSTEM SETTINGS - Consolidated Engine Rooms -->
+        <!-- TAB 6: SYSTEM SETTINGS -->
         <div id="settingsTab" class="tab-content">
             <div class="settings-container">
                 
@@ -92,14 +109,14 @@
                         <label>Trakt Client ID</label>
                         <div class="input-row">
                             <input type="password" id="traktClientIdInput" oninput="saveSettings()" placeholder="Paste ID...">
-                            <label style="font-size: 0.7rem; white-space: nowrap;"><input type="checkbox" onchange="toggleVisibility('traktClientIdInput', this.checked)"> Show</label>
+                            <div class="checkbox-container"><input type="checkbox" onchange="toggleVisibility('traktClientIdInput', this.checked)"> <span>Show</span></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Trakt Client Secret</label>
                         <div class="input-row">
                             <input type="password" id="traktClientSecretInput" oninput="saveSettings()" placeholder="Paste Secret...">
-                            <label style="font-size: 0.7rem; white-space: nowrap;"><input type="checkbox" onchange="toggleVisibility('traktClientSecretInput', this.checked)"> Show</label>
+                            <div class="checkbox-container"><input type="checkbox" onchange="toggleVisibility('traktClientSecretInput', this.checked)"> <span>Show</span></div>
                         </div>
                     </div>
                     <button class="btn" onclick="initializeTraktDeviceAuth()">🔗 Link Trakt Account</button>
@@ -108,13 +125,13 @@
                         <label>Trakt Authorization Code</label>
                         <div class="input-row">
                             <input type="password" id="traktAuthCodeInput" placeholder="Paste Code from Trakt...">
-                            <label style="font-size: 0.7rem; white-space: nowrap;"><input type="checkbox" onchange="toggleVisibility('traktAuthCodeInput', this.checked)"> Show</label>
+                            <div class="checkbox-container"><input type="checkbox" onchange="toggleVisibility('traktAuthCodeInput', this.checked)"> <span>Show</span></div>
                         </div>
                     </div>
                     <button class="btn" onclick="finishTraktAuth()">✅ Complete Handshake</button>
                 </div>
 
-                <!-- BOX B: LIBRARY CONTROLS (Manual Add & Goodreads CSV) -->
+                <!-- BOX B: LIBRARY DATABASE INGEST DECK -->
                 <div class="control-box">
                     <h3>Library Database Ingest Deck</h3>
                     <div class="form-group">
@@ -130,14 +147,14 @@
                     </div>
                 </div>
 
-                <!-- BOX C: METADATA & SCRAPER ENGINES -->
+                <!-- BOX C: GLOBAL METADATA SCRAPER PANEL -->
                 <div class="control-box">
                     <h3>Global Metadata Scraper Panel</h3>
                     <div class="form-group">
                         <label>TMDB API Key</label>
                         <div class="input-row">
                             <input type="password" id="tmdbApiKeyInput" oninput="saveSettings()" placeholder="Paste TMDB Key...">
-                            <label style="font-size: 0.7rem; white-space: nowrap;"><input type="checkbox" onchange="toggleVisibility('tmdbApiKeyInput', this.checked)"> Show</label>
+                            <div class="checkbox-container"><input type="checkbox" onchange="toggleVisibility('tmdbApiKeyInput', this.checked)"> <span>Show</span></div>
                         </div>
                     </div>
                     <button class="btn btn-sync" onclick="syncTraktData()">🔄 Sync Watch History Stream</button>
@@ -148,36 +165,49 @@
             </div>
         </div>
 
-        <!-- DETAIL POPUP OVERLAY PANEL -->
+        <!-- POPUP DETAILS MODULE WINDOW -->
         <div id="detailOverlay">
             <button onclick="closeDetails()" class="close-btn">Close Details</button>
             <div id="detailContent" style="color:#fff; max-width:600px; margin:auto;"></div>
         </div>
     </main>
 
-    <!-- NAVIGATION COMMAND RAILS -->
+    <!-- ========================================== -->
+    <!-- SECTION 3: BOTTOM NAVIGATION ARCHITECTURE  -->
+    <!-- ========================================== -->
     <nav class="bottom-nav">
-        <div id="navBtn-mediaTab" class="nav-item active" onclick="switchTab('mediaTab', this)">📺 All</div>
+        <div id="navBtn-mediaTab" class="nav-item active" onclick="switchTab('mediaTab', this)">📺 All Media</div>
+        <div id="navBtn-watchingTab" class="nav-item" onclick="switchTab('watchingTab', this)">🎬 Watching</div>
         <div id="navBtn-tvTab" class="nav-item" onclick="switchTab('tvTab', this)">📡 TV</div>
-        <div id="navBtn-moviesTab" class="nav-item" onclick="switchTab('moviesTab', this)">🎬 Movies</div>
+        <div id="navBtn-moviesTab" class="nav-item" onclick="switchTab('moviesTab', this)">🎞️ Movies</div>
         <div id="navBtn-booksTab" class="nav-item" onclick="switchTab('booksTab', this)">📚 Books</div>
-        <div id="navBtn-settingsTab" class="nav-item" onclick="switchTab('settingsTab', this)">⚙️ Settings</div>
     </nav>
 
     <!-- ========================================== -->
-    <!-- SECTION 6: VAULT CORE APPLICATION SCRIPTS   -->
+    <!-- SECTION 4: SYSTEM OPERATING LOGIC ENGINE    -->
     <!-- ========================================== -->
     <script>
-        // GLOBAL ARCHIVE ACCESS POINTERS
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
 
-        // NAVIGATION SWITCHER MATRIX
+        // CORE TAB ENGINE: Manages primary interface views
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('gearButton').classList.remove('active');
+            
             document.getElementById(tabId).classList.add('active');
-            el.classList.add('active');
+            if(el) el.classList.add('active');
+            
             localStorage.setItem('vault_active_tab', tabId);
+        }
+
+        // TOGGLE SETTINGS ENGINE: Handles standalone display swap for top gear click
+        function toggleSettingsTab() {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById('settingsTab').classList.add('active');
+            localStorage.setItem('vault_active_tab', 'settingsTab');
         }
 
         function toggleVisibility(inputId, isVisible) {
@@ -190,12 +220,12 @@
             localStorage.setItem('tmdbApiKey', document.getElementById('tmdbApiKeyInput').value);
         }
 
-        // --- SUB SECTION A: CINEMA DISPLAY GRID ENGINES ---
+        // --- RENDER COMPONENT MODULES ---
         function renderAllGrids() {
             const uniqueMedia = [...new Map(mediaDatabase.map(item => [item.name, item])).values()];
             
             const createCard = (i) => `
-                <div class="media-card" onclick="openDetails('${i.name}')" style="cursor:pointer; text-align:center;">
+                <div class="media-card" onclick="openDetails('${i.name.replace(/'/g, "\\'")}')" style="cursor:pointer; text-align:center;">
                     <div style="width: 100%; height: 190px; overflow: hidden; border-radius: 4px; background: #111;">
                         ${i.posterPath ? `<img src="https://image.tmdb.org/t/p/w200${i.posterPath}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="padding-top:70px; color:#00ffcc;">🎬</div>'}
                     </div>
@@ -205,9 +235,20 @@
             document.getElementById('cinemaDatabaseGrid').innerHTML = uniqueMedia.map(createCard).join('');
             document.getElementById('tvDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'TV').map(createCard).join('');
             document.getElementById('moviesDatabaseGrid').innerHTML = uniqueMedia.filter(i => i.type === 'Movie').map(createCard).join('');
+            
+            // Build Currently Watching framework check
+            const watchingGrid = document.getElementById('watchingDatabaseGrid');
+            if(watchingGrid) {
+                const watchingItems = uniqueMedia.filter(i => i.status === 'watching');
+                if (watchingItems.length === 0) {
+                    watchingGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: rgba(0,255,204,0.4);">No items marked as currently watching.</div>`;
+                } else {
+                    watchingGrid.innerHTML = watchingItems.map(createCard).join('');
+                }
+            }
         }
 
-        // --- SUB SECTION B: POPUP IMMERSIVE PROFILE DETAILS ---
+        // --- IMMERSIVE INFORMATION PROFILE POPUPS ---
         window.openDetails = async function(name) {
             const item = mediaDatabase.find(i => i.name === name);
             const books = JSON.parse(localStorage.getItem('vault_books_db') || '[]');
@@ -266,7 +307,7 @@
             document.getElementById('detailOverlay').style.display = 'none';
         };
 
-        // --- SUB SECTION C: THE ADVANCED BOOK LOADER ENGINES ---
+        // --- READING COLLECTION MANAGEMENT ENGINES ---
         function renderBooks() {
             const books = JSON.parse(localStorage.getItem('vault_books_db') || '[]');
             const grid = document.getElementById('booksDatabaseGrid');
@@ -297,7 +338,6 @@
             document.getElementById('bookTitleInput').value = '';
             renderBooks();
 
-            // Direct lazy-load background lookup check for individual manual imports
             try {
                 const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(title)}`);
                 const data = await res.json();
@@ -306,7 +346,6 @@
                     newBook.cover = bookInfo.imageLinks?.thumbnail ? bookInfo.imageLinks.thumbnail.replace("http://", "https://") : '';
                     newBook.description = bookInfo.description || 'No summary overview documented.';
                     
-                    // Re-save specific individual data match
                     const currentBooks = JSON.parse(localStorage.getItem('vault_books_db') || '[]');
                     const idx = currentBooks.findIndex(b => b.name === title);
                     if (idx !== -1) {
@@ -315,7 +354,7 @@
                         renderBooks();
                     }
                 }
-            } catch (e) { console.error("Background quick lookup offline.", e); }
+            } catch (e) { console.error(e); }
         };
 
         window.importGoodreads = function(event) {
@@ -323,7 +362,6 @@
             if (!file) return;
             
             const reader = new FileReader();
-            reader.onerror = () => alert("Oops, I couldn't read that file, Sweetie. Try a different format?");
             reader.onload = function(e) {
                 const text = e.target.result;
                 if (!text) return;
@@ -337,18 +375,18 @@
                     if (cols[1]) {
                         const bookTitle = cols[1].replace(/"/g, '').trim();
                         if(bookTitle && !importedBooks.some(b => b.name === bookTitle)) {
-                            importedBooks.push({ name: bookTitle, type: 'Book', cover: '', description: 'Imported from CSV file grid stream.' });
+                            importedBooks.push({ name: bookTitle, type: 'Book', cover: '', description: 'Imported from CSV file stream.' });
                         }
                     }
                 });
                 localStorage.setItem('vault_books_db', JSON.stringify(importedBooks));
-                alert("Success! Your CSV library is imported into local storage, Sweetie. Ready for artwork scrapers!");
+                alert("Success! Your CSV library is imported into local storage, Sweetie.");
                 renderBooks();
             };
             reader.readAsText(file);
         };
 
-        // --- SUB SECTION D: OAUTH HANDSHAKE HANDLERS ---
+        // --- TRAKT SYNC NETWORK ENGINE OPERATORS ---
         window.initializeTraktDeviceAuth = function() {
             const clientId = document.getElementById('traktClientIdInput').value.trim();
             if (!clientId) { alert("Please enter your Client ID first!"); return; }
@@ -398,23 +436,29 @@
             
             statusLog.innerText = "Syncing Watch History Stream...";
             try {
+                // Fetch watched TV metrics
                 const tvResponse = await fetch('https://api.trakt.tv/sync/watched/shows', {
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}`, 'trakt-api-version': '2', 'trakt-api-key': clientId }
                 });
                 let newMedia = [];
                 if (tvResponse.ok) {
                     const shows = await tvResponse.json();
-                    newMedia = shows.map(item => ({ name: item.show.title, type: 'TV', posterPath: '' }));
+                    // Detect custom watchlist/tracking rules or append local values dynamically
+                    newMedia = shows.map(item => ({ name: item.show.title, type: 'TV', posterPath: '', status: 'completed' }));
                 }
                 const movieResponse = await fetch('https://api.trakt.tv/sync/watched/movies', {
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}`, 'trakt-api-version': '2', 'trakt-api-key': clientId }
                 });
                 if (movieResponse.ok) {
                     const movies = await movieResponse.json();
-                    newMedia = [...newMedia, ...movies.map(item => ({ name: item.movie.title, type: 'Movie', posterPath: '' }))];
+                    const mappedMovies = movies.map(item => ({ name: item.movie.title, type: 'Movie', posterPath: '', status: 'completed' }));
+                    newMedia = [...newMedia, ...mappedMovies];
                 }
                 if (newMedia.length === 0) {
-                    newMedia = [{ name: "Stargate SG-1", type: "TV", posterPath: "" }, { name: "Neuromancer", type: "Movie", posterPath: "" }];
+                    newMedia = [
+                        { name: "Stargate SG-1", type: "TV", posterPath: "", status: "watching" }, 
+                        { name: "Neuromancer", type: "Movie", posterPath: "", status: "completed" }
+                    ];
                 }
                 mediaDatabase = newMedia;
                 localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
@@ -424,12 +468,11 @@
             } catch (e) { statusLog.innerText = "Status: Sync Complete!"; }
         };
 
-        // --- SUB SECTION E: DEEP METADATA NETWORK SCRAPER ---
+        // --- DEEP REPAIR SCRAPER SUB-MODULES ---
         window.repairExistingMediaMetadata = async function() {
             const statusLog = document.getElementById('traktStatusLog');
             const apiKey = localStorage.getItem('tmdbApiKey');
             
-            // A: SCAPE CINEMA DATA FROM TMDB
             if (apiKey) {
                 statusLog.innerText = "Scraping Cinematic Artwork...";
                 for (let item of mediaDatabase) {
@@ -448,14 +491,11 @@
                 renderAllGrids();
             }
 
-            // B: NEW ENGINE MODULE: SCRAPE BOOKS METADATA FROM GOOGLE BOOKS
             statusLog.innerText = "Scraping Reading Cover Catalogs...";
             let currentBooks = JSON.parse(localStorage.getItem('vault_books_db') || '[]');
             
             for (let book of currentBooks) {
-                // If it already has an active cover artwork image link, pass over it
                 if (book.cover && book.cover.startsWith('http')) continue;
-                
                 try {
                     const bookSearchUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(book.name)}`;
                     const response = await fetch(bookSearchUrl);
@@ -463,23 +503,20 @@
                     
                     if (bookData.items && bookData.items[0]) {
                         const info = bookData.items[0].volumeInfo;
-                        // Secure any raw HTTP asset streams to prevent mixed content locks
                         book.cover = info.imageLinks?.thumbnail ? info.imageLinks.thumbnail.replace("http://", "https://") : '';
                         book.description = info.description || 'No summary overview documented.';
                     }
-                } catch (err) {
-                    console.error("Google Books sync interrupted for title: " + book.name, err);
-                }
+                } catch (err) { console.error(err); }
             }
             
             localStorage.setItem('vault_books_db', JSON.stringify(currentBooks));
             renderBooks();
             
             statusLog.innerText = "Status: Metadata Repaired!";
-            alert("All Library Books and Cinema assets successfully repaired, Sweetie!");
+            alert("All Vault records and library catalogs safely optimized, Sweetie!");
         };
 
-        // LAUNCH LIFECYCLE SEQUENCE CONTAINER
+        // ONLOAD RUNTIME MATRIX INITIALIZATION
         window.onload = () => {
             document.getElementById('traktClientIdInput').value = localStorage.getItem('traktClientId') || '';
             document.getElementById('traktClientSecretInput').value = localStorage.getItem('traktClientSecret') || '';
@@ -492,8 +529,10 @@
             renderAllGrids();
             renderBooks();
             
-            const lastTab = localStorage.getItem('vault_active_tab');
-            if (lastTab) {
+            const lastTab = localStorage.getItem('vault_active_tab') || 'mediaTab';
+            if (lastTab === 'settingsTab') {
+                toggleSettingsTab();
+            } else {
                 const targetBtn = document.getElementById('navBtn-' + lastTab);
                 if (targetBtn) switchTab(lastTab, targetBtn);
             }
