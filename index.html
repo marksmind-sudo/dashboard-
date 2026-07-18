@@ -98,9 +98,10 @@
         .input-row { display: flex; gap: 12px; align-items: center; width: 100%; }
         .checkbox-container { display: flex; align-items: center; gap: 6px; min-width: 80px; color: #00ffcc; font-size: 0.85rem; }
         
-        .btn { background: #ff007f; color: #000; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; }
-        .btn-sync { background: #00ffcc; }
-        .btn-repair { background: #ffcc00; }
+        /* TOUCH-SAFE PHYSICAL BUTTON SHIELDS */
+        .btn { background: #ff007f; color: #000; padding: 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; display: block; }
+        .btn-sync { background: #00ffcc; color: #000; margin-bottom: 16px !important; border: 2px solid #ffffff; }
+        .btn-repair { background: #ffcc00; color: #000; border: 2px solid #ffffff; }
 
         /* INTERFACE FOOTER NAVIGATION RAIL */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #04040a; border-top: 2px solid #00ffcc; z-index: 1000; }
@@ -234,8 +235,11 @@
                             <div class="checkbox-container"><input type="checkbox" onchange="toggleVisibility('tmdbApiKeyInput', this.checked)"> <span>Show</span></div>
                         </div>
                     </div>
+                    
+                    <!-- HIGH-ISOLATION INTERFACE ACTIONS BUTTON LAYOUT -->
                     <button class="btn btn-sync" onclick="syncTraktData()">🔄 Sync Watch History Stream</button>
                     <button class="btn btn-repair" onclick="repairExistingMediaMetadata()">⚡ Force Full Meta Scraping Repair</button>
+                    
                     <p id="traktStatusLog" style="margin-top: 15px; text-align: center; font-weight: bold;">Status: Standby (Local Mode)</p>
                 </div>
             </div>
@@ -262,7 +266,7 @@
     <script>
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
         let currentStatusFilter = 'all';
-        let isScrapingLockActive = false; // Multi-thread overwrite lockout token
+        let isScrapingLockActive = false;
 
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -324,7 +328,6 @@
         }
 
         function renderAllMasterGrids() {
-            // Re-read storage cleanly to sync interface modifications perfectly
             mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
             
             const query = document.getElementById('globalSearchInput').value.toLowerCase().trim();
@@ -622,7 +625,6 @@
             localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
             document.getElementById('manualMediaTitleInput').value = '';
             renderAllMasterGrids();
-            await window.repairExistingMediaMetadata();
         };
 
         window.importGoodreads = function(event) {
@@ -646,7 +648,6 @@
                 });
                 localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
                 renderAllMasterGrids();
-                window.repairExistingMediaMetadata();
             };
             reader.readAsText(file);
         };
@@ -836,10 +837,10 @@
                 }
             }
             
+            // Explicit Core Decoupling: Syncing *only* commits the data payload array 
             localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
             renderAllMasterGrids();
             statusLog.innerText = `Sync Complete! Ingested ${totalAdded} assets.`;
-            await window.repairExistingMediaMetadata();
         };
 
         // --- ATOMIC RATE-LIMITED METADATA SCRAPER ENGINE ---
@@ -851,7 +852,6 @@
             const apiKey = localStorage.getItem('tmdbApiKey');
             let processedCount = 0;
             
-            // Re-read storage at loop initiation to get the most updated dataset array
             let localWorkingDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
             const totalAssets = localWorkingDB.length;
             
@@ -899,7 +899,6 @@
                 }
             }
             
-            // Atomic final commit to storage preventing parallel write corruption
             localStorage.setItem('vault_media_db', JSON.stringify(localWorkingDB));
             isScrapingLockActive = false;
             renderAllMasterGrids();
