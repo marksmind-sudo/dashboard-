@@ -236,7 +236,6 @@
                         </div>
                     </div>
                     
-                    <!-- HIGH-ISOLATION INTERFACE ACTIONS BUTTON LAYOUT -->
                     <button class="btn btn-sync" onclick="syncTraktData()">🔄 Sync Watch History Stream</button>
                     <button class="btn btn-repair" onclick="repairExistingMediaMetadata()">⚡ Force Full Meta Scraping Repair</button>
                     
@@ -837,13 +836,12 @@
                 }
             }
             
-            // Explicit Core Decoupling: Syncing *only* commits the data payload array 
             localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
             renderAllMasterGrids();
             statusLog.innerText = `Sync Complete! Ingested ${totalAdded} assets.`;
         };
 
-        // --- ATOMIC RATE-LIMITED METADATA SCRAPER ENGINE ---
+        // --- ATOMIC DUAL-ENGINE METADATA SCRAPER PANEL ---
         window.repairExistingMediaMetadata = async function() {
             if (isScrapingLockActive) return;
             isScrapingLockActive = true;
@@ -885,16 +883,30 @@
                     try {
                         let sanitizedTitle = item.name.replace(/\s*[\(\[][^\)]*[\)\]]\s*/g, "").trim();
                         
+                        // Engine Alpha: Google Books Query Core
                         const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(sanitizedTitle)}`);
                         const bookData = await response.json();
+                        
                         if (bookData.items && bookData.items[0]) {
                             const info = bookData.items[0].volumeInfo;
                             localWorkingDB[i].cover = info.imageLinks?.thumbnail ? info.imageLinks.thumbnail.replace("http://", "https://") : '';
                             localWorkingDB[i].description = info.description || 'No localized summary logged.';
                             localWorkingDB[i].author = info.authors ? info.authors.join(', ') : 'Unknown Author';
                             localWorkingDB[i].rating = info.averageRating || 'N/A';
+                        } else {
+                            // Engine Beta Failover: Open Library Search API Matrix
+                            const olResponse = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(sanitizedTitle)}&limit=1`);
+                            const olData = await olResponse.json();
+                            
+                            if (olData.docs && olData.docs[0]) {
+                                const doc = olData.docs[0];
+                                localWorkingDB[i].cover = doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : '';
+                                localWorkingDB[i].description = doc.first_sentence ? doc.first_sentence.join(' ') : 'No localized summary logged.';
+                                localWorkingDB[i].author = doc.author_name ? doc.author_name.join(', ') : 'Unknown Author';
+                                localWorkingDB[i].rating = doc.ratings_average ? doc.ratings_average.toFixed(1) : 'N/A';
+                            }
                         }
-                        await new Promise(r => setTimeout(r, 150));
+                        await new Promise(r => setTimeout(r, 200));
                     } catch (err) { console.error(err); }
                 }
             }
