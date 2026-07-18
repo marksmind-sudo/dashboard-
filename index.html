@@ -116,12 +116,7 @@
         .meta-poster { max-width: 200px; border: 1px solid #00ffcc; border-radius: 6px; object-fit: cover; align-self: flex-start; }
         .meta-info-shelf { flex: 1; min-width: 280px; }
         .cast-row { display: flex; gap: 12px; overflow-x: auto; padding: 15px 0; }
-        .actor-avatar-card { flex: 0 0 85px; text-align: center; cursor: pointer; }
-        .avatar-circle { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid #ff007f; }
-        
-        .season-block-row { background: rgba(20,20,40,0.6); padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00ffcc; }
-        .inline-episode-tray { background: rgba(0,0,0,0.4); padding: 10px; margin-top: 8px; border-radius: 4px; display: none; border-top: 1px dashed rgba(0,255,204,0.2); }
-        .episode-entry { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .accordion-item { background: rgba(20,20,40,0.6); padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00ffcc; }
         .personal-rating-stars { display: flex; gap: 5px; font-size: 1.4rem; color: #ffcc00; cursor: pointer; margin: 10px 0; }
     </style>
 </head>
@@ -488,7 +483,7 @@
                     if (item.type === 'TV' && deepData.seasons) {
                         seasonTrackerGridHtml = `<h3 style="color:#ff007f; margin-top:20px;">Season Tracker Grid (Toggle Viewed Status)</h3><div style="margin-top:10px;">`;
                         seasonTrackerGridHtml += deepData.seasons.map(s => `
-                            <div class="season-block-row" id="seasonBlock-${s.season_number}">
+                            <div class="accordion-item" id="seasonBlock-${s.season_number}">
                                 <div onclick="toggleInlineSeasonAccordion('${targetedId}', '${s.season_number}', '${item.name.replace(/'/g, "\\'")}')" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
                                     <span><strong>${s.name}</strong></span>
                                     <div style="display:flex; gap:15px; align-items:center;">
@@ -496,7 +491,7 @@
                                         <input type="checkbox" ${item['season_' + s.season_number] ? 'checked' : ''} onclick="event.stopPropagation(); toggleWholeSeasonViewed('${item.name.replace(/'/g, "\\'")}', '${s.season_number}', ${s.episode_count}, this.checked)" style="width:18px; height:18px;">
                                     </div>
                                 </div>
-                                <div class="inline-episode-tray" id="episodeTray-${s.season_number}"></div>
+                                <div class="inline-episode-tray" id="episodeTray-${s.season_number}" style="display:none; background:rgba(0,0,0,0.4); padding:10px; margin-top:8px; border-radius:4px; border-top:1px dashed rgba(0,255,204,0.2);"></div>
                             </div>
                         `).join('');
                         seasonTrackerGridHtml += `</div>`;
@@ -712,18 +707,24 @@
                     })
                 });
                 
-                if (!response.ok) throw new Error("Handshake denied by verification core.");
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error_description || "Handshake denied by verification core.");
+                }
                 
                 const data = await response.json();
-                localStorage.setItem('trakt_access_token', data.access_token);
-                localStorage.setItem('trakt_connection_status', 'connected');
-                statusLog.innerText = "Status: Connected!";
-                alert("Vault linked to Trakt Cloud Matrix cleanly!");
+                if (data.access_token) {
+                    localStorage.setItem('trakt_access_token', data.access_token);
+                    localStorage.setItem('trakt_connection_status', 'connected');
+                    statusLog.innerText = "Status: Connected!";
+                    alert("Vault linked to Trakt Cloud Matrix cleanly!");
+                } else {
+                    throw new Error("No access token returned.");
+                }
             } catch (e) {
-                console.error(e);
-                localStorage.setItem('trakt_connection_status', 'connected');
-                statusLog.innerText = "Status: Connected (Bridge Connected)!";
-                alert("Handshake confirmed via secure fallback bridge storage.");
+                console.error("Handshake Core Error:", e);
+                statusLog.innerText = `Auth Error: ${e.message}`;
+                alert(`Handshake Error: ${e.message}`);
             }
         };
 
@@ -733,9 +734,10 @@
             const statusLog = document.getElementById('traktStatusLog');
             const connectionStatus = localStorage.getItem('trakt_connection_status');
             const clientId = localStorage.getItem('traktClientId');
+            const accessToken = localStorage.getItem('trakt_access_token');
             
-            if (!connectionStatus && !localStorage.getItem('trakt_access_token')) {
-                alert("Please perform the Trakt connection handshake setup first!");
+            if (!connectionStatus || !accessToken) {
+                alert("Token not verified! Please link your account and complete the pink Handshake block successfully first, Sweetie!");
                 return;
             }
             
@@ -744,20 +746,17 @@
                 return;
             }
             
-            const accessToken = localStorage.getItem('trakt_access_token') || "";
             statusLog.innerText = "Querying Trakt Cloud Arrays...";
             let totalAdded = 0;
             
             let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
             
             const secureHeaders = {
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
                 'trakt-api-version': '2',
                 'trakt-api-client-id': clientId
             };
-            if (accessToken) {
-                secureHeaders['Authorization'] = `Bearer ${accessToken}`;
-            }
 
             const targetEndpoints = [
                 'https://api.trakt.tv/sync/watched/shows',
@@ -775,12 +774,15 @@
                     const labelType = isMovie ? 'Movie' : 'TV';
                     
                     const response = await fetch(url, { headers: secureHeaders });
-                    if (!response.ok) continue;
+                    if (!response.ok) {
+                        console.error(`Endpoint error ${response.status} for ${url}`);
+                        continue;
+                    }
                     
                     const dataset = await response.json();
                     if (dataset && dataset.length > 0) {
                         dataset.forEach(item => {
-                            let node = isWatchlist ? (isMovie ? item.movie : item.show) : (isMovie ? item.movie : item.show);
+                            let node = isMovie ? item.movie : item.show;
                             
                             if (node && node.title) {
                                 statusLog.innerText = `Ingesting: ${node.title}`;
@@ -800,7 +802,6 @@
                 } catch (e) { console.error(e); }
             }
             
-            // Fixed Array Integrity Commit: Ensure keys map cleanly back to disk storage
             localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
             renderAllMasterGrids();
             statusLog.innerText = `Sync Complete! Ingested ${totalAdded} assets.`;
@@ -887,7 +888,7 @@
             
             const savedStatus = localStorage.getItem('trakt_connection_status');
             if (savedStatus === 'connected') {
-                document.getElementById('traktStatusLog').innerText = "Status: Connected (Bridge Connected)!";
+                document.getElementById('traktStatusLog').innerText = "Status: Connected!";
             }
             
             const lastTab = localStorage.getItem('vault_active_tab') || 'mediaTab';
