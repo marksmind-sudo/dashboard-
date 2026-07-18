@@ -262,6 +262,7 @@
     <script>
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
         let currentStatusFilter = 'all';
+        let isScrapingLockActive = false; // Multi-thread overwrite lockout token
 
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -323,6 +324,9 @@
         }
 
         function renderAllMasterGrids() {
+            // Re-read storage cleanly to sync interface modifications perfectly
+            mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+            
             const query = document.getElementById('globalSearchInput').value.toLowerCase().trim();
             const genre = document.getElementById('genreFilterSelect').value;
             const sort = document.getElementById('sortEngineSelect').value;
@@ -383,15 +387,17 @@
 
         window.deleteAssetFromLibrary = function(name) {
             if (confirm("Are you absolutely sure you want to permanently delete '" + name + "'?")) {
-                mediaDatabase = mediaDatabase.filter(m => m.name !== name);
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+                currentDB = currentDB.filter(m => m.name !== name);
+                localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
                 closeDetails();
                 renderAllMasterGrids();
             }
         };
 
         window.openDetails = async function(name) {
-            let item = mediaDatabase.find(i => i.name === name);
+            let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+            let item = currentDB.find(i => i.name === name);
             if(!item) return;
 
             const detailContent = document.getElementById('detailContent');
@@ -538,13 +544,14 @@
         }
 
         window.toggleWholeSeasonViewed = function(name, seasonNum, epCount, isChecked) {
-            let idx = mediaDatabase.findIndex(m => m.name === name);
+            let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+            let idx = currentDB.findIndex(m => m.name === name);
             if(idx !== -1) {
-                mediaDatabase[idx]['season_' + seasonNum] = isChecked;
+                currentDB[idx]['season_' + seasonNum] = isChecked;
                 for(let k=1; k<=epCount; k++) {
-                    mediaDatabase[idx][`s${seasonNum}e${k}_watched`] = isChecked;
+                    currentDB[idx][`s${seasonNum}e${k}_watched`] = isChecked;
                 }
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
                 renderAllMasterGrids();
             }
         };
@@ -556,7 +563,8 @@
             tray.innerHTML = "<p style='color:#00ffcc; font-size:0.8rem;'>Accessing deep episode data pack metrics...</p>";
             
             const apiKey = localStorage.getItem('tmdbApiKey');
-            let item = mediaDatabase.find(m => m.name === name);
+            let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+            let item = currentDB.find(m => m.name === name);
             
             try {
                 const res = await fetch(`https://api.themoviedb.org/3/tv/${seriesId}/season/${seasonNumber}?api_key=${apiKey}`);
@@ -582,11 +590,12 @@
         };
 
         window.toggleIndividualEpisodeWatched = function(name, seasonNum, epNum, isChecked) {
-            let idx = mediaDatabase.findIndex(m => m.name === name);
+            let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+            let idx = currentDB.findIndex(m => m.name === name);
             if(idx !== -1) {
                 const epKey = `s${seasonNum}e${epNum}_watched`;
-                mediaDatabase[idx][epKey] = isChecked;
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                currentDB[idx][epKey] = isChecked;
+                localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
             }
         };
 
@@ -594,10 +603,11 @@
         window.closeActorDetails = function() { document.getElementById('actorOverlay').style.display = 'none'; };
 
         window.updateAssetDataField = function(name, field, value) {
-            let idx = mediaDatabase.findIndex(m => m.name === name);
+            let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+            let idx = currentDB.findIndex(m => m.name === name);
             if (idx !== -1) {
-                mediaDatabase[idx][field] = value;
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                currentDB[idx][field] = value;
+                localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
                 renderAllMasterGrids();
             }
         };
@@ -607,8 +617,9 @@
             const type = document.getElementById('manualMediaTypeSelect').value;
             if (!title) return;
 
-            mediaDatabase.push({ name: title, type: type, status: 'recent', favorite: false, source: 'Stream', progress: 0, genre: 'Sci-Fi', dateAdded: new Date().toISOString() });
-            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+            currentDB.push({ name: title, type: type, status: 'recent', favorite: false, source: 'Stream', progress: 0, genre: 'Sci-Fi', dateAdded: new Date().toISOString() });
+            localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
             document.getElementById('manualMediaTitleInput').value = '';
             renderAllMasterGrids();
             await window.repairExistingMediaMetadata();
@@ -621,17 +632,19 @@
             reader.onload = function(e) {
                 const text = e.target.result;
                 const lines = text.split('\n');
+                let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+                
                 lines.forEach((line, index) => {
                     if (index === 0) return; 
                     const cols = line.split(',');
                     if (cols[1]) {
                         const bookTitle = cols[1].replace(/"/g, '').trim();
-                        if(bookTitle && !mediaDatabase.some(m => m.name === bookTitle)) {
-                            mediaDatabase.push({ name: bookTitle, type: 'Book', status: 'completed', favorite: false, source: 'Owned', progress: 100, genre: 'Sci-Fi', dateAdded: new Date().toISOString() });
+                        if(bookTitle && !currentDB.some(m => m.name.toLowerCase() === bookTitle.toLowerCase())) {
+                            currentDB.push({ name: bookTitle, type: 'Book', status: 'completed', favorite: false, source: 'Owned', progress: 100, genre: 'Sci-Fi', dateAdded: new Date().toISOString() });
                         }
                     }
                 });
-                localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+                localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
                 renderAllMasterGrids();
                 window.repairExistingMediaMetadata();
             };
@@ -716,11 +729,11 @@
 
         // --- MODERN PAGINATED WATCH HISTORY SYNC STREAM ENGINE ---
         window.syncTraktData = async function() {
+            if(isScrapingLockActive) return;
             const statusLog = document.getElementById('traktStatusLog');
             const connectionStatus = localStorage.getItem('trakt_connection_status');
             const clientId = localStorage.getItem('traktClientId');
             
-            // Triple Checked Fix: Accept either a token OR a validated local bridge connection state
             if (!connectionStatus && !localStorage.getItem('trakt_access_token')) {
                 alert("Please perform the Trakt connection handshake setup first!");
                 return;
@@ -736,6 +749,8 @@
             let page = 1;
             let keepLooping = true;
             let totalAdded = 0;
+            
+            let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
             
             // Loop for TV Shows
             while (keepLooping) {
@@ -758,8 +773,8 @@
                         keepLooping = false;
                     } else {
                         shows.forEach(item => {
-                            if (!mediaDatabase.some(m => m.name.toLowerCase() === item.show.title.toLowerCase())) {
-                                mediaDatabase.push({ 
+                            if (!currentDB.some(m => m.name.toLowerCase() === item.show.title.toLowerCase())) {
+                                currentDB.push({ 
                                     name: item.show.title, 
                                     type: 'TV', 
                                     status: 'completed', 
@@ -801,8 +816,8 @@
                         keepLooping = false;
                     } else {
                         movies.forEach(item => {
-                            if (!mediaDatabase.some(m => m.name.toLowerCase() === item.movie.title.toLowerCase())) {
-                                mediaDatabase.push({ 
+                            if (!currentDB.some(m => m.name.toLowerCase() === item.movie.title.toLowerCase())) {
+                                currentDB.push({ 
                                     name: item.movie.title, 
                                     type: 'Movie', 
                                     status: 'completed', 
@@ -821,21 +836,28 @@
                 }
             }
             
-            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
             renderAllMasterGrids();
             statusLog.innerText = `Sync Complete! Ingested ${totalAdded} assets.`;
             await window.repairExistingMediaMetadata();
         };
 
-        // --- RATE-LIMITED SANITIZED METADATA ENGINE ---
+        // --- ATOMIC RATE-LIMITED METADATA SCRAPER ENGINE ---
         window.repairExistingMediaMetadata = async function() {
+            if (isScrapingLockActive) return;
+            isScrapingLockActive = true;
+            
             const statusLog = document.getElementById('traktStatusLog');
             const apiKey = localStorage.getItem('tmdbApiKey');
             let processedCount = 0;
-            const totalAssets = mediaDatabase.length;
+            
+            // Re-read storage at loop initiation to get the most updated dataset array
+            let localWorkingDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+            const totalAssets = localWorkingDB.length;
             
             if (apiKey) {
-                for (let item of mediaDatabase) {
+                for (let i = 0; i < localWorkingDB.length; i++) {
+                    let item = localWorkingDB[i];
                     if (item.type === 'Movie' || item.type === 'TV') {
                         processedCount++;
                         statusLog.innerText = `Scraping Cinematic Artwork (${processedCount}/${totalAssets})...`;
@@ -845,9 +867,9 @@
                             const data = await response.json();
                             if (data.results && data.results.length > 0) {
                                 const verifiedMatch = data.results.find(r => typeEndpoint === 'movie' ? r.hasOwnProperty('title') : r.hasOwnProperty('name')) || data.results[0];
-                                item.id = verifiedMatch.id; 
-                                item.posterPath = verifiedMatch.poster_path;
-                                item.vote_average = verifiedMatch.vote_average ? verifiedMatch.vote_average.toFixed(1) : 'N/A';
+                                localWorkingDB[i].id = verifiedMatch.id; 
+                                localWorkingDB[i].posterPath = verifiedMatch.poster_path;
+                                localWorkingDB[i].vote_average = verifiedMatch.vote_average ? verifiedMatch.vote_average.toFixed(1) : 'N/A';
                             }
                             await new Promise(r => setTimeout(r, 150));
                         } catch (e) { console.error(e); }
@@ -855,7 +877,8 @@
                 }
             }
 
-            for (let item of mediaDatabase) {
+            for (let i = 0; i < localWorkingDB.length; i++) {
+                let item = localWorkingDB[i];
                 if (item.type === 'Book' || item.type === 'Audiobook') {
                     processedCount++;
                     statusLog.innerText = `Scraping Book Cover Catalogs (${processedCount}/${totalAssets})...`;
@@ -866,16 +889,19 @@
                         const bookData = await response.json();
                         if (bookData.items && bookData.items[0]) {
                             const info = bookData.items[0].volumeInfo;
-                            item.cover = info.imageLinks?.thumbnail ? info.imageLinks.thumbnail.replace("http://", "https://") : '';
-                            item.description = info.description || 'No localized summary logged.';
-                            item.author = info.authors ? info.authors.join(', ') : 'Unknown Author';
-                            item.rating = info.averageRating || 'N/A';
+                            localWorkingDB[i].cover = info.imageLinks?.thumbnail ? info.imageLinks.thumbnail.replace("http://", "https://") : '';
+                            localWorkingDB[i].description = info.description || 'No localized summary logged.';
+                            localWorkingDB[i].author = info.authors ? info.authors.join(', ') : 'Unknown Author';
+                            localWorkingDB[i].rating = info.averageRating || 'N/A';
                         }
                         await new Promise(r => setTimeout(r, 150));
                     } catch (err) { console.error(err); }
                 }
             }
-            localStorage.setItem('vault_media_db', JSON.stringify(mediaDatabase));
+            
+            // Atomic final commit to storage preventing parallel write corruption
+            localStorage.setItem('vault_media_db', JSON.stringify(localWorkingDB));
+            isScrapingLockActive = false;
             renderAllMasterGrids();
             statusLog.innerText = "Status: Metadata Repaired!";
         };
