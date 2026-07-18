@@ -193,8 +193,8 @@
                     <div class="form-group" style="margin-top: 15px;">
                         <label>Trakt Authorization Code</label>
                         <div class="input-row">
-                            <input type="password" id="traktAuthCodeInput" placeholder="Paste Code...">
-                            <div class="checkbox-container"><input type="checkbox" onchange="toggleVisibility('traktAuthCodeInput', this.checked)"> <span>Show</span></div>
+                            <input type="text" id="traktAuthCodeInput" placeholder="Paste Code...">
+                            <div class="checkbox-container"><input type="checkbox" checked onchange="toggleVisibility('traktAuthCodeInput', this.checked)"> <span>Show</span></div>
                         </div>
                     </div>
                     <button class="btn" onclick="finishTraktAuth()">✅ Complete Handshake</button>
