@@ -186,6 +186,9 @@
                         💡 <strong>How to get your Master Token directly:</strong> Go to <a href="https://trakt.tv/oauth/applications" target="_blank" style="color: #ff007f; font-weight: bold;">trakt.tv/oauth/applications</a> inside your browser tab, select your API App container, copy the long 64-character <strong>Access Token</strong> string listed under your production details, and paste it directly into the matrix field above! This completely bypasses browser verification blockers.
                     </div>
                     <button class="btn" style="background: #ff007f;" onclick="testAndLockDirectAuth()">Verify & Save Configuration</button>
+                    <button type="button" onclick="fetchTraktToken()" style="background-color: #00bcd4; color: white; margin-top: 10px; padding: 10px; border: none; border-radius: 4px; width: 100%; font-weight: bold;">
+                        🤖 Automate Token Generation
+                    </button>
                 </div>
 
                 <div class="control-box">
@@ -246,6 +249,47 @@
     </nav>
 
     <script>
+        async function fetchTraktToken() {
+            const clientId = document.getElementById('traktClientIdInput').value.trim();
+            const clientSecret = prompt("Please enter your Trakt Client Secret:");
+            const authCode = prompt("Please enter the temporary authorization code from Trakt:");
+
+            if (!clientId || !clientSecret || !authCode) {
+                alert("All fields are required to generate the token, Sweetie.");
+                return;
+            }
+
+            try {
+                const response = await fetch('https://api.trakt.tv/oauth/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code: authCode,
+                        client_id: clientId,
+                        client_secret: clientSecret,
+                        redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+                        grant_type: 'authorization_code'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.access_token) {
+                    document.getElementById('traktAccessTokenInput').value = data.access_token;
+                    localStorage.setItem('trakt_access_token', data.access_token);
+                    localStorage.setItem('trakt_connection_status', 'connected');
+                    document.getElementById('traktStatusLog').innerText = "Status: Connected Master Access Token Locked!";
+                    alert("Success! Your permanent Master Key has been generated and locked in.");
+                } else {
+                    alert("Error retrieving token: " + (data.error_description || data.error || "Unknown error"));
+                }
+            } catch (err) {
+                alert("Failed to connect to Trakt API: " + err.message);
+            }
+        }
+
         let mediaDatabase = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
         let currentStatusFilter = 'all';
         let isScrapingLockActive = false;
