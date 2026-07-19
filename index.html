@@ -113,6 +113,9 @@
 
         .accordion-item { background: rgba(20,20,40,0.6); padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00ffcc; }
         .personal-rating-stars { display: flex; gap: 5px; font-size: 1.4rem; color: #ffcc00; cursor: pointer; margin: 10px 0; }
+        
+        /* ON-PAGE AUTOMATION AREA */
+        .automation-deck { background: rgba(0, 188, 212, 0.1); border: 1px solid #00bcd4; padding: 15px; border-radius: 6px; margin-top: 15px; display: none; flex-direction: column; gap: 12px; }
     </style>
 </head>
 <body>
@@ -183,9 +186,28 @@
                         </div>
                     </div>
                     <button class="btn" style="background: #ff007f;" onclick="testAndLockDirectAuth()">Verify & Save Configuration</button>
-                    <button type="button" onclick="fetchTraktToken()" style="background-color: #00bcd4; color: white; margin-top: 10px; padding: 10px; border: none; border-radius: 4px; width: 100%; font-weight: bold;">
-                        🤖 Automate Token Generation
+                    
+                    <button type="button" onclick="startOnPageDeviceFlow()" style="background-color: #00bcd4; color: white; margin-top: 10px; padding: 10px; border: none; border-radius: 4px; width: 100%; font-weight: bold;">
+                        🤖 Step 1: Request Activation Code
                     </button>
+
+                    <!-- NEW STATIC ON-PAGE ASSISTANT DECK -->
+                    <div id="inlineAutomationDeck" class="automation-deck">
+                        <p style="color: #fff; font-size: 0.85rem; font-weight: bold;">
+                            1. Open a new tab and go to: <a href="https://trakt.tv/activate" target="_blank" style="color: #ff007f;">trakt.tv/activate</a>
+                        </p>
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem; color: #00bcd4;">2. Copy and enter this code on that page:</label>
+                            <input type="text" id="staticUserCodeDisplay" readonly style="padding: 8px; background: #222; color: #ffcc00; font-weight: bold; text-align: center; border: 1px solid #00bcd4;">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem; color: #00bcd4;">3. Paste your Trakt Client Secret here:</label>
+                            <input type="password" id="staticClientSecretInput" placeholder="Paste Client Secret key..." style="padding: 8px; background: #111; color: #fff; border: 1px solid #00bcd4;">
+                        </div>
+                        <button type="button" onclick="finalizeOnPageDeviceFlow()" style="background-color: #ff007f; color: white; padding: 10px; border: none; border-radius: 4px; font-weight: bold; width: 100%;">
+                            ⚡ Step 2: Complete Handshake & Save Key
+                        </button>
+                    </div>
                 </div>
 
                 <div class="control-box">
@@ -246,63 +268,71 @@
     </nav>
 
     <script>
-        // --- NEW, PROPER DEVICE AUTHENTICATION FLOW ---
-        async function fetchTraktToken() {
+        // GLOBALS TO HOLD BACKEND DEVICE FLOW DATA STATE
+        let activeDeviceCode = "";
+
+        // NEW PERMANENT ON-PAGE STEP 1 INITIALIZATION
+        async function startOnPageDeviceFlow() {
             const clientId = document.getElementById('traktClientIdInput').value.trim();
-            
             if (!clientId) {
-                alert("Sweetie, please make sure your Client ID is pasted into the top box first!");
+                alert("Sweetie, please paste your Client ID into the top box before running the assistant.");
                 return;
             }
 
             try {
-                // Step 1: Request a device code from Trakt
-                const codeResponse = await fetch('https://api.trakt.tv/oauth/device/code', {
+                const response = await fetch('https://api.trakt.tv/oauth/device/code', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ client_id: clientId })
                 });
-                
-                const codeData = await codeResponse.json();
+                const data = await response.json();
 
-                if (!codeData.user_code) {
-                    alert("Oh no, Trakt didn't give us a code: " + JSON.stringify(codeData));
-                    return;
+                if (data.user_code) {
+                    activeDeviceCode = data.device_code;
+                    document.getElementById('staticUserCodeDisplay').value = data.user_code;
+                    document.getElementById('inlineAutomationDeck').style.display = 'flex';
+                } else {
+                    alert("Trakt rejected the request: " + JSON.stringify(data));
                 }
+            } catch (err) {
+                alert("Connection failed: " + err.message);
+            }
+        }
 
-                // Step 2: Ask the user to authorize it on the official page
-                const userConfirmed = confirm(`Ready for the magic?\n\n1. Open a new tab and go to: https://trakt.tv/activate\n2. Enter this exact code: ${codeData.user_code}\n3. Tap 'Continue/Yes' on their page.\n\n4. Come back here and tap 'OK' AFTER you finish authorizing!`);
+        // NEW PERMANENT ON-PAGE STEP 2 FINALIZATION
+        async function finalizeOnPageDeviceFlow() {
+            const clientId = document.getElementById('traktClientIdInput').value.trim();
+            const clientSecret = document.getElementById('staticClientSecretInput').value.trim();
 
-                if (!userConfirmed) return;
+            if (!activeDeviceCode || !clientSecret) {
+                alert("Please make sure you generated the code first and pasted your Client Secret cleanly.");
+                return;
+            }
 
-                // Step 3: Get the Client Secret
-                const clientSecret = prompt("Awesome! Now just paste your Client Secret here to complete the handshake:");
-                if (!clientSecret) return;
-
-                // Step 4: Ask Trakt for the token using the verified device code
-                const tokenResponse = await fetch('https://api.trakt.tv/oauth/device/token', {
+            try {
+                const response = await fetch('https://api.trakt.tv/oauth/device/token', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        code: codeData.device_code,
+                        code: activeDeviceCode,
                         client_id: clientId,
                         client_secret: clientSecret
                     })
                 });
+                const tokenData = await response.json();
 
-                const tokenData = await tokenResponse.json();
-                
                 if (tokenData.access_token) {
                     document.getElementById('traktAccessTokenInput').value = tokenData.access_token;
                     localStorage.setItem('trakt_access_token', tokenData.access_token);
                     localStorage.setItem('trakt_connection_status', 'connected');
                     document.getElementById('traktStatusLog').innerText = "Status: Connected Master Access Token Locked!";
-                    alert("Success! Your permanent Master Key has been pulled from Trakt and locked in.");
+                    document.getElementById('inlineAutomationDeck').style.display = 'none';
+                    alert("Success! Your permanent master authentication token is locked in.");
                 } else {
-                    alert("Error retrieving token. Make sure you authorized it on the activate page first! Error: " + JSON.stringify(tokenData));
+                    alert("Token exchange failed. Make sure you finished tapping 'Authorize' on Trakt's tab first!\n\nDetails: " + (tokenData.error_description || JSON.stringify(tokenData)));
                 }
             } catch (err) {
-                alert("Network Error: " + err.message);
+                alert("Error during key negotiation: " + err.message);
             }
         }
 
