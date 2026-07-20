@@ -87,12 +87,17 @@
         .card-progress-bar { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
         .card-progress-fill { height: 100%; background: #ff007f; width: 0%; }
 
-        /* CASTING HORIZONTAL DECK */
+        /* CASTING & FILMOGRAPHY HORIZONTAL DECKS */
         .cast-scroll-tray { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; margin-top: 10px; }
         .actor-card { min-width: 90px; width: 90px; text-align: center; cursor: pointer; }
         .actor-thumb { width: 90px; height: 120px; border-radius: 6px; object-fit: cover; border: 1px solid #00ffcc; background: #111; }
         .actor-name { font-size: 0.75rem; color: #fff; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .actor-role { font-size: 0.68rem; color: #aaa; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* EXTERNAL LINK BUTTONS */
+        .external-btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        .ext-btn { background: #111; color: #00ffcc; border: 1px solid #00ffcc; border-radius: 4px; padding: 6px 12px; font-size: 0.75rem; font-weight: bold; text-decoration: none; display: inline-block; }
+        .ext-btn:hover { background: #ff007f; color: #fff; border-color: #ff007f; }
 
         /* SETTINGS CONFIGURATION */
         .settings-container { display: flex; flex-direction: column; gap: 20px; padding: 20px; max-width: 600px; margin: 0 auto; }
@@ -232,7 +237,7 @@
         <!-- DEEP ACTOR PROFILE DOSSIER OVERLAY -->
         <div id="actorOverlay">
             <button onclick="closeActorDetails()" class="close-btn">🔙 Return to Media</button>
-            <div id="actorContent" style="color: #fff; max-width: 600px; margin: auto;"></div>
+            <div id="actorContent" style="color: #fff; max-width: 650px; margin: auto;"></div>
         </div>
     </main>
 
@@ -473,7 +478,7 @@
             try {
                 const typeEndpoint = item.type === 'Movie' ? 'movie' : 'tv';
                 let fetchUrl = item.tmdbId 
-                    ? `https://api.themoviedb.org/3/${typeEndpoint}/${item.tmdbId}?api_key=${apiKey}&append_to_response=credits,release_dates,content_ratings`
+                    ? `https://api.themoviedb.org/3/${typeEndpoint}/${item.tmdbId}?api_key=${apiKey}&append_to_response=credits,release_dates,content_ratings,external_ids`
                     : `https://api.themoviedb.org/3/search/${typeEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(item.name)}${item.year ? `&year=${item.year}` : ''}`;
 
                 let targetedId = item.tmdbId;
@@ -485,7 +490,7 @@
                 }
 
                 if (targetedId) {
-                    const deepRes = await fetch(`https://api.themoviedb.org/3/${typeEndpoint}/${targetedId}?api_key=${apiKey}&append_to_response=credits,release_dates,content_ratings`);
+                    const deepRes = await fetch(`https://api.themoviedb.org/3/${typeEndpoint}/${targetedId}?api_key=${apiKey}&append_to_response=credits,release_dates,content_ratings,external_ids`);
                     const deepData = await deepRes.json();
                     
                     const dbRating = deepData.vote_average ? deepData.vote_average.toFixed(1) : "N/A";
@@ -494,12 +499,23 @@
                     const runtime = deepData.runtime || (deepData.episode_run_time ? deepData.episode_run_time[0] : 'N/A');
                     const statusText = deepData.status || 'Unknown';
                     const nextEpisodeAir = deepData.next_episode_to_air ? deepData.next_episode_to_air.air_date : 'No Release Scheduled';
+                    const taglineText = deepData.tagline ? `<em>"${deepData.tagline}"</em>` : '';
 
                     let creatorStr = deepData.created_by ? deepData.created_by.map(c => c.name).join(', ') : 'N/A';
                     let networkStr = deepData.networks ? deepData.networks.map(n => n.name).join(', ') : 'N/A';
                     let genresStr = deepData.genres ? deepData.genres.map(g => g.name).join(', ') : 'N/A';
                     let releaseDateStr = deepData.release_date || deepData.first_air_date || 'N/A';
                     let originCountryStr = deepData.production_countries ? deepData.production_countries.map(c => c.name).join(', ') : (deepData.origin_country ? deepData.origin_country.join(', ') : 'N/A');
+
+                    // Calculate Total Series Runtime
+                    let totalRuntimeFormatted = 'N/A';
+                    if (item.type === 'TV' && deepData.number_of_episodes && runtime !== 'N/A') {
+                        let totalMins = deepData.number_of_episodes * parseInt(runtime);
+                        let days = Math.floor(totalMins / 1440);
+                        let hours = Math.floor((totalMins % 1440) / 60);
+                        let mins = totalMins % 60;
+                        totalRuntimeFormatted = `${days > 0 ? days + ' days, ' : ''}${hours} hours, ${mins} mins`;
+                    }
 
                     let directorStr = 'N/A';
                     if (deepData.credits && deepData.credits.crew) {
@@ -518,11 +534,23 @@
                         }
                     }
 
+                    // EXTERNAL LAUNCH BUTTONS
+                    const imdbId = deepData.external_ids ? deepData.external_ids.imdb_id : null;
+                    const encodedName = encodeURIComponent(item.name);
+                    const extButtons = `
+                        <div class="external-btn-group">
+                            <a href="https://trakt.tv/search/tmdb/${targetedId}?id_type=${item.type.toLowerCase()}" target="_blank" class="ext-btn">Trakt</a>
+                            <a href="https://www.themoviedb.org/${typeEndpoint}/${targetedId}" target="_blank" class="ext-btn">TMDB</a>
+                            ${imdbId ? `<a href="https://www.imdb.com/title/${imdbId}" target="_blank" class="ext-btn">IMDb</a>` : ''}
+                            <a href="https://www.justwatch.com/us/search?q=${encodedName}" target="_blank" class="ext-btn">JustWatch</a>
+                        </div>
+                    `;
+
                     // CASTING SCROLL TRAY
                     let castHtml = "";
                     if (deepData.credits && deepData.credits.cast && deepData.credits.cast.length > 0) {
                         castHtml = `<h3 style="color:#ff007f; margin-top:20px;">Top Cast & Performers (Tap for Details)</h3><div class="cast-scroll-tray">`;
-                        castHtml += deepData.credits.cast.slice(0, 12).map(c => `
+                        castHtml += deepData.credits.cast.slice(0, 14).map(c => `
                             <div class="actor-card" onclick="openActorProfile('${c.id}')">
                                 <img src="${c.profile_path ? 'https://image.tmdb.org/t/p/w185' + c.profile_path : 'https://via.placeholder.com/90x120?text=No+Photo'}" class="actor-thumb">
                                 <div class="actor-name">${c.name}</div>
@@ -590,12 +618,15 @@
                             </div>
                             <div class="meta-info-shelf">
                                 <h2>${item.name} ${item.year ? `(${item.year})` : ''}</h2>
+                                <p style="color:#ff007f; font-size:0.85rem; margin-bottom:8px;">${taglineText}</p>
                                 <p style="margin:8px 0; font-size:0.85rem; color:#ccc; line-height:1.5;">
                                     🎬 <strong>Type:</strong> ${item.type} | ⏱️ <strong>Runtime:</strong> ${runtime} min | ⭐ TMDB: ${dbRating}/10<br>
                                     🔞 <strong>Certification:</strong> ${certRating} | 🏷️ <strong>Genre:</strong> ${genresStr}<br>
-                                    ${item.type === 'TV' ? `✍️ <strong>Creator:</strong> ${creatorStr} | 📺 <strong>Network:</strong> ${networkStr}<br>⚡ <strong>Status:</strong> ${statusText} | 📆 <strong>Next Season Drop:</strong> ${nextEpisodeAir}` : `🎥 <strong>Director:</strong> ${directorStr} | 🌍 <strong>Country:</strong> ${originCountryStr}<br>📅 <strong>Release Date:</strong> ${releaseDateStr}`}
+                                    ${item.type === 'TV' ? `✍️ <strong>Creators:</strong> ${creatorStr} | 📺 <strong>Network:</strong> ${networkStr}<br>⚡ <strong>Status:</strong> ${statusText} | ⏱️ <strong>Total Series Length:</strong> ${totalRuntimeFormatted}<br>📆 <strong>Next Season Drop:</strong> ${nextEpisodeAir}` : `🎥 <strong>Director:</strong> ${directorStr} | 🌍 <strong>Country:</strong> ${originCountryStr}<br>📅 <strong>Release Date:</strong> ${releaseDateStr}`}
                                 </p>
-                                
+
+                                ${extButtons}
+
                                 <div style="margin-top:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px;">
                                     <label style='color:#ccc; font-size:0.85rem;'><strong>Date Watched / Seen:</strong></label>
                                     <div style="display:flex; gap:10px; align-items:center; margin-top:4px;">
@@ -615,7 +646,7 @@
             } catch (e) { console.error(e); }
         };
 
-        // DEEP ACTOR DOSSIER LOADER
+        // DEEP ACTOR PROFILE DOSSIER LOADER (TRAKT & SAMUEL L JACKSON STYLE)
         window.openActorProfile = async function(actorId) {
             const overlay = document.getElementById('actorOverlay');
             const content = document.getElementById('actorContent');
@@ -627,31 +658,100 @@
                 const res = await fetch(`https://api.themoviedb.org/3/person/${actorId}?api_key=${apiKey}&append_to_response=combined_credits`);
                 const actor = await res.json();
 
-                let knownWorks = "";
-                if (actor.combined_credits && actor.combined_credits.cast) {
-                    knownWorks = actor.combined_credits.cast
-                        .sort((a,b) => (b.popularity || 0) - (a.popularity || 0))
-                        .slice(0, 10)
-                        .map(w => `<li style="margin-bottom:6px; color:#00ffcc;"><strong>${w.title || w.name}</strong> (${(w.release_date || w.first_air_date || 'N/A').substring(0,4)}) as <em>${w.character || 'Self'}</em></li>`)
-                        .join('');
+                // Calculate Age
+                let ageStr = "N/A";
+                if (actor.birthday) {
+                    const birthYear = new Date(actor.birthday).getFullYear();
+                    const currentYear = 2026;
+                    ageStr = (currentYear - birthYear) + " years (" + actor.birthday + ")";
                 }
+
+                // Cross-reference with Local User Library ("From My History")
+                let userDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+                let userHistoryMatches = [];
+
+                if (actor.combined_credits && actor.combined_credits.cast) {
+                    actor.combined_credits.cast.forEach(credit => {
+                        const creditTitle = (credit.title || credit.name || '').toLowerCase();
+                        const match = userDB.find(m => m.name.toLowerCase() === creditTitle);
+                        if (match && !userHistoryMatches.some(m => m.name === match.name)) {
+                            userHistoryMatches.push({
+                                name: match.name,
+                                type: match.type,
+                                poster: credit.poster_path ? 'https://image.tmdb.org/t/p/w185' + credit.poster_path : '',
+                                role: credit.character || 'Actor',
+                                year: (credit.release_date || credit.first_air_date || '').substring(0,4)
+                            });
+                        }
+                    });
+                }
+
+                let historyHtml = "";
+                if (userHistoryMatches.length > 0) {
+                    historyHtml = `<h3 style="color:#ff007f; border-bottom:1px dashed #00ffcc; padding-bottom:4px; margin-top:20px; margin-bottom:10px;">From My History</h3><div class="cast-scroll-tray">`;
+                    historyHtml += userHistoryMatches.map(h => `
+                        <div class="actor-card" onclick="closeActorDetails(); openDetails('${h.name.replace(/'/g, "\\'")}')">
+                            <img src="${h.poster || 'https://via.placeholder.com/90x120?text=No+Cover'}" class="actor-thumb">
+                            <div class="actor-name">${h.name}</div>
+                            <div class="actor-role">${h.year} • ${h.role}</div>
+                        </div>
+                    `).join('');
+                    historyHtml += `</div>`;
+                } else {
+                    historyHtml = `<h3 style="color:#ff007f; border-bottom:1px dashed #00ffcc; padding-bottom:4px; margin-top:20px; margin-bottom:10px;">From My History</h3><p style="font-size:0.8rem; color:#aaa;">There is nothing logged in your personal vault featuring this actor.</p>`;
+                }
+
+                // Separate TV Shows and Movies Filmography
+                let tvCredits = [];
+                let movieCredits = [];
+
+                if (actor.combined_credits && actor.combined_credits.cast) {
+                    actor.combined_credits.cast.forEach(c => {
+                        if (c.media_type === 'tv') tvCredits.push(c);
+                        else if (c.media_type === 'movie') movieCredits.push(c);
+                    });
+                }
+
+                tvCredits.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
+                movieCredits.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
+
+                let tvCarousel = `<h3 style="color:#00ffcc; margin-top:20px;">Acting in ${tvCredits.length} TV Shows</h3><div class="cast-scroll-tray">`;
+                tvCarousel += tvCredits.slice(0, 15).map(c => `
+                    <div class="actor-card">
+                        <img src="${c.poster_path ? 'https://image.tmdb.org/t/p/w185' + c.poster_path : 'https://via.placeholder.com/90x120?text=No+Cover'}" class="actor-thumb">
+                        <div class="actor-name">${c.name}</div>
+                        <div class="actor-role">${c.episode_count ? c.episode_count + ' eps' : ''} ${c.character ? '• ' + c.character : ''}</div>
+                    </div>
+                `).join('');
+                tvCarousel += `</div>`;
+
+                let movieCarousel = `<h3 style="color:#00ffcc; margin-top:20px;">Acting in ${movieCredits.length} Movies</h3><div class="cast-scroll-tray">`;
+                movieCarousel += movieCredits.slice(0, 15).map(c => `
+                    <div class="actor-card">
+                        <img src="${c.poster_path ? 'https://image.tmdb.org/t/p/w185' + c.poster_path : 'https://via.placeholder.com/90x120?text=No+Cover'}" class="actor-thumb">
+                        <div class="actor-name">${c.title}</div>
+                        <div class="actor-role">${c.character || 'Actor'}</div>
+                    </div>
+                `).join('');
+                movieCarousel += `</div>`;
 
                 content.innerHTML = `
                     <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
                         <img src="${actor.profile_path ? 'https://image.tmdb.org/t/p/w300' + actor.profile_path : 'https://via.placeholder.com/150x225?text=No+Photo'}" style="width:160px; height:230px; object-fit:cover; border-radius:8px; border:1px solid #00ffcc;">
                         <div style="flex:1; min-width:200px;">
                             <h2 style="color:#ff007f;">${actor.name}</h2>
-                            <p style="margin:6px 0; font-size:0.85rem; color:#ccc;">
-                                🎂 <strong>Born:</strong> ${actor.birthday || 'Unknown'} <br>
+                            <p style="margin:6px 0; font-size:0.85rem; color:#ccc; line-height:1.5;">
+                                🎂 <strong>Age / Born:</strong> ${ageStr} <br>
                                 📍 <strong>Place of Birth:</strong> ${actor.place_of_birth || 'Unknown'}<br>
                                 🎭 <strong>Department:</strong> ${actor.known_for_department || 'Acting'}
                             </p>
                         </div>
                     </div>
                     <h3 style="color:#ff007f; border-bottom:1px dashed #00ffcc; padding-bottom:4px; margin-bottom:10px;">Biography</h3>
-                    <p style="font-size:0.85rem; color:#ddd; line-height:1.6; max-height:200px; overflow-y:auto; margin-bottom:20px;">${actor.biography || 'No biography logged in registry.'}</p>
-                    <h3 style="color:#ff007f; border-bottom:1px dashed #00ffcc; padding-bottom:4px; margin-bottom:10px;">Notable Filmography & Television</h3>
-                    <ul style="padding-left:20px; font-size:0.85rem;">${knownWorks || '<li>No logged credit archive.</li>'}</ul>
+                    <p style="font-size:0.85rem; color:#ddd; line-height:1.6; max-height:180px; overflow-y:auto; margin-bottom:20px;">${actor.biography || 'No biography logged in registry.'}</p>
+                    ${historyHtml}
+                    ${tvCarousel}
+                    ${movieCarousel}
                 `;
             } catch (e) {
                 content.innerHTML = `<p style="color:#ff007f;">Failed to fetch performer metadata.</p>`;
