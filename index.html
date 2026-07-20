@@ -191,7 +191,7 @@
                         🤖 Step 1: Request Activation Code
                     </button>
 
-                    <!-- NEW STATIC ON-PAGE ASSISTANT DECK -->
+                    <!-- STATIC ON-PAGE ASSISTANT DECK -->
                     <div id="inlineAutomationDeck" class="automation-deck">
                         <p style="color: #fff; font-size: 0.85rem; font-weight: bold;">
                             1. Open a new tab and go to: <a href="https://trakt.tv/activate" target="_blank" style="color: #ff007f;">trakt.tv/activate</a>
@@ -268,16 +268,15 @@
     </nav>
 
     <script>
-        // GLOBALS TO HOLD BACKEND DEVICE FLOW DATA STATE
         let activeDeviceCode = "";
 
-        // NEW PERMANENT ON-PAGE STEP 1 INITIALIZATION
         async function startOnPageDeviceFlow() {
             const clientId = document.getElementById('traktClientIdInput').value.trim();
             if (!clientId) {
                 alert("Sweetie, please paste your Client ID into the top box before running the assistant.");
                 return;
             }
+            localStorage.setItem('traktClientId', clientId);
 
             try {
                 const response = await fetch('https://api.trakt.tv/oauth/device/code', {
@@ -299,7 +298,6 @@
             }
         }
 
-        // NEW PERMANENT ON-PAGE STEP 2 FINALIZATION
         async function finalizeOnPageDeviceFlow() {
             const clientId = document.getElementById('traktClientIdInput').value.trim();
             const clientSecret = document.getElementById('staticClientSecretInput').value.trim();
@@ -323,13 +321,14 @@
 
                 if (tokenData.access_token) {
                     document.getElementById('traktAccessTokenInput').value = tokenData.access_token;
+                    localStorage.setItem('traktClientId', clientId);
                     localStorage.setItem('trakt_access_token', tokenData.access_token);
                     localStorage.setItem('trakt_connection_status', 'connected');
                     document.getElementById('traktStatusLog').innerText = "Status: Connected Master Access Token Locked!";
                     document.getElementById('inlineAutomationDeck').style.display = 'none';
                     alert("Success! Your permanent master authentication token is locked in.");
                 } else {
-                    alert("Token exchange failed. Make sure you finished tapping 'Authorize' on Trakt's tab first!\n\nDetails: " + (tokenData.error_description || JSON.stringify(tokenData)));
+                    alert("Token exchange failed: " + (tokenData.error_description || JSON.stringify(tokenData)));
                 }
             } catch (err) {
                 alert("Error during key negotiation: " + err.message);
@@ -723,7 +722,6 @@
             reader.readAsText(file);
         };
 
-        // --- BYPASS HANDSHAKE ENGINE CORE ---
         window.testAndLockDirectAuth = function() {
             const clientId = document.getElementById('traktClientIdInput').value.trim();
             const token = document.getElementById('traktAccessTokenInput').value.trim();
@@ -742,27 +740,25 @@
             alert("Master Access Token loaded into browser storage successfully!");
         };
 
-        // --- NEW BYPASS-SAFE TRACE DATA INGESTION MATRIX ---
+        // --- ENHANCED TRACE DATA INGESTION MATRIX ---
         window.syncTraktData = async function() {
             if(isScrapingLockActive) return;
             const statusLog = document.getElementById('traktStatusLog');
-            const connectionStatus = localStorage.getItem('trakt_connection_status');
-            const clientId = localStorage.getItem('traktClientId');
-            const accessToken = localStorage.getItem('trakt_access_token');
             
-            if (!connectionStatus || !accessToken) {
-                alert("Master Token not detected! Please paste in your permanent token key and press verify first!");
+            let clientId = localStorage.getItem('traktClientId') || document.getElementById('traktClientIdInput').value.trim();
+            let accessToken = localStorage.getItem('trakt_access_token') || document.getElementById('traktAccessTokenInput').value.trim();
+            
+            if (!clientId || !accessToken) {
+                alert("Please make sure your Client ID and Access Token are both pasted in cleanly!");
                 return;
             }
             
-            if (!clientId) {
-                alert("Please input your application Client ID key into the system matrix configuration box!");
-                return;
-            }
+            localStorage.setItem('traktClientId', clientId);
+            localStorage.setItem('trakt_access_token', accessToken);
+            localStorage.setItem('trakt_connection_status', 'connected');
             
-            statusLog.innerText = "Querying Trakt Cloud Arrays directly...";
+            statusLog.innerText = "Connecting to Trakt Cloud Arrays...";
             let totalAdded = 0;
-            
             let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
             
             const secureHeaders = {
@@ -773,38 +769,35 @@
             };
 
             const targetEndpoints = [
-                'https://api.trakt.tv/sync/watched/shows',
-                'https://api.trakt.tv/sync/collection/shows',
-                'https://api.trakt.tv/sync/watchlist/shows',
-                'https://api.trakt.tv/sync/watched/movies',
-                'https://api.trakt.tv/sync/collection/movies',
-                'https://api.trakt.tv/sync/watchlist/movies'
+                { url: 'https://api.trakt.tv/sync/history/shows?extended=full', type: 'TV', status: 'completed' },
+                { url: 'https://api.trakt.tv/sync/history/movies?extended=full', type: 'Movie', status: 'completed' },
+                { url: 'https://api.trakt.tv/sync/watchlist/shows', type: 'TV', status: 'watching' },
+                { url: 'https://api.trakt.tv/sync/watchlist/movies', type: 'Movie', status: 'watching' },
+                { url: 'https://api.trakt.tv/sync/collection/shows', type: 'TV', status: 'completed' },
+                { url: 'https://api.trakt.tv/sync/collection/movies', type: 'Movie', status: 'completed' }
             ];
 
-            for (let url of targetEndpoints) {
+            for (let target of targetEndpoints) {
                 try {
-                    const isMovie = url.includes('movies');
-                    const isWatchlist = url.includes('watchlist');
-                    const labelType = isMovie ? 'Movie' : 'TV';
+                    statusLog.innerText = `Querying ${target.type} (${target.status})...`;
+                    const response = await fetch(target.url, { headers: secureHeaders });
                     
-                    const response = await fetch(url, { headers: secureHeaders });
                     if (!response.ok) {
-                        console.error(`Endpoint error ${response.status} for URL mapping.`);
+                        console.warn(`Endpoint HTTP status ${response.status} for ${target.url}`);
                         continue;
                     }
                     
                     const dataset = await response.json();
-                    if (dataset && dataset.length > 0) {
+                    if (Array.isArray(dataset) && dataset.length > 0) {
                         dataset.forEach(item => {
-                            let node = isMovie ? item.movie : item.show;
-                            
+                            let node = target.type === 'Movie' ? (item.movie || item) : (item.show || item);
                             if (node && node.title) {
-                                statusLog.innerText = `Ingesting: ${node.title}`;
-                                if (!currentDB.some(m => m.name.toLowerCase() === node.title.toLowerCase())) {
+                                let cleanTitle = node.title.trim();
+                                if (!currentDB.some(m => m.name.toLowerCase() === cleanTitle.toLowerCase())) {
                                     currentDB.push({ 
-                                        name: node.title, 
-                                        type: labelType, 
-                                        status: isWatchlist ? 'watching' : 'completed', 
+                                        name: cleanTitle, 
+                                        type: target.type, 
+                                        status: target.status, 
                                         genre: 'Sci-Fi', 
                                         dateAdded: new Date().toISOString() 
                                     });
@@ -813,21 +806,23 @@
                             }
                         });
                     }
-                } catch (e) { console.error(e); }
+                } catch (e) { 
+                    console.error("Endpoint fetch error:", e); 
+                }
             }
             
             localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
             renderAllMasterGrids();
-            statusLog.innerText = `Sync Complete! Ingested ${totalAdded} assets.`;
+            statusLog.innerText = `Sync Complete! Ingested ${totalAdded} new assets.`;
         };
 
-        // --- FIXED DUAL-ENGINE BOOK METADATA SCRAPER ENGINE ---
+        // --- ACCURATE TITLE+AUTHOR BOOK SCRAPER ENGINE ---
         window.repairExistingMediaMetadata = async function() {
             if (isScrapingLockActive) return;
             isScrapingLockActive = true;
             
             const statusLog = document.getElementById('traktStatusLog');
-            const apiKey = localStorage.getItem('tmdbApiKey');
+            const apiKey = localStorage.getItem('tmdbApiKey') || document.getElementById('tmdbApiKeyInput').value.trim();
             let processedCount = 0;
             
             let localWorkingDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
@@ -862,15 +857,16 @@
                     statusLog.innerText = `Scraping Book Cover Catalogs (${processedCount}/${totalAssets})...`;
                     try {
                         let sanitizedTitle = item.name.replace(/\s*[\(\[][^\)]*[\)\]]\s*/g, "").trim();
+                        let searchQuery = item.author ? `intitle:${sanitizedTitle} inauthor:${item.author}` : sanitizedTitle;
                         
-                        const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(sanitizedTitle)}`);
+                        const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchQuery)}`);
                         const bookData = await response.json();
                         
                         if (bookData.items && bookData.items.length > 0) {
                             const info = bookData.items[0].volumeInfo;
                             localWorkingDB[i].cover = info.imageLinks?.thumbnail ? info.imageLinks.thumbnail.replace("http://", "https://") : '';
                             localWorkingDB[i].description = info.description || 'No localized summary logged.';
-                            localWorkingDB[i].author = info.authors ? info.authors.join(', ') : 'Unknown Author';
+                            localWorkingDB[i].author = info.authors ? info.authors.join(', ') : (item.author || 'Unknown Author');
                             localWorkingDB[i].rating = info.averageRating || 'N/A';
                         } else {
                             const olResponse = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(sanitizedTitle)}&limit=1`);
@@ -880,7 +876,7 @@
                                 const doc = olData.docs[0];
                                 localWorkingDB[i].cover = doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : '';
                                 localWorkingDB[i].description = doc.first_sentence ? doc.first_sentence.join(' ') : 'No localized summary logged.';
-                                localWorkingDB[i].author = doc.author_name ? doc.author_name.join(', ') : 'Unknown Author';
+                                localWorkingDB[i].author = doc.author_name ? doc.author_name.join(', ') : (item.author || 'Unknown Author');
                                 localWorkingDB[i].rating = doc.ratings_average ? doc.ratings_average.toFixed(1) : 'N/A';
                             }
                         }
