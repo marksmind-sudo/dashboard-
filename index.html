@@ -740,7 +740,7 @@
             alert("Master Access Token loaded into browser storage successfully!");
         };
 
-        // --- ENHANCED TRACE DATA INGESTION MATRIX ---
+               // --- PROXY-ENABLED TRACE DATA INGESTION MATRIX ---
         window.syncTraktData = async function() {
             if(isScrapingLockActive) return;
             const statusLog = document.getElementById('traktStatusLog');
@@ -749,7 +749,7 @@
             let accessToken = localStorage.getItem('trakt_access_token') || document.getElementById('traktAccessTokenInput').value.trim();
             
             if (!clientId || !accessToken) {
-                alert("Please make sure your Client ID and Access Token are both pasted in cleanly!");
+                alert("Please make sure your Client ID and Access Token are both pasted in cleanly, Sweetie!");
                 return;
             }
             
@@ -760,13 +760,74 @@
             statusLog.innerText = "Connecting to Trakt Cloud Arrays...";
             let totalAdded = 0;
             let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
-            
+            let errorsEncountered = [];
+
             const secureHeaders = {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
                 'trakt-api-version': '2',
                 'trakt-api-client-id': clientId
             };
+
+            const targetEndpoints = [
+                { url: 'https://api.trakt.tv/sync/history/shows?extended=full', type: 'TV', status: 'completed' },
+                { url: 'https://api.trakt.tv/sync/history/movies?extended=full', type: 'Movie', status: 'completed' },
+                { url: 'https://api.trakt.tv/sync/watchlist/shows', type: 'TV', status: 'watching' },
+                { url: 'https://api.trakt.tv/sync/watchlist/movies', type: 'Movie', status: 'watching' },
+                { url: 'https://api.trakt.tv/sync/collection/shows', type: 'TV', status: 'completed' },
+                { url: 'https://api.trakt.tv/sync/collection/movies', type: 'Movie', status: 'completed' }
+            ];
+
+            for (let target of targetEndpoints) {
+                try {
+                    statusLog.innerText = `Querying ${target.type} (${target.status})...`;
+                    
+                    // Route through proxy to pass Cloudflare's browser check
+                    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(target.url);
+                    
+                    const response = await fetch(proxyUrl, { headers: secureHeaders });
+                    
+                    if (!response.ok) {
+                        const errText = `HTTP ${response.status} on ${target.type}`;
+                        errorsEncountered.push(errText);
+                        continue;
+                    }
+                    
+                    const dataset = await response.json();
+                    if (Array.isArray(dataset) && dataset.length > 0) {
+                        dataset.forEach(item => {
+                            let node = target.type === 'Movie' ? (item.movie || item) : (item.show || item);
+                            if (node && node.title) {
+                                let cleanTitle = node.title.trim();
+                                if (!currentDB.some(m => m.name.toLowerCase() === cleanTitle.toLowerCase())) {
+                                    currentDB.push({ 
+                                        name: cleanTitle, 
+                                        type: target.type, 
+                                        status: target.status, 
+                                        genre: 'Sci-Fi', 
+                                        dateAdded: new Date().toISOString() 
+                                    });
+                                    totalAdded++;
+                                }
+                            }
+                        });
+                    }
+                } catch (e) { 
+                    errorsEncountered.push(e.message);
+                }
+            }
+            
+            localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
+            renderAllMasterGrids();
+            
+            if (totalAdded > 0) {
+                statusLog.innerText = `Sync Complete! Ingested ${totalAdded} new assets.`;
+            } else if (errorsEncountered.length > 0) {
+                statusLog.innerText = `Sync Issue: ${errorsEncountered.join(', ')}`;
+            } else {
+                statusLog.innerText = `Sync Complete! Ingested 0 new assets.`;
+            }
+        };
 
             const targetEndpoints = [
                 { url: 'https://api.trakt.tv/sync/history/shows?extended=full', type: 'TV', status: 'completed' },
