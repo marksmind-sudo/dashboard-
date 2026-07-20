@@ -99,8 +99,9 @@
         .checkbox-container { display: flex; align-items: center; gap: 6px; min-width: 80px; color: #00ffcc; font-size: 0.85rem; }
         
         /* TOUCH-SAFE PHYSICAL BUTTON SHIELDS */
-        .btn { background: #ff007f; color: #000; padding: 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; display: block; }
+        .btn { background: #ff007f; color: #000; padding: 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; display: block; margin-top: 10px; }
         .btn-repair { background: #ffcc00; color: #000; border: 2px solid #ffffff; }
+        .btn-books { background: #00ffcc; color: #000; border: 2px solid #ffffff; }
 
         /* INTERFACE FOOTER NAVIGATION RAIL */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #04040a; border-top: 2px solid #00ffcc; z-index: 1000; }
@@ -168,7 +169,7 @@
                 <div class="control-box">
                     <h3>Library Database Ingest Deck</h3>
                     <div class="form-group">
-                        <label>Import Trakt JSON Files (Select one or multiple JSON files)</label>
+                        <label>Import Trakt JSON Files (Select one or multiple files)</label>
                         <input type="file" id="traktJsonImport" accept=".json, application/json, text/plain" multiple onchange="importTraktJSON(event)">
                     </div>
                     <div class="form-group" style="margin-top: 15px;">
@@ -200,7 +201,8 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-repair" onclick="repairExistingMediaMetadata()">⚡ Force Full Meta Scraping Repair</button>
+                    <button class="btn btn-repair" onclick="repairCinematicMetadataOnly()">⚡ Repair Movie & TV Art (TMDB)</button>
+                    <button class="btn btn-books" onclick="repairBookMetadataOnly()">📚 Repair Book Covers Only</button>
                     
                     <p id="traktStatusLog" style="margin-top: 15px; text-align: center; font-weight: bold;">Status: Standby (Local Mode)</p>
                 </div>
@@ -592,7 +594,7 @@
             renderAllMasterGrids();
         };
 
-        // --- UNIVERSAL TRAKT JSON INGEST ENGINE ---
+        // --- ACCUMULATIVE TRAKT JSON INGEST ENGINE ---
         window.importTraktJSON = function(event) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
@@ -648,8 +650,8 @@
                         if (filesProcessed === files.length) {
                             localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
                             renderAllMasterGrids();
-                            document.getElementById('traktStatusLog').innerText = `Ingested ${totalAdded} items from ${files.length} file(s)!`;
-                            repairExistingMediaMetadata();
+                            document.getElementById('traktStatusLog').innerText = `Ingested ${totalAdded} new title(s) across ${files.length} file(s)!`;
+                            repairCinematicMetadataOnly();
                         }
                     } catch (err) {
                         console.error("Parse error on " + file.name, err);
@@ -685,8 +687,8 @@
             reader.readAsText(file);
         };
 
-        // --- ENHANCED PRECISION BOOK & MEDIA SCRAPER ENGINE ---
-        window.repairExistingMediaMetadata = async function() {
+        // --- DEDICATED CINEMATIC SCRAPER (FAST TMDB ONLY) ---
+        window.repairCinematicMetadataOnly = async function() {
             if (isScrapingLockActive) return;
             isScrapingLockActive = true;
             
@@ -695,7 +697,8 @@
             let processedCount = 0;
             
             let localWorkingDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
-            const totalAssets = localWorkingDB.length;
+            const cinematicAssets = localWorkingDB.filter(i => i.type === 'Movie' || i.type === 'TV');
+            const totalAssets = cinematicAssets.length;
             
             if (apiKey) {
                 for (let i = 0; i < localWorkingDB.length; i++) {
@@ -727,17 +730,35 @@
                                 localWorkingDB[i].posterPath = verifiedMatch.poster_path;
                                 localWorkingDB[i].vote_average = verifiedMatch.vote_average ? verifiedMatch.vote_average.toFixed(1) : 'N/A';
                             }
-                            await new Promise(r => setTimeout(r, 150));
+                            await new Promise(r => setTimeout(r, 120));
                         } catch (e) { console.error(e); }
                     }
                 }
             }
+            
+            localStorage.setItem('vault_media_db', JSON.stringify(localWorkingDB));
+            isScrapingLockActive = false;
+            renderAllMasterGrids();
+            statusLog.innerText = "Status: Cinematic Metadata Repaired!";
+        };
+
+        // --- DEDICATED BOOK COVER SCRAPER ---
+        window.repairBookMetadataOnly = async function() {
+            if (isScrapingLockActive) return;
+            isScrapingLockActive = true;
+            
+            const statusLog = document.getElementById('traktStatusLog');
+            let processedCount = 0;
+            
+            let localWorkingDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+            const bookAssets = localWorkingDB.filter(i => i.type === 'Book' || i.type === 'Audiobook');
+            const totalAssets = bookAssets.length;
 
             for (let i = 0; i < localWorkingDB.length; i++) {
                 let item = localWorkingDB[i];
                 if (item.type === 'Book' || item.type === 'Audiobook') {
                     processedCount++;
-                    statusLog.innerText = `Scraping Book Cover Catalogs (${processedCount}/${totalAssets})...`;
+                    statusLog.innerText = `Scraping Book Covers (${processedCount}/${totalAssets})...`;
                     try {
                         let sanitizedTitle = item.name.replace(/\s*[\(\[][^\)]*[\)\]]\s*/g, "").trim();
                         let searchQuery = item.author 
@@ -749,7 +770,6 @@
                         
                         let matchFound = false;
                         if (bookData.items && bookData.items.length > 0) {
-                            // Find precise match to avoid pulling unrelated books (e.g. R.L. Stine)
                             const exactMatch = bookData.items.find(b => {
                                 const t = (b.volumeInfo?.title || '').toLowerCase();
                                 return t.includes(sanitizedTitle.toLowerCase());
@@ -777,7 +797,7 @@
                                 localWorkingDB[i].rating = doc.ratings_average ? doc.ratings_average.toFixed(1) : 'N/A';
                             }
                         }
-                        await new Promise(r => setTimeout(r, 200));
+                        await new Promise(r => setTimeout(r, 150));
                     } catch (err) { console.error(err); }
                 }
             }
@@ -785,7 +805,7 @@
             localStorage.setItem('vault_media_db', JSON.stringify(localWorkingDB));
             isScrapingLockActive = false;
             renderAllMasterGrids();
-            statusLog.innerText = "Status: Metadata Repaired!";
+            statusLog.innerText = "Status: Book Covers Repaired!";
         };
 
         window.onload = () => {
