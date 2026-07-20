@@ -100,7 +100,6 @@
         
         /* TOUCH-SAFE PHYSICAL BUTTON SHIELDS */
         .btn { background: #ff007f; color: #000; padding: 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; display: block; }
-        .btn-sync { background: #00ffcc; color: #000; margin-bottom: 16px !important; border: 2px solid #ffffff; }
         .btn-repair { background: #ffcc00; color: #000; border: 2px solid #ffffff; }
 
         /* INTERFACE FOOTER NAVIGATION RAIL */
@@ -169,12 +168,12 @@
                 <div class="control-box">
                     <h3>Library Database Ingest Deck</h3>
                     <div class="form-group">
-                        <label>Import Trakt CSV File (Shows/Movies Export)</label>
-                        <input type="file" id="traktImport" accept=".csv, .txt" onchange="importTraktCSV(event)">
+                        <label>Import Trakt JSON File (e.g. watched-shows.json or watched-movies.json)</label>
+                        <input type="file" id="traktJsonImport" accept=".json, application/json, text/plain" onchange="importTraktJSON(event)">
                     </div>
                     <div class="form-group" style="margin-top: 15px;">
                         <label>Import Goodreads CSV Log (Books)</label>
-                        <input type="file" id="goodreadsImport" accept=".csv, .txt" onchange="importGoodreads(event)">
+                        <input type="file" id="goodreadsImport" accept=".csv, .txt, text/csv" onchange="importGoodreads(event)">
                     </div>
                     <div class="form-group" style="margin-top: 15px;">
                         <label>Manual Asset Entry</label>
@@ -587,44 +586,53 @@
             renderAllMasterGrids();
         };
 
-        // --- TRAKT CSV / DATA INGEST ENGINE ---
-        window.importTraktCSV = function(event) {
+        // --- TRAKT JSON INGEST ENGINE ---
+        window.importTraktJSON = function(event) {
             const file = event.target.files[0];
             if (!file) return;
+            
+            const fileName = file.name.toLowerCase();
             const reader = new FileReader();
+            
             reader.onload = function(e) {
-                const text = e.target.result;
-                const lines = text.split('\n');
-                let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
-                let addedCount = 0;
+                try {
+                    const data = JSON.parse(e.target.result);
+                    let currentDB = JSON.parse(localStorage.getItem('vault_media_db') || '[]');
+                    let addedCount = 0;
 
-                lines.forEach((line, index) => {
-                    if (index === 0) return;
-                    // Auto-parse CSV quote structures
-                    const cols = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || line.split(',');
-                    if (cols && cols.length >= 2) {
-                        let title = cols[0].replace(/"/g, '').trim();
-                        let type = line.toLowerCase().includes('show') || line.toLowerCase().includes('episode') ? 'TV' : 'Movie';
-                        
-                        if (title && title.toLowerCase() !== 'title' && !currentDB.some(m => m.name.toLowerCase() === title.toLowerCase())) {
-                            currentDB.push({
-                                name: title,
-                                type: type,
-                                status: 'completed',
-                                favorite: false,
-                                source: 'Stream',
-                                progress: 100,
-                                genre: 'Sci-Fi',
-                                dateAdded: new Date().toISOString()
-                            });
-                            addedCount++;
-                        }
+                    if (Array.isArray(data)) {
+                        data.forEach(item => {
+                            let node = item.show || item.movie || item;
+                            if (node && node.title) {
+                                let title = node.title.trim();
+                                let type = (item.show || fileName.includes('show') || fileName.includes('tv')) ? 'TV' : 'Movie';
+                                
+                                if (!currentDB.some(m => m.name.toLowerCase() === title.toLowerCase())) {
+                                    currentDB.push({
+                                        name: title,
+                                        type: type,
+                                        status: 'completed',
+                                        favorite: false,
+                                        source: 'Stream',
+                                        progress: 100,
+                                        genre: 'Sci-Fi',
+                                        dateAdded: new Date().toISOString()
+                                    });
+                                    addedCount++;
+                                }
+                            }
+                        });
                     }
-                });
 
-                localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
-                renderAllMasterGrids();
-                document.getElementById('traktStatusLog').innerText = `Ingested ${addedCount} items from Trakt export!`;
+                    localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
+                    renderAllMasterGrids();
+                    document.getElementById('traktStatusLog').innerText = `Ingested ${addedCount} items from ${file.name}!`;
+                    
+                    // Trigger artwork fetching right away
+                    repairExistingMediaMetadata();
+                } catch (err) {
+                    alert("Could not parse file: " + err.message);
+                }
             };
             reader.readAsText(file);
         };
