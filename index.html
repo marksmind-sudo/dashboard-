@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entertainment Vault</title>
     <style>
+        /* MASTER MODAL LAYERS */
         #detailOverlay, #actorOverlay {
             display: none; 
             position: fixed; 
@@ -42,22 +43,25 @@
             font-weight: bold;
         }
 
+        /* CORE HARDWARE LAYOUT */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: #020208; color: #00ffcc; font-family: sans-serif; padding-bottom: 100px; min-height: 100vh; }
+        body { background-color: #020208; color: #00ffcc; font-family: sans-serif; padding-bottom: 110px; min-height: 100vh; }
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #00ffcc; }
         .gear-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #00ffcc; padding: 5px; }
         
+        /* MULTI-FILTER CONTROL DECK */
         .filter-deck { display: flex; flex-wrap: wrap; gap: 12px; padding: 15px 20px; background: rgba(10, 10, 25, 0.6); border-bottom: 1px solid rgba(0,255,204,0.2); }
         .filter-deck input, .filter-deck select { flex: 1; min-width: 130px; padding: 10px; background: #111; color: #fff; border: 1px solid #00ffcc; border-radius: 4px; font-size: 0.85rem; }
 
-        .folder-row { display: flex; gap: 6px; padding: 10px 20px 0 20px; background: #020208; overflow-x: auto; align-items: flex-end; position: relative; }
+        /* PHYSICAL FOLDERS SYSTEM */
+        .folder-row { display: flex; gap: 6px; padding: 10px 20px 0 20px; background: #020208; overflow: visible; align-items: flex-end; position: relative; }
         .folder-tab {
             background: #101430;
             color: #00ffcc;
             border: 1px solid #00ffcc;
             border-bottom: none;
             padding: 10px 14px;
-            border-radius: 8px 8px 0 0;
+            border-radius: 10px 10px 0 0;
             cursor: pointer;
             font-size: 0.8rem;
             font-weight: bold;
@@ -65,9 +69,16 @@
             align-items: center;
             gap: 6px;
             white-space: nowrap;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.05);
         }
         .folder-tab.active { background: #ff007f; color: #fff; border-color: #ff007f; padding-bottom: 12px; }
 
+        .overflow-menu-btn { background: #111; color: #00ffcc; border: 1px solid #00ffcc; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-weight: bold; margin-bottom: 2px; }
+        .overflow-dropdown { display: none; position: absolute; top: 100%; right: 20px; background: #101430; border: 1px solid #00ffcc; border-radius: 6px; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.8); }
+        .overflow-dropdown-item { padding: 12px 20px; color: #00ffcc; cursor: pointer; font-size: 0.85rem; font-weight: bold; border-bottom: 1px dashed rgba(0,255,204,0.1); white-space: nowrap; }
+        .overflow-dropdown-item:hover { background: #ff007f; color: #fff; }
+
+        /* RESPONSIVE MEDIA GRID */
         .cinema-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 20px; }
         .media-card { background: rgba(20, 20, 35, 0.8); border: 1px solid #00ffcc; border-radius: 8px; padding: 10px; height: 285px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         
@@ -76,6 +87,14 @@
         .card-progress-bar { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
         .card-progress-fill { height: 100%; background: #ff007f; width: 0%; }
 
+        /* CASTING HORIZONTAL DECK */
+        .cast-scroll-tray { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; margin-top: 10px; }
+        .actor-card { min-width: 90px; width: 90px; text-align: center; cursor: pointer; }
+        .actor-thumb { width: 90px; height: 120px; border-radius: 6px; object-fit: cover; border: 1px solid #00ffcc; background: #111; }
+        .actor-name { font-size: 0.75rem; color: #fff; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .actor-role { font-size: 0.68rem; color: #aaa; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* SETTINGS CONFIGURATION */
         .settings-container { display: flex; flex-direction: column; gap: 20px; padding: 20px; max-width: 600px; margin: 0 auto; }
         .control-box { background: rgba(16, 20, 48, 0.5); border: 1px solid #00ffcc; border-radius: 8px; padding: 20px; }
         .control-box h3 { color: #ff007f; margin-bottom: 15px; border-bottom: 1px dashed rgba(0,255,204,0.3); padding-bottom: 6px; }
@@ -88,9 +107,10 @@
         .btn-repair { background: #ffcc00; color: #000; border: 2px solid #ffffff; }
         .btn-books { background: #00ffcc; color: #000; border: 2px solid #ffffff; }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #04040a; border-top: 2px solid #00ffcc; z-index: 1000; overflow-x: auto; }
-        .nav-item { padding: 12px 10px; flex: 1; text-align: center; cursor: pointer; color: #00ffcc; font-size: 0.75rem; white-space: nowrap; }
-        .nav-item.active { background: #00ffcc; color: #000; font-weight: bold; }
+        /* PHYSICAL ROUNDED BOTTOM TABS */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #04040a; border-top: 2px solid #00ffcc; z-index: 1000; overflow-x: auto; padding-top: 4px; }
+        .nav-item { padding: 12px 14px; flex: 1; text-align: center; cursor: pointer; color: #00ffcc; font-size: 0.8rem; white-space: nowrap; border-radius: 12px 12px 0 0; background: #0a0d20; border: 1px solid rgba(0,255,204,0.2); border-bottom: none; margin: 0 2px; }
+        .nav-item.active { background: #00ffcc; color: #000; font-weight: bold; border-color: #00ffcc; }
         
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -136,14 +156,20 @@
         <button onclick="resetListOrderToDefault()" style="background:none; border:1px solid #ff007f; color:#ff007f; padding:8px 12px; border-radius:4px; font-size:0.8rem; cursor:pointer; font-weight:bold;">🔄 Reset</button>
     </section>
 
+    <!-- FOLDER NAVIGATION ROW WITH DROPDOWN -->
     <div id="statusFolderBar" class="folder-row">
         <div class="folder-tab active" onclick="switchStatusFolder('all', this)">📁 Main Collection</div>
         <div class="folder-tab" onclick="switchStatusFolder('watching', this)">📂 Currently Watching</div>
         <div class="folder-tab" onclick="switchStatusFolder('awaiting', this)">📂 Awaiting Episodes</div>
-        <div class="folder-tab" onclick="switchStatusFolder('favorites', this)">📂 Favorites</div>
-        <div class="folder-tab" onclick="switchStatusFolder('history', this)">📂 History Archive</div>
-        <div class="folder-tab" onclick="switchStatusFolder('find', this)">📂 Want to Find</div>
-        <div class="folder-tab" onclick="switchStatusFolder('owned', this)">📂 Owned Vault</div>
+        <div class="folder-tab" onclick="switchStatusFolder('recently_watched', this)">📂 Recently Watched</div>
+        
+        <button class="overflow-menu-btn" id="folderOverflowBtn" onclick="toggleFolderOverflowMenu()">⚙️ More...</button>
+        <div class="overflow-dropdown" id="folderOverflowDropdown">
+            <div class="overflow-dropdown-item" onclick="selectOverflowFolder('favorites')">📂 Favorites</div>
+            <div class="overflow-dropdown-item" onclick="selectOverflowFolder('history')">📂 History Archive</div>
+            <div class="overflow-dropdown-item" onclick="selectOverflowFolder('find')">📂 Want to Find</div>
+            <div class="overflow-dropdown-item" onclick="selectOverflowFolder('owned')">📂 Owned Vault</div>
+        </div>
     </div>
 
     <main>
@@ -197,11 +223,13 @@
             </div>
         </div>
 
+        <!-- MAIN MEDIA DETAIL OVERLAY -->
         <div id="detailOverlay">
             <button onclick="closeDetails()" class="close-btn">❌ Close Window</button>
             <div id="detailContent"></div>
         </div>
 
+        <!-- DEEP ACTOR PROFILE DOSSIER OVERLAY -->
         <div id="actorOverlay">
             <button onclick="closeActorDetails()" class="close-btn">🔙 Return to Media</button>
             <div id="actorContent" style="color: #fff; max-width: 600px; margin: auto;"></div>
@@ -243,9 +271,21 @@
 
         function switchStatusFolder(statusType, el) {
             document.querySelectorAll('.folder-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('folderOverflowBtn').classList.remove('active');
             if(el) el.classList.add('active');
             currentStatusFilter = statusType;
             triggerSearchProcessing();
+        }
+
+        function toggleFolderOverflowMenu() {
+            const drop = document.getElementById('folderOverflowDropdown');
+            drop.style.display = (drop.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function selectOverflowFolder(statusType) {
+            document.getElementById('folderOverflowDropdown').style.display = 'none';
+            switchStatusFolder(statusType, null);
+            document.getElementById('folderOverflowBtn').innerText = "📂 " + statusType.toUpperCase().replace('_', ' ');
         }
 
         function toggleVisibility(inputId, isVisible) {
@@ -377,6 +417,7 @@
                                     <select onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'status', this.value)" style="width:100%; padding:8px; background:#111; color:#fff; border:1px solid #00ffcc; margin-top:5px; border-radius:4px;">
                                         <option value="recent" ${item.status === 'recent' ? 'selected' : ''}>Main Collection</option>
                                         <option value="watching" ${item.status === 'watching' ? 'selected' : ''}>Currently Reading/Listening</option>
+                                        <option value="recently_watched" ${item.status === 'recently_watched' ? 'selected' : ''}>Recently Watched</option>
                                         <option value="history" ${item.status === 'history' ? 'selected' : ''}>History Archive</option>
                                         <option value="find" ${item.status === 'find' ? 'selected' : ''}>Want to Find</option>
                                     </select>
@@ -384,33 +425,41 @@
                                 <div>
                                     <label style="font-size:0.8rem; color:#ff007f; font-weight:bold;">Acquisition Source:</label>
                                     <select onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'source', this.value)" style="width:100%; padding:8px; background:#111; color:#fff; border:1px solid #00ffcc; margin-top:5px; border-radius:4px;">
-                                        <option value="Stream" ${item.source === 'Stream' ? 'selected' : ''}>Digital / Stream Access</option>
+                                        <option value="Stream" ${item.source === 'Stream' ? 'selected' : ''}>Digital Stream Access</option>
                                         <option value="Owned" ${item.source === 'Owned' ? 'selected' : ''}>Physical / Owned Copy</option>
                                     </select>
                                 </div>
                                 <div style="margin-top:5px;">
-                                    <label style="font-size:0.8rem; color:#00ffcc;">Metrics Unit Mode:</label>
+                                    <label style="font-size:0.8rem; color:#00ffcc;">Progress Mode:</label>
                                     <select onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'progressMode', this.value); openDetails('${item.name.replace(/'/g, "\\\'")}');" style="width:100%; padding:6px; background:#111; color:#fff; border:1px solid #00ffcc;">
                                         <option value="percent" ${item.progressMode === 'percent' ? 'selected' : ''}>Percentage (%)</option>
-                                        <option value="pages" ${item.progressMode === 'pages' ? 'selected' : ''}>Pages / Chapters Count</option>
+                                        <option value="pages" ${item.progressMode === 'pages' ? 'selected' : ''}>Pages / Chapters</option>
                                     </select>
-                                    <label style="font-size:0.75rem; color:#aaa; margin-top:4px; display:block;">Current Progress Value:</label>
+                                    <label style="font-size:0.75rem; color:#aaa; margin-top:4px; display:block;">Current Value:</label>
                                     <input type="number" min="0" value="${item.progressValue || 0}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'progressValue', this.value); renderAllMasterGrids();" style="padding:6px; width:100%;">
                                     ${item.progressMode === 'pages' ? `
-                                    <label style="font-size:0.75rem; color:#aaa; margin-top:4px; display:block;">Total Pages / Chapters:</label>
+                                    <label style="font-size:0.75rem; color:#aaa; margin-top:4px; display:block;">Total Pages/Chapters:</label>
                                     <input type="number" min="1" value="${item.totalPages || 300}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'totalPages', this.value); renderAllMasterGrids();" style="padding:6px; width:100%;">` : ''}
                                 </div>
                                 <div class="checkbox-container">
                                     <input type="checkbox" ${item.favorite ? 'checked' : ''} onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'favorite', this.checked)">
-                                    <span style="color:#ff007f; font-weight:bold;">❤️ Mark Favorite</span>
+                                    <span style="color:#ff007f; font-weight:bold;">❤️ Favorite</span>
                                 </div>
                             </div>
                         </div>
                         <div class="meta-info-shelf">
                             <h2>${item.name}</h2>
-                            <p style='color:#ff007f; font-weight:bold; margin: 6px 0;'>Type: ${item.type} | Database Rating: ⭐ ${item.rating || 'N/A'}</p>
+                            <p style='color:#ff007f; font-weight:bold; margin: 6px 0;'>Type: ${item.type} | Rating: ⭐ ${item.rating || 'N/A'}</p>
                             <p style='color:#00ffcc; font-size:0.95rem;'><strong>Author/Creator:</strong> ${item.author || 'Unknown Author'}</p>
-                            <p style='color:#ccc; font-size:0.85rem; margin-top:4px;'><strong>Date Read/Completed:</strong> <input type="date" value="${item.dateCompleted || ''}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'dateCompleted', this.value)" style="background:#111; color:#fff; border:1px solid #00ffcc; padding:2px 6px; border-radius:4px;"></p>
+                            
+                            <div style="margin-top:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px;">
+                                <label style='color:#ccc; font-size:0.85rem;'><strong>Date Read / Completed:</strong></label>
+                                <div style="display:flex; gap:10px; align-items:center; margin-top:4px;">
+                                    <input type="date" id="dateInput" value="${item.dateCompleted || ''}" ${item.dateUnknown ? 'disabled' : ''} onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'dateCompleted', this.value)" style="background:#111; color:#fff; border:1px solid #00ffcc; padding:4px 8px; border-radius:4px;">
+                                    <label style="font-size:0.8rem; color:#00ffcc; cursor:pointer;"><input type="checkbox" ${item.dateUnknown ? 'checked' : ''} onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'dateUnknown', this.checked); openDetails('${item.name.replace(/'/g, "\\\'")}');"> Unknown Date</label>
+                                </div>
+                            </div>
+
                             <div class="personal-rating-stars">${renderStarInterface(item.name, item.personalRating || 0)}</div>
                             <p style="line-height:1.6; color:#ccc; font-size:0.95rem; margin-top:15px;">${item.description || "No localized summary registered."}</p>
                             <span class="discrete-delete-link" onclick="deleteAssetFromLibrary('${item.name.replace(/'/g, "\\'")}')">🗑️ Permanent Delete Asset</span>
@@ -446,7 +495,6 @@
                     const statusText = deepData.status || 'Unknown';
                     const nextEpisodeAir = deepData.next_episode_to_air ? deepData.next_episode_to_air.air_date : 'No Release Scheduled';
 
-                    // Extended Metadata Extractions
                     let creatorStr = deepData.created_by ? deepData.created_by.map(c => c.name).join(', ') : 'N/A';
                     let networkStr = deepData.networks ? deepData.networks.map(n => n.name).join(', ') : 'N/A';
                     let genresStr = deepData.genres ? deepData.genres.map(g => g.name).join(', ') : 'N/A';
@@ -470,13 +518,26 @@
                         }
                     }
 
+                    // CASTING SCROLL TRAY
+                    let castHtml = "";
+                    if (deepData.credits && deepData.credits.cast && deepData.credits.cast.length > 0) {
+                        castHtml = `<h3 style="color:#ff007f; margin-top:20px;">Top Cast & Performers (Tap for Details)</h3><div class="cast-scroll-tray">`;
+                        castHtml += deepData.credits.cast.slice(0, 12).map(c => `
+                            <div class="actor-card" onclick="openActorProfile('${c.id}')">
+                                <img src="${c.profile_path ? 'https://image.tmdb.org/t/p/w185' + c.profile_path : 'https://via.placeholder.com/90x120?text=No+Photo'}" class="actor-thumb">
+                                <div class="actor-name">${c.name}</div>
+                                <div class="actor-role">${c.character || 'Actor'}</div>
+                            </div>
+                        `).join('');
+                        castHtml += `</div>`;
+                    }
+
                     let seasonTrackerGridHtml = "";
                     if (item.type === 'TV' && deepData.seasons) {
                         seasonTrackerGridHtml = `<h3 style="color:#ff007f; margin-top:20px;">Season Tracker Grid (Toggle Viewed Status)</h3><div style="margin-top:10px;">`;
                         seasonTrackerGridHtml += deepData.seasons.map(s => {
                             let isSeasonFullyWatched = item['season_' + s.season_number] || false;
                             
-                            // Check if all episodes are individually toggled
                             if (!isSeasonFullyWatched && s.episode_count > 0) {
                                 let allWatched = true;
                                 for(let ep = 1; ep <= s.episode_count; ep++) {
@@ -509,7 +570,8 @@
                                         <select onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'status', this.value)" style="width:100%; padding:8px; background:#111; color:#fff; border:1px solid #00ffcc; border-radius:4px; margin-top:4px;">
                                             <option value="recent" ${item.status === 'recent' ? 'selected' : ''}>Main Collection</option>
                                             <option value="watching" ${item.status === 'watching' ? 'selected' : ''}>Currently Watching</option>
-                                            <option value="awaiting" ${item.status === 'awaiting' ? 'selected' : ''}>Awaiting Episodes</option>
+                                            ${item.type === 'TV' ? `<option value="awaiting" ${item.status === 'awaiting' ? 'selected' : ''}>Awaiting Episodes</option>` : ''}
+                                            <option value="recently_watched" ${item.status === 'recently_watched' ? 'selected' : ''}>Recently Watched</option>
                                             <option value="history" ${item.status === 'history' ? 'selected' : ''}>History Archive</option>
                                             <option value="find" ${item.status === 'find' ? 'selected' : ''}>Want to Find</option>
                                         </select>
@@ -533,15 +595,67 @@
                                     🔞 <strong>Certification:</strong> ${certRating} | 🏷️ <strong>Genre:</strong> ${genresStr}<br>
                                     ${item.type === 'TV' ? `✍️ <strong>Creator:</strong> ${creatorStr} | 📺 <strong>Network:</strong> ${networkStr}<br>⚡ <strong>Status:</strong> ${statusText} | 📆 <strong>Next Season Drop:</strong> ${nextEpisodeAir}` : `🎥 <strong>Director:</strong> ${directorStr} | 🌍 <strong>Country:</strong> ${originCountryStr}<br>📅 <strong>Release Date:</strong> ${releaseDateStr}`}
                                 </p>
-                                <p style='color:#ccc; font-size:0.85rem; margin-top:6px;'><strong>Date Watched/Seen:</strong> <input type="date" value="${item.dateCompleted || ''}" onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'dateCompleted', this.value)" style="background:#111; color:#fff; border:1px solid #00ffcc; padding:2px 6px; border-radius:4px;"></p>
+                                
+                                <div style="margin-top:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px;">
+                                    <label style='color:#ccc; font-size:0.85rem;'><strong>Date Watched / Seen:</strong></label>
+                                    <div style="display:flex; gap:10px; align-items:center; margin-top:4px;">
+                                        <input type="date" id="dateInput" value="${item.dateCompleted || ''}" ${item.dateUnknown ? 'disabled' : ''} onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'dateCompleted', this.value)" style="background:#111; color:#fff; border:1px solid #00ffcc; padding:4px 8px; border-radius:4px;">
+                                        <label style="font-size:0.8rem; color:#00ffcc; cursor:pointer;"><input type="checkbox" ${item.dateUnknown ? 'checked' : ''} onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'dateUnknown', this.checked); openDetails('${item.name.replace(/'/g, "\\\'")}');"> Unknown Date</label>
+                                    </div>
+                                </div>
+
                                 <div class="personal-rating-stars">${renderStarInterface(item.name, item.personalRating || 0)}</div>
                                 <p style="margin-top:12px; color:#ddd; font-size:0.9rem; line-height:1.5;">${deepData.overview || "Overview summary filed offline."}</p>
+                                ${castHtml}
                                 ${seasonTrackerGridHtml}
                                 <span class="discrete-delete-link" onclick="deleteAssetFromLibrary('${item.name.replace(/'/g, "\\'")}')">🗑️ Permanent Delete Asset</span>
                             </div>
                         </div>`;
                 }
             } catch (e) { console.error(e); }
+        };
+
+        // DEEP ACTOR DOSSIER LOADER
+        window.openActorProfile = async function(actorId) {
+            const overlay = document.getElementById('actorOverlay');
+            const content = document.getElementById('actorContent');
+            overlay.style.display = 'block';
+            content.innerHTML = `<p style="color:#00ffcc;">Decrypting performer dossier...</p>`;
+
+            const apiKey = localStorage.getItem('tmdbApiKey');
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/person/${actorId}?api_key=${apiKey}&append_to_response=combined_credits`);
+                const actor = await res.json();
+
+                let knownWorks = "";
+                if (actor.combined_credits && actor.combined_credits.cast) {
+                    knownWorks = actor.combined_credits.cast
+                        .sort((a,b) => (b.popularity || 0) - (a.popularity || 0))
+                        .slice(0, 10)
+                        .map(w => `<li style="margin-bottom:6px; color:#00ffcc;"><strong>${w.title || w.name}</strong> (${(w.release_date || w.first_air_date || 'N/A').substring(0,4)}) as <em>${w.character || 'Self'}</em></li>`)
+                        .join('');
+                }
+
+                content.innerHTML = `
+                    <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
+                        <img src="${actor.profile_path ? 'https://image.tmdb.org/t/p/w300' + actor.profile_path : 'https://via.placeholder.com/150x225?text=No+Photo'}" style="width:160px; height:230px; object-fit:cover; border-radius:8px; border:1px solid #00ffcc;">
+                        <div style="flex:1; min-width:200px;">
+                            <h2 style="color:#ff007f;">${actor.name}</h2>
+                            <p style="margin:6px 0; font-size:0.85rem; color:#ccc;">
+                                🎂 <strong>Born:</strong> ${actor.birthday || 'Unknown'} <br>
+                                📍 <strong>Place of Birth:</strong> ${actor.place_of_birth || 'Unknown'}<br>
+                                🎭 <strong>Department:</strong> ${actor.known_for_department || 'Acting'}
+                            </p>
+                        </div>
+                    </div>
+                    <h3 style="color:#ff007f; border-bottom:1px dashed #00ffcc; padding-bottom:4px; margin-bottom:10px;">Biography</h3>
+                    <p style="font-size:0.85rem; color:#ddd; line-height:1.6; max-height:200px; overflow-y:auto; margin-bottom:20px;">${actor.biography || 'No biography logged in registry.'}</p>
+                    <h3 style="color:#ff007f; border-bottom:1px dashed #00ffcc; padding-bottom:4px; margin-bottom:10px;">Notable Filmography & Television</h3>
+                    <ul style="padding-left:20px; font-size:0.85rem;">${knownWorks || '<li>No logged credit archive.</li>'}</ul>
+                `;
+            } catch (e) {
+                content.innerHTML = `<p style="color:#ff007f;">Failed to fetch performer metadata.</p>`;
+            }
         };
 
         function renderStarInterface(name, activeScore) {
@@ -662,7 +776,6 @@
                                     let tmdbId = (node.ids && node.ids.tmdb) ? node.ids.tmdb : null;
                                     let isFav = fileName.includes('favorite');
                                     
-                                    // Folder Categorization Logic
                                     let targetStatus = 'recent';
                                     if (fileName.includes('watchlist')) targetStatus = isMovie ? 'find' : 'awaiting';
                                     else if (fileName.includes('history')) targetStatus = 'watching';
@@ -708,7 +821,7 @@
                         if (filesProcessed === files.length) {
                             localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
                             renderAllMasterGrids();
-                            document.getElementById('traktStatusLog').innerText = `Successfully parsed & merged ${files.length} JSON file(s)!`;
+                            document.getElementById('traktStatusLog').innerText = `Successfully parsed ${files.length} JSON file(s)!`;
                             repairCinematicMetadataOnly();
                         }
                     } catch (err) {
@@ -745,7 +858,7 @@
                 });
                 localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
                 renderAllMasterGrids();
-                document.getElementById('traktStatusLog').innerText = "Goodreads CSV library ingested!";
+                document.getElementById('traktStatusLog').innerText = "Goodreads library ingested!";
             };
             reader.readAsText(file);
         };
