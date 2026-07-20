@@ -740,7 +740,7 @@
             alert("Master Access Token loaded into browser storage successfully!");
         };
 
-               // --- PROXY-ENABLED TRACE DATA INGESTION MATRIX ---
+        // --- CLEAN PROXY-ENABLED TRACE DATA INGESTION MATRIX ---
         window.syncTraktData = async function() {
             if(isScrapingLockActive) return;
             const statusLog = document.getElementById('traktStatusLog');
@@ -782,9 +782,7 @@
                 try {
                     statusLog.innerText = `Querying ${target.type} (${target.status})...`;
                     
-                    // Route through proxy to pass Cloudflare's browser check
                     const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(target.url);
-                    
                     const response = await fetch(proxyUrl, { headers: secureHeaders });
                     
                     if (!response.ok) {
@@ -827,54 +825,6 @@
             } else {
                 statusLog.innerText = `Sync Complete! Ingested 0 new assets.`;
             }
-        };
-
-            const targetEndpoints = [
-                { url: 'https://api.trakt.tv/sync/history/shows?extended=full', type: 'TV', status: 'completed' },
-                { url: 'https://api.trakt.tv/sync/history/movies?extended=full', type: 'Movie', status: 'completed' },
-                { url: 'https://api.trakt.tv/sync/watchlist/shows', type: 'TV', status: 'watching' },
-                { url: 'https://api.trakt.tv/sync/watchlist/movies', type: 'Movie', status: 'watching' },
-                { url: 'https://api.trakt.tv/sync/collection/shows', type: 'TV', status: 'completed' },
-                { url: 'https://api.trakt.tv/sync/collection/movies', type: 'Movie', status: 'completed' }
-            ];
-
-            for (let target of targetEndpoints) {
-                try {
-                    statusLog.innerText = `Querying ${target.type} (${target.status})...`;
-                    const response = await fetch(target.url, { headers: secureHeaders });
-                    
-                    if (!response.ok) {
-                        console.warn(`Endpoint HTTP status ${response.status} for ${target.url}`);
-                        continue;
-                    }
-                    
-                    const dataset = await response.json();
-                    if (Array.isArray(dataset) && dataset.length > 0) {
-                        dataset.forEach(item => {
-                            let node = target.type === 'Movie' ? (item.movie || item) : (item.show || item);
-                            if (node && node.title) {
-                                let cleanTitle = node.title.trim();
-                                if (!currentDB.some(m => m.name.toLowerCase() === cleanTitle.toLowerCase())) {
-                                    currentDB.push({ 
-                                        name: cleanTitle, 
-                                        type: target.type, 
-                                        status: target.status, 
-                                        genre: 'Sci-Fi', 
-                                        dateAdded: new Date().toISOString() 
-                                    });
-                                    totalAdded++;
-                                }
-                            }
-                        });
-                    }
-                } catch (e) { 
-                    console.error("Endpoint fetch error:", e); 
-                }
-            }
-            
-            localStorage.setItem('vault_media_db', JSON.stringify(currentDB));
-            renderAllMasterGrids();
-            statusLog.innerText = `Sync Complete! Ingested ${totalAdded} new assets.`;
         };
 
         // --- ACCURATE TITLE+AUTHOR BOOK SCRAPER ENGINE ---
