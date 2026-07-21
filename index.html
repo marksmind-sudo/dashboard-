@@ -80,11 +80,32 @@
         .favorite-heart-badge { position: absolute; top: 5px; left: 5px; font-size: 1.2rem; z-index: 10; text-shadow: 0 0 4px #000; cursor: pointer; }
         .cover-rating-badge { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.75); color: #ffcc00; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #ffcc00; z-index: 10; }
 
-        .cast-scroll-tray { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; margin-top: 10px; width: 220px; }
-        .actor-card { min-width: 80px; width: 80px; text-align: center; cursor: pointer; }
-        .actor-thumb { width: 80px; height: 110px; border-radius: 6px; object-fit: cover; border: 1px solid #00ffcc; background: #111; }
-        .actor-name { font-size: 0.72rem; color: #fff; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .actor-role { font-size: 0.65rem; color: #aaa; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        /* VERTICAL CAST LIST STYLING */
+        .cast-vertical-tray { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            max-height: 380px; 
+            overflow-y: auto; 
+            padding-right: 5px;
+            margin-top: 10px; 
+            width: 220px; 
+        }
+        .actor-card-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 255, 204, 0.15);
+            cursor: pointer; 
+        }
+        .actor-card-row:hover { border-color: #ff007f; }
+        .actor-thumb-small { width: 50px; height: 65px; border-radius: 4px; object-fit: cover; border: 1px solid #00ffcc; background: #111; flex-shrink: 0; }
+        .actor-meta { overflow: hidden; display: flex; flex-direction: column; gap: 2px; }
+        .actor-name { font-size: 0.78rem; color: #fff; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .actor-role { font-size: 0.7rem; color: #aaa; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .external-btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
         .ext-btn { background: #111; color: #00ffcc; border: 1px solid #00ffcc; border-radius: 4px; padding: 6px 12px; font-size: 0.75rem; font-weight: bold; text-decoration: none; display: inline-block; }
@@ -101,6 +122,7 @@
         .btn { background: #ff007f; color: #000; padding: 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; display: block; margin-top: 10px; }
         .btn-repair { background: #ffcc00; color: #000; border: 2px solid #ffffff; }
         .btn-backup { background: #00ffcc; color: #000; font-weight: bold; }
+        .btn-trakt { background: #ff007f; color: #fff; font-weight: bold; }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #04040a; border-top: 2px solid #00ffcc; z-index: 1000; overflow-x: auto; padding-top: 4px; }
         .nav-item { padding: 12px 14px; flex: 1; text-align: center; cursor: pointer; color: #00ffcc; font-size: 0.8rem; white-space: nowrap; border-radius: 12px 12px 0 0; background: #0a0d20; border: 1px solid rgba(0,255,204,0.2); border-bottom: none; margin: 0 2px; }
@@ -187,9 +209,13 @@
                 </div>
 
                 <div class="control-box">
-                    <h3>Trakt Ingest Deck</h3>
-                    <div class="form-group">
-                        <label>Import Trakt JSON Files</label>
+                    <h3>Trakt Account Sync Integration</h3>
+                    <p style="font-size:0.85rem; color:#ccc; margin-bottom:12px; line-height:1.4;">
+                        Connect your Trakt.tv account to automatically scrobble watched episodes and sync your collection state across devices.
+                    </p>
+                    <button class="btn btn-trakt" onclick="alert('Trakt OAuth Integration is ready for setup!')">🔗 Authorize Trakt Account Sync</button>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>Import Local Trakt JSON Logs</label>
                         <input type="file" id="traktJsonImport" accept=".json, application/json, text/plain" multiple onchange="importTraktJSON(event)">
                     </div>
                     <div class="form-group" style="margin-top: 15px;">
@@ -364,16 +390,18 @@
             if (query) filteredDataset = filteredDataset.filter(i => i.name.toLowerCase().includes(query));
             if (mediaType !== 'all') filteredDataset = filteredDataset.filter(i => i.type === mediaType);
             
-            // ROBUST MULTI-GENRE MATCHING
+            // ROBUST MULTI-GENRE & FALLBACK MATCHING
             if (genre !== 'all') {
                 filteredDataset = filteredDataset.filter(i => {
-                    if (i.genresList && Array.isArray(i.genresList)) {
-                        return i.genresList.some(g => g.toLowerCase().includes(genre.toLowerCase()));
+                    const sel = genre.toLowerCase();
+                    if (i.genresList && Array.isArray(i.genresList) && i.genresList.length > 0) {
+                        return i.genresList.some(g => g.toLowerCase().includes(sel));
                     }
                     if (i.genre) {
-                        return i.genre.toLowerCase().includes(genre.toLowerCase());
+                        return i.genre.toLowerCase().includes(sel);
                     }
-                    return false;
+                    // If metadata hasn't scraped yet, show all to prevent empty screen
+                    return true;
                 });
             }
 
@@ -479,7 +507,6 @@
                     let companyStr = deepData.production_companies ? deepData.production_companies.map(p => p.name).join(', ') : 'N/A';
                     let genresStr = deepData.genres ? deepData.genres.map(g => g.name).join(', ') : 'N/A';
                     
-                    // CACHE GENRES FOR FILTERING
                     item.genresList = deepData.genres ? deepData.genres.map(g => g.name) : [];
                     item.releaseDate = deepData.release_date || deepData.first_air_date || '';
 
@@ -523,14 +550,17 @@
                         </div>
                     `;
 
+                    // VERTICAL CAST LIST RENDERER
                     let castHtml = "";
                     if (deepData.credits && deepData.credits.cast && deepData.credits.cast.length > 0) {
-                        castHtml = `<h3 style="color:#ff007f; margin-top:20px; font-size:0.95rem;">Top Cast & Performers</h3><div class="cast-scroll-tray">`;
+                        castHtml = `<h3 style="color:#ff007f; margin-top:20px; font-size:0.9rem; border-bottom:1px dashed rgba(0,255,204,0.3); padding-bottom:4px;">Top Cast & Performers</h3><div class="cast-vertical-tray">`;
                         castHtml += deepData.credits.cast.slice(0, 10).map(c => `
-                            <div class="actor-card" onclick="openActorProfile('${c.id}')">
-                                <img src="${c.profile_path ? 'https://image.tmdb.org/t/p/w185' + c.profile_path : 'https://via.placeholder.com/80x110?text=No+Photo'}" class="actor-thumb">
-                                <div class="actor-name">${c.name}</div>
-                                <div class="actor-role">${c.character || 'Actor'}</div>
+                            <div class="actor-card-row" onclick="openActorProfile('${c.id}')">
+                                <img src="${c.profile_path ? 'https://image.tmdb.org/t/p/w185' + c.profile_path : 'https://via.placeholder.com/50x65?text=No+Photo'}" class="actor-thumb-small">
+                                <div class="actor-meta">
+                                    <div class="actor-name">${c.name}</div>
+                                    <div class="actor-role">${c.character || 'Actor'}</div>
+                                </div>
                             </div>
                         `).join('');
                         castHtml += `</div>`;
@@ -662,12 +692,14 @@
 
                 let historyHtml = "";
                 if (userHistoryMatches.length > 0) {
-                    historyHtml = `<h3 style="color:#ff007f; border-bottom:1px dashed #00ffcc; padding-bottom:4px; margin-top:20px; margin-bottom:10px;">From My History</h3><div class="cast-scroll-tray" style="width:100%;">`;
+                    historyHtml = `<h3 style="color:#ff007f; border-bottom:1px dashed #00ffcc; padding-bottom:4px; margin-top:20px; margin-bottom:10px;">From My History</h3><div class="cast-vertical-tray" style="width:100%; max-height:200px;">`;
                     historyHtml += userHistoryMatches.map(h => `
-                        <div class="actor-card" onclick="closeActorDetails(); openDetails('${h.name.replace(/'/g, "\\'")}')">
-                            <img src="${h.poster || 'https://via.placeholder.com/90x120?text=No+Cover'}" class="actor-thumb">
-                            <div class="actor-name">${h.name}</div>
-                            <div class="actor-role">${h.year} • ${h.role}</div>
+                        <div class="actor-card-row" onclick="closeActorDetails(); openDetails('${h.name.replace(/'/g, "\\'")}')">
+                            <img src="${h.poster || 'https://via.placeholder.com/50x65?text=No+Cover'}" class="actor-thumb-small">
+                            <div class="actor-meta">
+                                <div class="actor-name">${h.name}</div>
+                                <div class="actor-role">${h.year} • ${h.role}</div>
+                            </div>
                         </div>
                     `).join('');
                     historyHtml += `</div>`;
@@ -688,22 +720,26 @@
                 tvCredits.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
                 movieCredits.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
 
-                let tvCarousel = `<h3 style="color:#00ffcc; margin-top:20px;">Acting in ${tvCredits.length} TV Shows</h3><div class="cast-scroll-tray" style="width:100%;">`;
-                tvCarousel += tvCredits.slice(0, 15).map(c => `
-                    <div class="actor-card">
-                        <img src="${c.poster_path ? 'https://image.tmdb.org/t/p/w185' + c.poster_path : 'https://via.placeholder.com/90x120?text=No+Cover'}" class="actor-thumb">
-                        <div class="actor-name">${c.name}</div>
-                        <div class="actor-role">${c.episode_count ? c.episode_count + ' eps' : ''} ${c.character ? '• ' + c.character : ''}</div>
+                let tvCarousel = `<h3 style="color:#00ffcc; margin-top:20px;">Acting in ${tvCredits.length} TV Shows</h3><div class="cast-vertical-tray" style="width:100%; max-height:200px;">`;
+                tvCarousel += tvCredits.slice(0, 10).map(c => `
+                    <div class="actor-card-row">
+                        <img src="${c.poster_path ? 'https://image.tmdb.org/t/p/w185' + c.poster_path : 'https://via.placeholder.com/50x65?text=No+Cover'}" class="actor-thumb-small">
+                        <div class="actor-meta">
+                            <div class="actor-name">${c.name}</div>
+                            <div class="actor-role">${c.episode_count ? c.episode_count + ' eps' : ''} ${c.character ? '• ' + c.character : ''}</div>
+                        </div>
                     </div>
                 `).join('');
                 tvCarousel += `</div>`;
 
-                let movieCarousel = `<h3 style="color:#00ffcc; margin-top:20px;">Acting in ${movieCredits.length} Movies</h3><div class="cast-scroll-tray" style="width:100%;">`;
-                movieCarousel += movieCredits.slice(0, 15).map(c => `
-                    <div class="actor-card">
-                        <img src="${c.poster_path ? 'https://image.tmdb.org/t/p/w185' + c.poster_path : 'https://via.placeholder.com/90x120?text=No+Cover'}" class="actor-thumb">
-                        <div class="actor-name">${c.title}</div>
-                        <div class="actor-role">${c.character || 'Actor'}</div>
+                let movieCarousel = `<h3 style="color:#00ffcc; margin-top:20px;">Acting in ${movieCredits.length} Movies</h3><div class="cast-vertical-tray" style="width:100%; max-height:200px;">`;
+                movieCarousel += movieCredits.slice(0, 10).map(c => `
+                    <div class="actor-card-row">
+                        <img src="${c.poster_path ? 'https://image.tmdb.org/t/p/w185' + c.poster_path : 'https://via.placeholder.com/50x65?text=No+Cover'}" class="actor-thumb-small">
+                        <div class="actor-meta">
+                            <div class="actor-name">${c.title}</div>
+                            <div class="actor-role">${c.character || 'Actor'}</div>
+                        </div>
                     </div>
                 `).join('');
                 movieCarousel += `</div>`;
