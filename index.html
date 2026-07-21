@@ -80,11 +80,11 @@
         .favorite-heart-badge { position: absolute; top: 5px; left: 5px; font-size: 1.2rem; z-index: 10; text-shadow: 0 0 4px #000; cursor: pointer; }
         .cover-rating-badge { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.75); color: #ffcc00; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid #ffcc00; z-index: 10; }
 
-        .cast-scroll-tray { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; margin-top: 10px; }
-        .actor-card { min-width: 90px; width: 90px; text-align: center; cursor: pointer; }
-        .actor-thumb { width: 90px; height: 120px; border-radius: 6px; object-fit: cover; border: 1px solid #00ffcc; background: #111; }
-        .actor-name { font-size: 0.75rem; color: #fff; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .actor-role { font-size: 0.68rem; color: #aaa; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .cast-scroll-tray { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; margin-top: 10px; width: 220px; }
+        .actor-card { min-width: 80px; width: 80px; text-align: center; cursor: pointer; }
+        .actor-thumb { width: 80px; height: 110px; border-radius: 6px; object-fit: cover; border: 1px solid #00ffcc; background: #111; }
+        .actor-name { font-size: 0.72rem; color: #fff; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .actor-role { font-size: 0.65rem; color: #aaa; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .external-btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
         .ext-btn { background: #111; color: #00ffcc; border: 1px solid #00ffcc; border-radius: 4px; padding: 6px 12px; font-size: 0.75rem; font-weight: bold; text-decoration: none; display: inline-block; }
@@ -112,6 +112,7 @@
         .accordion-item { background: rgba(20,20,40,0.6); padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00ffcc; }
         .personal-rating-stars { display: flex; gap: 5px; font-size: 1.4rem; color: #ffcc00; cursor: pointer; margin: 10px 0; }
         .meta-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .meta-left-col { width: 220px; flex-shrink: 0; }
         .meta-info-shelf { flex: 1; min-width: 280px; }
     </style>
 </head>
@@ -131,12 +132,15 @@
         </select>
         <select id="genreFilterSelect" onchange="triggerSearchProcessing()">
             <option value="all">All Genres</option>
-            <option value="Sci-Fi">Sci-Fi</option>
             <option value="Action">Action</option>
-            <option value="Drama">Drama</option>
-            <option value="Mystery">Mystery</option>
+            <option value="Adventure">Adventure</option>
             <option value="Comedy">Comedy</option>
             <option value="Crime">Crime</option>
+            <option value="Drama">Drama</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Mystery">Mystery</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="Science Fiction">Science Fiction</option>
             <option value="Thriller">Thriller</option>
         </select>
         <select id="sortEngineSelect" onchange="triggerSearchProcessing()">
@@ -298,6 +302,7 @@
             document.getElementById('sortEngineSelect').value = 'name-asc';
             document.getElementById('mediaTypeFilterSelect').value = 'all';
             document.getElementById('genreFilterSelect').value = 'all';
+            document.getElementById('globalSearchInput').value = '';
             triggerSearchProcessing();
         }
 
@@ -358,7 +363,19 @@
 
             if (query) filteredDataset = filteredDataset.filter(i => i.name.toLowerCase().includes(query));
             if (mediaType !== 'all') filteredDataset = filteredDataset.filter(i => i.type === mediaType);
-            if (genre !== 'all') filteredDataset = filteredDataset.filter(i => i.genre === genre);
+            
+            // ROBUST MULTI-GENRE MATCHING
+            if (genre !== 'all') {
+                filteredDataset = filteredDataset.filter(i => {
+                    if (i.genresList && Array.isArray(i.genresList)) {
+                        return i.genresList.some(g => g.toLowerCase().includes(genre.toLowerCase()));
+                    }
+                    if (i.genre) {
+                        return i.genre.toLowerCase().includes(genre.toLowerCase());
+                    }
+                    return false;
+                });
+            }
 
             if (currentStatusFilter !== 'all') {
                 if (currentStatusFilter === 'favorites') {
@@ -370,10 +387,20 @@
                 }
             }
 
-            if (sort === 'name-asc') filteredDataset.sort((a,b) => a.name.localeCompare(b.name));
-            if (sort === 'name-desc') filteredDataset.sort((a,b) => b.name.localeCompare(a.name));
-            if (sort === 'rating') filteredDataset.sort((a,b) => (parseFloat(b.vote_average || 0)) - (parseFloat(a.vote_average || 0)));
-            if (sort === 'personal-rating') filteredDataset.sort((a,b) => (b.personalRating || 0) - (a.personalRating || 0));
+            // REWORKED SORTING ENGINE
+            if (sort === 'name-asc') {
+                filteredDataset.sort((a,b) => a.name.localeCompare(b.name));
+            } else if (sort === 'name-desc') {
+                filteredDataset.sort((a,b) => b.name.localeCompare(a.name));
+            } else if (sort === 'release-date') {
+                filteredDataset.sort((a,b) => new Date(b.releaseDate || b.year || 0) - new Date(a.releaseDate || a.year || 0));
+            } else if (sort === 'date-added') {
+                filteredDataset.sort((a,b) => new Date(b.dateAdded || 0) - new Date(a.dateAdded || 0));
+            } else if (sort === 'rating') {
+                filteredDataset.sort((a,b) => (parseFloat(b.vote_average || 0)) - (parseFloat(a.vote_average || 0)));
+            } else if (sort === 'personal-rating') {
+                filteredDataset.sort((a,b) => (b.personalRating || 0) - (a.personalRating || 0));
+            }
 
             const generateCardTemplate = (i) => {
                 let graphicAsset = i.posterPath;
@@ -449,7 +476,13 @@
 
                     let creatorStr = deepData.created_by ? deepData.created_by.map(c => c.name).join(', ') : 'N/A';
                     let networkStr = deepData.networks ? deepData.networks.map(n => n.name).join(', ') : 'N/A';
+                    let companyStr = deepData.production_companies ? deepData.production_companies.map(p => p.name).join(', ') : 'N/A';
                     let genresStr = deepData.genres ? deepData.genres.map(g => g.name).join(', ') : 'N/A';
+                    
+                    // CACHE GENRES FOR FILTERING
+                    item.genresList = deepData.genres ? deepData.genres.map(g => g.name) : [];
+                    item.releaseDate = deepData.release_date || deepData.first_air_date || '';
+
                     let releaseDateStr = deepData.release_date || deepData.first_air_date || 'N/A';
                     let originCountryStr = deepData.production_countries ? deepData.production_countries.map(c => c.name).join(', ') : (deepData.origin_country ? deepData.origin_country.join(', ') : 'N/A');
 
@@ -492,10 +525,10 @@
 
                     let castHtml = "";
                     if (deepData.credits && deepData.credits.cast && deepData.credits.cast.length > 0) {
-                        castHtml = `<h3 style="color:#ff007f; margin-top:20px;">Top Cast & Performers</h3><div class="cast-scroll-tray">`;
-                        castHtml += deepData.credits.cast.slice(0, 14).map(c => `
+                        castHtml = `<h3 style="color:#ff007f; margin-top:20px; font-size:0.95rem;">Top Cast & Performers</h3><div class="cast-scroll-tray">`;
+                        castHtml += deepData.credits.cast.slice(0, 10).map(c => `
                             <div class="actor-card" onclick="openActorProfile('${c.id}')">
-                                <img src="${c.profile_path ? 'https://image.tmdb.org/t/p/w185' + c.profile_path : 'https://via.placeholder.com/90x120?text=No+Photo'}" class="actor-thumb">
+                                <img src="${c.profile_path ? 'https://image.tmdb.org/t/p/w185' + c.profile_path : 'https://via.placeholder.com/80x110?text=No+Photo'}" class="actor-thumb">
                                 <div class="actor-name">${c.name}</div>
                                 <div class="actor-role">${c.character || 'Actor'}</div>
                             </div>
@@ -534,8 +567,8 @@
 
                     detailContent.innerHTML = `
                         <div class="meta-layout">
-                            <div>
-                                <img src="https://image.tmdb.org/t/p/w300${deepData.poster_path}" class="meta-poster" style="width:200px; border-radius:6px;">
+                            <div class="meta-left-col">
+                                <img src="https://image.tmdb.org/t/p/w300${deepData.poster_path}" class="meta-poster" style="width:220px; border-radius:6px;">
                                 <div style="margin-top:15px; display:flex; flex-direction:column; gap:10px;">
                                     <div><label style="font-size:0.8rem; color:#ff007f; font-weight:bold;">Folder Location:</label>
                                         <select onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'status', this.value)" style="width:100%; padding:8px; background:#111; color:#fff; border:1px solid #00ffcc; border-radius:4px; margin-top:4px;">
@@ -558,19 +591,20 @@
                                         <span style="color:#ff007f; font-weight:bold;">❤️ Favorite</span>
                                     </div>
                                 </div>
+                                ${castHtml}
                             </div>
                             <div class="meta-info-shelf">
                                 <h2>${item.name} ${item.year ? `(${item.year})` : ''}</h2>
                                 <p style="color:#ff007f; font-size:0.85rem; margin-bottom:8px;">${taglineText}</p>
-                                <p style="margin:8px 0; font-size:0.85rem; color:#ccc; line-height:1.5;">
+                                <p style="margin:8px 0; font-size:0.85rem; color:#ccc; line-height:1.6;">
                                     🎬 <strong>Type:</strong> ${item.type} | ⏱️ <strong>Runtime:</strong> ${runtime} min | ⭐ TMDB: ${dbRating}/10<br>
                                     🔞 <strong>Certification:</strong> ${certRating} | 🏷️ <strong>Genre:</strong> ${genresStr}<br>
-                                    ${item.type === 'TV' ? `✍️ <strong>Creators:</strong> ${creatorStr} | 📺 <strong>Network:</strong> ${networkStr}<br>⚡ <strong>Status:</strong> ${statusText} | ⏱️ <strong>Total Series Length:</strong> ${totalRuntimeFormatted}<br>📆 <strong>Next Season Drop:</strong> ${nextEpisodeAir}` : `🎥 <strong>Director:</strong> ${directorStr} | 🌍 <strong>Country:</strong> ${originCountryStr}<br>📅 <strong>Release Date:</strong> ${releaseDateStr}`}
+                                    ${item.type === 'TV' ? `✍️ <strong>Creators:</strong> ${creatorStr}<br>📺 <strong>Network:</strong> ${networkStr}<br>⚡ <strong>Status:</strong> ${statusText} | ⏱️ <strong>Total Series Length:</strong> ${totalRuntimeFormatted}<br>📆 <strong>Next Season Drop:</strong> ${nextEpisodeAir}` : `🎥 <strong>Director:</strong> ${directorStr}<br>🏢 <strong>Studio / Production:</strong> ${companyStr}<br>🌍 <strong>Country:</strong> ${originCountryStr}<br>📅 <strong>Release Date:</strong> ${releaseDateStr}`}
                                 </p>
 
                                 ${extButtons}
 
-                                <div style="margin-top:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px;">
+                                <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px;">
                                     <label style='color:#ccc; font-size:0.85rem;'><strong>Date Watched / Seen:</strong></label>
                                     <div style="display:flex; gap:10px; align-items:center; margin-top:4px;">
                                         <input type="date" id="dateInput" value="${item.dateCompleted || ''}" ${item.dateUnknown ? 'disabled' : ''} onchange="updateAssetDataField('${item.name.replace(/'/g, "\\'")}', 'dateCompleted', this.value)" style="background:#111; color:#fff; border:1px solid #00ffcc; padding:4px 8px; border-radius:4px;">
@@ -580,7 +614,6 @@
 
                                 <div class="personal-rating-stars">${renderStarInterface(item.name, item.personalRating || 0)}</div>
                                 <p style="margin-top:12px; color:#ddd; font-size:0.9rem; line-height:1.5;">${deepData.overview || "Overview summary filed offline."}</p>
-                                ${castHtml}
                                 ${seasonTrackerGridHtml}
                                 <span class="discrete-delete-link" onclick="deleteAssetFromLibrary('${item.name.replace(/'/g, "\\'")}')">🗑️ Permanent Delete Asset</span>
                             </div>
@@ -629,7 +662,7 @@
 
                 let historyHtml = "";
                 if (userHistoryMatches.length > 0) {
-                    historyHtml = `<h3 style="color:#ff007f; border-bottom:1px dashed #00ffcc; padding-bottom:4px; margin-top:20px; margin-bottom:10px;">From My History</h3><div class="cast-scroll-tray">`;
+                    historyHtml = `<h3 style="color:#ff007f; border-bottom:1px dashed #00ffcc; padding-bottom:4px; margin-top:20px; margin-bottom:10px;">From My History</h3><div class="cast-scroll-tray" style="width:100%;">`;
                     historyHtml += userHistoryMatches.map(h => `
                         <div class="actor-card" onclick="closeActorDetails(); openDetails('${h.name.replace(/'/g, "\\'")}')">
                             <img src="${h.poster || 'https://via.placeholder.com/90x120?text=No+Cover'}" class="actor-thumb">
@@ -655,7 +688,7 @@
                 tvCredits.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
                 movieCredits.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
 
-                let tvCarousel = `<h3 style="color:#00ffcc; margin-top:20px;">Acting in ${tvCredits.length} TV Shows</h3><div class="cast-scroll-tray">`;
+                let tvCarousel = `<h3 style="color:#00ffcc; margin-top:20px;">Acting in ${tvCredits.length} TV Shows</h3><div class="cast-scroll-tray" style="width:100%;">`;
                 tvCarousel += tvCredits.slice(0, 15).map(c => `
                     <div class="actor-card">
                         <img src="${c.poster_path ? 'https://image.tmdb.org/t/p/w185' + c.poster_path : 'https://via.placeholder.com/90x120?text=No+Cover'}" class="actor-thumb">
@@ -665,7 +698,7 @@
                 `).join('');
                 tvCarousel += `</div>`;
 
-                let movieCarousel = `<h3 style="color:#00ffcc; margin-top:20px;">Acting in ${movieCredits.length} Movies</h3><div class="cast-scroll-tray">`;
+                let movieCarousel = `<h3 style="color:#00ffcc; margin-top:20px;">Acting in ${movieCredits.length} Movies</h3><div class="cast-scroll-tray" style="width:100%;">`;
                 movieCarousel += movieCredits.slice(0, 15).map(c => `
                     <div class="actor-card">
                         <img src="${c.poster_path ? 'https://image.tmdb.org/t/p/w185' + c.poster_path : 'https://via.placeholder.com/90x120?text=No+Cover'}" class="actor-thumb">
